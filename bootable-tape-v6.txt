@@ -1,9 +1,7 @@
 My intention was to be able to boot from Dennis Ritchies v6 diskset:
 http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6
 
-I don't think this is possible without a bootstrap program being installed. 
-So, I set out to install a bootstrap to the v6root image in the set. 
-Here are a couple of methods, beginning with the easiest:
+I don't think this is possible without a bootstrap program being installed. So, I set out to install a bootstrap to the v6root image in the set. Here are a couple of methods, beginning with the easiest:
 
 mkdir -p ~/sandboxes/retro-workarea/bootblock
 cd ~/sandboxes/retro-workarea/bootblock
@@ -65,6 +63,8 @@ count
 Simulation stopped, PC: 137274 (TSTB @#177560)
 sim> q
 Goodbye
+
+tar cvzf v6root-bootable.tar.gz v6root
 
 cat > dboot.ini <<EOF
 set cpu 11/40
