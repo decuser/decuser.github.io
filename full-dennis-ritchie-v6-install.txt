@@ -1,0 +1,891 @@
+xref: bootable-tape-v6.txt
+
+The intent here it to install and configure a fully working v6 environment
+using the disk images in the Dennis_v6 archive:
+http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6
+
+Create a working directory
+mkdir -p ~/sandboxes/retro-workarea/v6-ritchie
+cd ~/sandboxes/retro-workarea/v6-ritchie
+
+
+Get the boot.tap file from somewhere (or follow the instructions at
+https://github.com/decuser/decuser.github.io/blob/master/bootable-tape-v6.txt to create one):
+
+cp ~/_workarea/_resources/retro-resources/v6/wellsch-bootblock.tar.gz .
+tar xvzf wellsch-bootblock.tar.gz boot.tap
+
+Get Dennis's disk images:
+curl -O -L http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6/v6root.gz
+curl -O -L http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6/v6src.gz
+curl -O -L http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6/v6doc.gz
+openssl sha1 v6*
+
+SHA1(v6doc.gz)= a9adc1bf69f160531ed7db6f5201dbdba37d4e4c
+SHA1(v6root.gz)= 105bb5c4f79bb1af0ed50ac63b90dca1229373c1
+SHA1(v6src.gz)= c8f693ae86e687dba919f3370fdb9e68daf404c1
+
+gunzip *gz
+
+Boot from the tape and install the bootblock onto the root disk:
+
+cat > tboot.ini <<EOF
+set cpu 11/40
+set tm0 locked
+attach tm0 boot.tap
+attach rk0 v6root
+d cpu 100000 012700
+d cpu 100002 172526
+d cpu 100004 010040
+d cpu 100006 012740
+d cpu 100010 060003
+d cpu 100012 000777
+g 100000
+EOF
+
+pdp11 tboot.ini 
+
+PDP-11 simulator V4.0-0 Beta        git commit id: 1d2742ed
+Disabling XQ
+tboot.ini-11> g 100000
+^E
+Simulation stopped, PC: 100012 (BR 100012)
+sim> g 0
+=tmrk
+disk offset
+0
+tape offset
+100
+count
+1
+=
+^E
+Simulation stopped, PC: 137300 (BGE 137274)
+sim> q
+Goodbye
+
+Back it up:
+tar cvzf v6root-bootable.tar.gz v6root
+
+Boot from the disk and install
+
+cat > dboot.ini <<EOF
+set cpu 11/40
+set cpu idle
+set tto 7b
+attach rk0 v6root
+attach rk1 v6src
+attach rk2 v6doc
+attach rk3 additional-storage
+attach ptr ptr.txt
+attach ptp ptp.txt
+attach lpt lpt.txt
+dep system sr 173030
+boot rk0
+EOF
+
+# note, if the switches are set to 173030 as above, unix will boot the system in single user mode (xref, man 8 boot procedures), set them to 1 for multiuser mode (maybe simh default)...
+
+pdp11 dboot.ini 
+
+PDP-11 simulator V4.0-0 Beta        git commit id: 1d2742ed
+Disabling XQ
+RK: creating new file
+PTR: creating new file
+PTP: creating new file
+LPT: creating new file
+@rkunix
+mem = 1036
+# STTY -LCASE NL0 CR0 ERASE <type a real backspace following the word erase and press enter>
+
+to test, type sttys and backspace, then press enter and you should see:
+# stty
+speed 0 baud
+erase = '; kill = '@'
+-nl echo -tabs
+
+and not:
+stty: not found
+
+----
+build mkconf
+----
+chdir /usr/sys/conf
+cc mkconf.c
+mv a.out mkconf
+
+----
+run mkconf and tell it about our attached devices
+rk05's, tape reader and tape punch, magtape, DECtape, serial terminals, and line printer
+----
+./mkconf
+rk
+pc
+tm
+tc
+8dc
+lp
+done
+
+----
+compile and install the kernel (unix)
+m40.s is the machine language assist file
+c.c is the configuration table containing the major device switches for each device class, block or character
+l.s is the trap vectors for the devices
+----
+as m40.s
+mv a.out m40.o
+cc -c c.c
+as l.s
+ld -x a.out m40.o c.o ../lib1 ../lib2
+mv a.out /unix
+
+# confirm that the resulting kernel is 30k
+ls -l /
+-rwxrwxrwx  1 root    30742 Aug 14 22:10 unix
+
+
+Prior to making dev mods, the directory contains:
+ls /dev
+kmem
+mem
+null
+tty8
+
+each of these files is described in section IV of the manual
+
+cat c.c
+/*
+ */
+
+int     (*bdevsw[])()
+{
+        &nulldev,       &nulldev,       &rkstrategy,    &rktab, /* rk */
+        &nodev,         &nodev,         &nodev,         0,      /* rp */
+        &nodev,         &nodev,         &nodev,         0,      /* rf */
+        &tmopen,        &tmclose,       &tmstrategy,    &tmtab, /* tm */
+        &nulldev,       &tcclose,       &tcstrategy,    &tctab, /* tc */
+        &nodev,         &nodev,         &nodev,         0,      /* hs */
+        &nodev,         &nodev,         &nodev,         0,      /* hp */
+        &nodev,         &nodev,         &nodev,         0,      /* ht */
+        0
+};
+
+int     (*cdevsw[])()
+{
+        &klopen,   &klclose,  &klread,   &klwrite,  &klsgtty,   /* console */
+        &pcopen,   &pcclose,  &pcread,   &pcwrite,  &nodev,     /* pc */
+        &lpopen,   &lpclose,  &nodev,    &lpwrite,  &nodev,     /* lp */
+        &dcopen,   &dcclose,  &dcread,   &dcwrite,  &dcsgtty,   /* dc */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* dh */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* dp */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* dj */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* dn */
+        &nulldev,  &nulldev,  &mmread,   &mmwrite,  &nodev,     /* mem */
+        &nulldev,  &nulldev,  &rkread,   &rkwrite,  &nodev,     /* rk */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* rf */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* rp */
+        &tmopen,   &tmclose,  &tmread,   &tmwrite,  &nodev,     /* tm */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* hs */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* hp */
+        &nodev,    &nodev,    &nodev,    &nodev,    &nodev,     /* ht */
+        0
+};
+
+int     rootdev {(0<<8)|0};
+int     swapdev {(0<<8)|0};
+int     swplo   4000;   /* cannot be zero */
+int     nswap   872;
+-------------
+rk is block device major 0
+rrk is character device major 9
+
+----
+create special files for each installed device that isn't already there
+----
+/etc/mknod /dev/rk0 b 0 0
+/etc/mknod /dev/rk1 b 0 1
+/etc/mknod /dev/rk2 b 0 2
+/etc/mknod /dev/rk3 b 0 3
+/etc/mknod /dev/mt0 b 3 0
+/etc/mknod /dev/tap0 b 4 0
+/etc/mknod /dev/rrk0 c 9 0
+/etc/mknod /dev/rrk1 c 9 1
+/etc/mknod /dev/rrk2 c 9 2
+/etc/mknod /dev/rrk3 c 9 3
+/etc/mknod /dev/rmt0 c 12 0
+/etc/mknod /dev/ppt c 1 0
+/etc/mknod /dev/lp0 c 2 0
+/etc/mknod /dev/tty0 c 3 0
+/etc/mknod /dev/tty1 c 3 1
+/etc/mknod /dev/tty2 c 3 2
+/etc/mknod /dev/tty3 c 3 3
+/etc/mknod /dev/tty4 c 3 4
+/etc/mknod /dev/tty5 c 3 5
+/etc/mknod /dev/tty6 c 3 6
+/etc/mknod /dev/tty7 c 3 7
+
+----
+secure the special files
+----
+chmod 640 /dev/*rk*
+chmod 640 /dev/*pp*
+chmod 640 /dev/*lp*
+chmod 640 /dev/*mt*
+chmod 640 /dev/*tap*
+chmod 640 /dev/*tty*
+
+ls -l /dev|wc
+     26     227
+
+----
+update the superblock
+----
+sync
+sync
+
+----
+create mount point for doc and mount both doc and source (mountpoint already exists)
+----
+mkdir /usr/doc
+/etc/mount /dev/rk1 /usr/source
+/etc/mount /dev/rk2 /usr/doc
+
+----
+test that both now have files
+----
+ls /usr/source
+ls /usr/doc
+
+
+----
+add mounts to rc
+----
+cat >> /etc/rc
+/etc/mount /dev/rk1 /usr/source
+/etc/mount /dev/rk2 /usr/doc
+
+CTRL+D
+
+----
+modify df to show disk free on all devices
+----
+chdir /usr/source/s1
+ed df.c
+5p
+5d
+4
+i
+  "/dev/rk0",
+  "/dev/rk1",
+.
+7
+i
+  "/dev/rk3",
+.
+w
+q
+
+cc df.c
+cp a.out /bin/df
+
+----
+test df
+----
+df
+/dev/rk0 989
+/dev/rk1 935
+/dev/rk2 1691
+/dev/rk3 bad free count
+0
+#
+
+rk3 doesn't have a file system on it... yet.
+
+----
+check the drives that have filesystems
+----
+icheck /dev/rrk0
+dcheck /dev/rrk0
+icheck /dev/rrk1
+dcheck /dev/rrk1
+icheck /dev/rrk2
+dcheck /dev/rrk2
+
+----
+modify ttys to enable devices 1-8
+----
+ed /etc/ttys
+1,8s/^0/1/p
+w
+q
+
+----
+update the superblock
+----
+sync
+sync
+CTRL-E
+sim> q
+
+
+tar cvzf installed.tar.gz v6root v6src v6doc additional-storage dboot.ini
+
+---------------------------------------------------------------------
+--  Post Install Notes
+---------------------------------------------------------------------
+the system is ready for a normal multiuser boot with all of the devices attached
+
+----
+create the normal boot ini file
+----
+cat > nboot.ini << "EOF"
+set cpu 11/40
+set cpu idle
+set tto 7b
+set tm0 locked
+attach rk0 v6root
+attach rk1 v6src
+attach rk2 v6doc
+attach rk3 additional-storage
+attach ptr ptr.txt
+attach ptp ptp.txt
+attach lpt lpt.txt
+set dci en
+set dci lines=8
+set dco 7b
+att dci 5555
+boot rk0
+EOF
+
+----
+boot for the first time
+----
+pdp11 nboot.ini
+
+The pdp running unix is now available via telnet:
+telnet localhost 5555
+login as root, with no password
+
+See command notes at bottom for command help
+---------------------------------------------------------------------
+-- speed up the terminal cr and lf
+---------------------------------------------------------------------
+set the stty to be a bit faster
+stty erase <real backspace> cr0 nl0
+
+---------------------------------------------------------------------
+--  test "printing" from the simulation
+---------------------------------------------------------------------
+if you set up the lp device correctly, lp0 is a character device where text can be redirected, and picked up by simh.
+
+cat /etc/rc > /dev/lp0
+
+then on the host, open the lpt.txt file
+
+---------------------------------------------------------------------
+-- add man command
+---------------------------------------------------------------------
+----
+mount wolfgang's man.enb tape in the simuation
+----
+CTRL-E to suspend the simulation
+simh> attach tm0 v6enb/man.enb
+co
+
+----
+list the files on the tape
+----
+tp tm
+
+sav
+res
+man0/naa.df
+man0/tocrc.df
+man3/pow.3.df
+man3/printf.3.df
+man3/rand.3.df
+man5/fs.5.df
+man5/a.out.5.df
+man6/factor.6.df
+man6/primes.6.df
+/usr/bin/man
+/usr/source/s7/nroff1.s
+  13 entries
+  45 used
+ 107 last
+
+the tape contains a save and restore script, a number of diff files, the man script, and an nroff1.s assembly file
+----
+restore the files from the tape into /usr/doc/man
+----
+chdir /usr/doc/man
+tp xm res
+cat res
+
+----
+restore the files (modify some files)
+----
+sh res
+
+The error /usr/source/s7/nroff1.s.df: cannot open does is not fatal and the man command will work fine.
+
+----
+test man
+----
+man man
+
+---------------------------------------------------------------------
+-- test that a telnet session from the host works
+---------------------------------------------------------------------
+open a terminal
+telnet localhost 5555
+note the escape character is ^]
+press enter if the word login doesn't immediately appear
+login
+stty nl0 cr0
+ls
+CTRL-D to logout of v6
+
+CTRL-] to close the telnet session
+q to quit telnet altogether
+
+CTRL-D again to close the terminal
+
+---------------------------------------------------------------------
+--  test copying text files to and from the simulator
+---------------------------------------------------------------------
+because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt
+
+this test is for the paper tape device, see the longer note on Copying Files for more information
+
+----
+on the host, put some text in the ptr.txt file
+-----
+--snip
+Hello, v6 from
+the HOST!!!
+--snip
+
+----
+in v6, read the file from the ppt device
+----
+cat > myfile < /dev/ppt
+
+cat myfile
+Hello, v6 from
+the HOST!!!#
+
+----
+in v6, write the file to the ppt device
+----
+cat myfile > /dev/ppt
+
+sync
+CTRL-E to suspend the simulation
+co to resume v6
+
+on the host, read the ptp file
+
+* as of 20151120.0642pm, it appears to be necessary to suspend the simulator to get anything written to the device. This can be done multiple times, as needed.
+
+---------------------------------------------------------------------
+-- Set up users
+---------------------------------------------------------------------
+
+@unix
+cat >> /etc/passwd
+dmr::7:3::/usr/dmr:
+
+CTRL+D
+
+mkdir /usr/dmr
+chown dmr /usr/dmr
+login dmr
+pwd
+/usr/dmr
+
+sync
+sync
+sync
+CTRL+E to break the emulation
+sim> q
+
+---------------------------------------------------------------------
+-- Back up the working instance (baseline)
+---------------------------------------------------------------------
+mkdir baseline-v6
+cp nboot.ini baseline-v6/
+cp rk? baseline-v6/
+tar cvzf baseline-v6.tar.gz baseline-v6
+cp baseline-v6.tar.gz ../
+rm -fr baseline-v6*
+
+----
+test the backup
+----
+cd ..
+tar xvf baseline-v6.tar.gz
+cd baseline-v6
+pdp11 nboot.ini
+
+PDP-11 simulator V4.0-0 Beta        git commit id: 0f43551d
+Disabling XQ
+PTR: creating new file
+PTP: creating new file
+LPT: creating new file
+Listening on port 5555
+@unix
+
+login: wsenn
+%
+CTRL-E
+q
+
+cd ..
+rm -fr ./baseline-v6
+cd v6-20151121
+
+---------------------------------------------------------------------
+-- add cd command using host editor and reading and writing from ppt
+---------------------------------------------------------------------
+Note: sh is critically important, don't muck it up :). The issue is that if you do, there
+really isn't an easy way to recover. Just be careful. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.
+
+pdp11 nboot.ini
+
+@unix
+root
+stty cr0 nl0
+
+----
+cat to the paper tape punch
+----
+cat /usr/source/s2/sh.c > /dev/ppt
+
+CTRL-E to suspend the sim (ensure that the device complete's its write)
+co to continue
+
+open ptp.txt in your favorite editor that doesn't muck with the invisible characters
+copy it's contents except for the header and footer lines, but be sure to get every non-header or footer character
+
+edit it
+by changing:
+		if(equal(cp1, "chdir")) {
+			if(t[DCOM+1] != 0) {
+				if(chdir(t[DCOM+1]) < 0)
+					err("chdir: bad directory");
+			} else
+				err("chdir: arg count");
+			return;
+		}
+to:
+		if(equal(cp1, "chdir")) {
+			if(t[DCOM+1] != 0) {
+				if(chdir(t[DCOM+1]) < 0)
+					err("chdir: bad directory");
+			} else
+				err("chdir: arg count");
+			return;
+		}
+		if(equal(cp1, "cd")) {
+			if(t[DCOM+1] != 0) {
+				if(chdir(t[DCOM+1]) < 0)
+					err("cd: bad directory");
+			} else
+				err("cd: arg count");
+			return;
+		}
+
+paste it into ptr.txt, be sure to end with an empty line
+
+----
+in v6, read from ppt into a new file
+----
+CTRL-E to suspend
+detach ptr
+attach ptr ptr.txt
+co
+
+cat > sh.c.new < /dev/ppt
+
+----
+compare the new file to the old file
+----
+diff sh.c.new /usr/source/s2/sh.c
+569,576d568
+*               if(equal(cp1, "cd")) {
+*                       if(t[DCOM+1] != 0) {
+*                               if(chdir(t[DCOM+1]) < 0)
+*                                       err("cd: bad directory");
+*                       } else
+*                               err("cd: arg count");
+*                       return;
+*               }
+
+----
+figure out how to build and install sh
+----
+chdir /usr/source/s2
+cp sh.c sh.c.original
+cp /sh.c.new sh.c
+
+grep sh run
+
+----
+build and install sh
+----
+
+cc -s -n -O sh.c
+cmp a.out /bin/sh
+a.out /bin/sh differ: char 4, line 1
+
+mv /bin/sh /bin/sh.original
+a.out
+
+cp a.out /bin/sh
+chown bin /bin/sh
+
+CTRL-D
+relogin
+
+cd /usr
+Woohoo!
+
+backup baseline-v6-withcd
+
+mkdir baseline-v6-withcd
+cp nboot.ini baseline-v6-withcd/
+cp rk? baseline-v6-withcd/
+tar cvzf baseline-v6-withcd.tar.gz baseline-v6-withcd
+cp baseline-v6-withcd.tar.gz ../
+rm -fr baseline-v6-withcd*
+
+---------------------------------------------------------------------
+-- Copying Files
+---------------------------------------------------------------------
+****
+** From Unix v6 on PDP 11/40 SimH to Host:
+****
+
+----
+create and attach an additional rk device
+----
+simh> attach rk3 rk3
+co
+
+----
+get a file of interest and note it's size in bytes
+----
+# ls -l /etc/rc
+-rw-rw-r--  1 bin        90 Oct 10 12:32 /etc/rc
+
+----
+look at the od dump of the file for comparison later
+----
+# od -c /etc/rc
+0000000  r  m     -  f     /  e  t  c  /  m  t  a  b \n
+0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
+0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
+0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
+0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
+0000120  /  u  s  r  /  d  o  c \n \n
+0000132
+
+----
+write the file to the rk device (the sync may not be needed, but the result looks cleaner, also it doesn't apper that you can specify bs=1, device errors out)
+----
+# dd if=/etc/rc of=/dev/rrk03 conv=sync
+0+1 records in
+1+0 records out
+
+----
+exit the sim and then on the host, read from the rk image using bs=1 and count from the ls output
+----
+$ dd if=rk3 of=rc bs=1 count=90
+90+0 records in
+90+0 records out
+
+----
+look at the od dump
+----
+$ od -c rc
+0000000    r   m       -   f       /   e   t   c   /   m   t   a b  \n
+0000020    /   e   t   c   /   u   p   d   a   t   e  \n   /   e t   c
+0000040    /   m   o   u   n   t       /   d   e   v   /   r   k 1
+0000060    /   u   s   r   /   s   o   u   r   c   e  \n   /   e t   c
+0000100    /   m   o   u   n   t       /   d   e   v   /   r   k 2
+0000120    /   u   s   r   /   d   o   c  \n \n
+0000132
+
+A match!
+
+****
+** From Host to Unix v6 on PDP 11/40 SimH Host:
+****
+
+----
+make a minor edit to the rc file (change m to n in the word mtab) and note it's size in bytes
+----
+$ ls -l rc
+-rw-r--r--  1 wsenn  staff  90 Nov 20 16:15 rc
+
+it better be 90, unless I did something other than changing a letter
+
+----
+write rc to a new rk3 file
+----
+$ dd if=rc of=rk3 conv=sync
+0+1 records in
+1+0 records out
+512 bytes transferred in 0.000037 secs (13854733 bytes/sec)
+note the count of blocks
+
+----
+with the number of blocks on hand, fire up the simulation and read from the rk to disk
+----
+# dd if=/dev/rrk3 of=rc.dd count=1
+
+----
+because of the fact that I can't specify bs=1, the result is padded
+----
+od -c rc.dd
+0000000  r  m     -  f     /  e  t  c  /  n  t  a  b \n
+0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
+0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
+0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
+0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
+0000120  /  u  s  r  /  d  o  c \n \n \0 \0 \0 \0 \0 \0
+0001000
+
+----
+read from the dd file with the number of bytes still in hand
+----
+dd if=rc.dd of=rc bs=1 count=90
+90+0 records in
+90+0 records out
+
+----
+then diff the file against the original:
+----
+diff rc /etc/rc
+1c1
+* rm -f /etc/ntab
+---
+. rm -f /etc/mtab
+
+Success!
+
+---------------------------------------------------------------------
+-- Some confusing, but special points to remember
+---------------------------------------------------------------------
+there is no vi, use ed (see below)
+there is no cd, use chdir
+
+# characters are not good for pasting, they require an escape \#
+
+ctime.README points the way to successfully compiling stuff:
+sometimes you need to be bin, login as bin with no password
+the correct command to add an object to a lib is:
+ar r ../lib2 myfile.o
+
+to learn how to compile stuff, the run script in the source directories
+are good skeletons. to see how to compile login.c in /usr/source/s1
+chdir /usr/source/s1
+ed login.c and make any changes you desire (such as fixing the login:
+prompt which shows Name: on subsequent retries)
+
+if you can't remember the right commands to compile and install this
+program, do the following:
+grep login run
+cc -s -O login.c
+cmp a.out /bin/login
+cp a.out /bin/login
+
+to see who needs to do the compiling
+ls -l /bin/login
+-rwsr-xr-x  1 root     2606 Oct 10 14:19 /bin/login
+
+looks like root in this case, whereas for getty.c:
+grep getty run
+cc -s -n -O getty.c
+cmp a.out /etc/getty
+cp a.out /etc/getty
+ls -l /etc/getty
+-rwxrwxr--  1 bin      1002 Oct 10 14:09 /etc/getty
+looks like bin.
+
+As noted in ctime.README, run in /usr/sys does not actually update the libraries
+
+Before you update libraries, ls -l to see the mode and ownership of the files
+ls -l /usr/sys/lib?
+-rw-rw-r--  1 bin     59342 Oct 10 13:17 lib1
+-rw-rw-r--  1 bin     48630 Oct 10 13:18 lib2
+
+if you try to remove a special file (whatever that is), it will display a mode that is six digits long.
+
+rm /usr/sys/lib1
+/usr/sys/lib1: 110664 mode
+
+man 2 stat
+
+The flags are as follows:
+100000 i-node is allocated
+060000 2-bit file type:
+    000000 plain file
+    040000 directory
+    020000 character-type special file
+    060000 block-type special file.
+010000 large file
+004000 set user-ID on execution
+002000 set group-ID on execution
+001000 save text image after execution
+000400 read (owner)
+000200 write (owner)
+000100 execute (owner)
+000070 read, write, execute (group)
+000007 read, write, execute (others)
+
+that makes 110664 read:
+the i-node is allocated, it's a large file, it's a plain file, and it is rw-rw-r--.
+
+---------------------------------------------------------------------
+-- ed cheatsheet
+---------------------------------------------------------------------
+ed is the editor, there is no vi
+ed is ok, here's a quick cheat sheet
+
+m,nC - m is a starting line number, n is an ending line number, C is command
+The current line is the default target for a command
+
+a - append
+c - change
+d - delete
+i - insert
+p - print
+
+e - edit file
+f - file being edited
+r - read file
+w - write file
+. ends input
+
+s/this/that
+
+---------------------------------------------------------------------
+--  Command Help
+---------------------------------------------------------------------
+* find - find files
+
+this command is tricky, but once you get the hang of it, works great!
+
+to find a file use the following syntax -a means "and" and is absolutely required:
+find / -name tty.h -a -print
+/usr/sys/tty.h
+
+to find a pattern is straightforward:
+find / -name "tty*" -a -print
+
+
+
+

@@ -1,3 +1,9 @@
+xref:http://gunkies.org/wiki/Installing_UNIX_Sixth_Edition#Installation_tape_contents
+
+http://mercury.lcs.mit.edu/~jnc/tech/V6Unix.html#Initial
+
+---
+
 My intention was to be able to boot from Dennis Ritchies v6 diskset:
 http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6
 
