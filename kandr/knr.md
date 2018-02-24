@@ -6,5 +6,5 @@ This site is a trace of my work reviewing K&R's classic work. The coding is bein
 * [Exercise 1-1](ex1-1.md)
 * [Exercise 1-2](ex1-2.md)
 * [Exercise 1-3](ex1-3.md)
-
-
+* [Exercise 1-4](ex1-4.md)
+* [Exercise 1-5](ex1-5.md)
