@@ -4,5 +4,5 @@ added note on how to extract the bootstrap from Ken Wellsch's V6 distribution fo
 
 added boolean algebra note: https://github.com/decuser/decuser.github.io/blob/master/boolean-algebra-notes.txt
 added algebra of sets note: https://github.com/decuser/decuser.github.io/blob/master/algebra-of-sets.txt
-added k&r area: https://github.com/decuser/decuser.github.io/blobl/master/knr/knr.md
+added k&r area: https://github.com/decuser/decuser.github.io/blob/master/knr/knr.md
 
