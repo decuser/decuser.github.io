@@ -13,5 +13,5 @@ This site is a trace of my work reviewing K&R's classic work. The coding is bein
 * [Exercise 1-8](ex1-8.md) count blanks, tabs and newlines
 * [Exercise 1-9](ex1-9.md) copy input to output compressing blanks
 * [Exercise 1-10](ex1-10.md) copy input to output escaping tab, backspace, backslash
-
+* [Exercise 1-11](ex1-11.md) tests for word counting program 
 
