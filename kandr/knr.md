@@ -14,4 +14,5 @@ This site is a trace of my work reviewing K&R's classic work. The coding is bein
 * [Exercise 1-9](ex1-9.md) copy input to output compressing blanks
 * [Exercise 1-10](ex1-10.md) copy input to output escaping tab, backspace, backslash
 * [Exercise 1-11](ex1-11.md) tests for word counting program 
+* [Exercise 1-11](ex1-12.md) print words on lines by themselves
 
