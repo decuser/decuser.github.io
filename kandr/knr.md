@@ -17,5 +17,6 @@ This site is a trace of my work reviewing K&R's classic work. The coding is bein
 * [Exercise 1-12](ex1-12.md) print words on lines by themselves
 * [Exercise 1-13](ex1-13.md) word length histogram
 * [Exercise 1-14](ex1-14.md) char freq histogram
+* [Exercise 1-15](ex1-15.md) temp converter with function
 
 
