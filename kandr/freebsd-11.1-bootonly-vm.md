@@ -81,8 +81,8 @@ The BSD installer gets the install files from the ftp server and installs the se
 - Set root password and confirm
 - Select Yes to choose UTC for local clock
   -Select 2. America
-  - 49. United States
-  - 11. Central Time
+  - 49 United States
+  - 11 Central Time
   - Select Yes for CDT
 - Select sshd, moused, ntpd, powerd, dumpdev as services to start at boot
 - Select Yes to add user
