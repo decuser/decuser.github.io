@@ -1,6 +1,9 @@
 # K&R C ANSI Edition Exercises
 This site is a trace of my work reviewing K&R's classic work. The coding is being done in a FreeBSD 11.1 minimal VM.
 
+## Set up a working VM
+* [FreeBSD11](freebsd-11.1-bootonly-vm.md) FreeBSD Boot Only Media Install
+
 ## Chapter 1
 
 * [Exercise 1-1](ex1-1.md) hello, world
