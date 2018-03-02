@@ -1,0 +1,246 @@
+The purpose of installing this system is to have a system capable of working through Robert Love's 2010 book, Linux Kernel Development, 3rd. ed. In the book, the author is explaining how the 2.6.34 kernel works. The system described below is suitable for working with the 2.6.34 kernel and through the Love book.
+
+Host:
+Mac OS High Sierra 10.13.3
+MacBook Pro (15-inch, Mid 2012)
+Processor 2.6 GHz Intel Core i7
+Memory 16 GB 1600 MHz DDR3
+VirtualBox 5.2.8-121009
+
+Guest:
+Centos 6.9 32 bit
+
+
+References
+Kroah-Hartman, G. (2007). Linux Kernel in a Nutshell. Sebastopol, CA: O'Reilly Media, Inc.
+
+Love, R. (2010). Linux Kernel Development (3rd ed.). Upper Saddle River, NJ: Addison-Wesley.
+
+https://wiki.centos.org/HowTos/I_need_the_Kernel_Source
+
+https://www.howtoforge.com/kernel_compilation_centos
+
+https://wiki.centos.org/HowTos/Custom_Kernel
+
+https://wiki.gentoo.org/wiki/Kernel/Configuration
+
+mkdir ~/love
+cd ~/love
+
+ 
+Download Centos
+
+Latest in 6.x series in order to have 2.6.x kernel
+
+http://isoredirect.centos.org/centos/6/isos/i386/
+http://mirror.math.princeton.edu/pub/centos/6.9/isos/i386/
+
+gpg --recv-keys C105B9DE
+or
+curl -OL https://www.centos.org/keys/RPM-GPG-KEY-CentOS-6
+gpg --import RPM-GPG-KEY-CentOS-6
+
+curl -OL http://mirror.math.princeton.edu/pub/centos/6.9/isos/i386/CentOS-6.9-i386-minimal.iso
+sha256sum.asc
+
+gpg --verify sha256sum.asc
+...
+gpg: Good signature from "CentOS-6 Key (CentOS 6 Official Signing Key) <centos-6-key@centos.org>" [unknown]
+...
+
+cat sha256sum.asc
+...
+e104b3bc2261e40c020e4047d31a4454a00435787c54fb0a376261f9348382b7  CentOS-6.9-i386-minimal.iso
+...
+
+openssl sha256 CentOS-6.9-i386-minimal.iso
+SHA256(CentOS-6.9-i386-minimal.iso)= e104b3bc2261e40c020e4047d31a4454a00435787c54fb0a376261f9348382b7
+
+
+Create a Centos Instance in Virtual Box
+
+New VirtualBox VM
+Name: centos69
+Version: Red Hat (32-bit)
+Memory: 4096MB
+HDD: 20GB
+Add iso to storage
+SSH PortForward 3333 22
+
+Boot VM
+Press Enter to Install or upgrade an existing system
+Press Enter twice to Test the media
+Press Enter to accept success :)
+Reattach the iso (it has been ejected)
+Press Enter to continue
+Press Tab to select Continue and Press Enter
+Click Next in the Graphic Installer to begin the Graphical Installation Process
+Click Next to accept English as the Installer Language
+Click Next to accept US English as the keyboard mapping
+Click Next to accept Basic Storage Devices as the install target
+Click Next to accept Fresh Install
+Choose to discard any existing data
+Enter centos69.sentech.home as the Hostname and then click Next
+Choose America/Chicago and Click Next
+Enter and confirm a root password and click Next
+Choose Use All Space as the installation type and Click Next
+Click Write changes to disk
+The installer will finish up and install the system
+Click Reboot
+Eject the iso and halt
+
+snapshot installed
+
+start VM
+
+login as root
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+change to
+ONBOOT=yes
+
+adduser -m -G wheel wsenn
+passwd wsenn
+visudo
+uncomment wheel login
+
+uname -a
+Linux centos69.sentech.home 2.6.32-696.el6.i686 #1 SMP Tue Mar 21 18:53:30 UTC 2017 i686 i686 i386 GNU/Linux
+
+halt
+snapshot baseline
+
+
+start VM
+
+from host
+ssh-copy-id localhost -p 3333
+ssh localhost -p 3333
+
+sudo yum update
+
+sudo halt
+snapshot updated
+
+from host
+VBoxManage list vms
+...
+"centos69" {09bffb07-6c39-413b-9497-44b1d5ae7dd7}
+...
+
+VBoxManage modifyvm "centos69" --defaultfrontend headless
+
+Start the VM back up
+
+uname -a
+Linux centos69.sentech.home 2.6.32-696.20.1.el6.i686 #1 SMP Fri Jan 26 18:13:32 UTC 2018 i686 i686 i386 GNU/Linux
+
+sudo yum groupinstall 'Development Tools'
+sudo yum install rpm-build redhat-rpm-config asciidoc bison hmaccalc patchutils perl-ExtUtils-Embed xmlto audit-libs-devel binutils-devel elfutils-devel elfutils-libelf-devel newt-devel python-devel zlib-devel rng-tools ncurses-devel wget
+
+sudo halt
+snapshot with-devtools
+
+start VM
+find the current source http://vault.centos.org/6.9/updates/Source/SPackages/
+
+login as ordinary user!
+sudo rngd -r /dev/urandom
+
+rpm -iv http://vault.centos.org/6.9/updates/Source/SPackages/kernel-2.6.32-696.20.1.el6.src.rpm 2>&1
+
+This can take a few minutes depending on the download speed
+
+cd ~/rpmbuild/SPECS
+rpmbuild -bp --target=$(uname -m) kernel.spec
+
+it will hang on genkey if random pool isn't set up (sudo rngd -r /dev/urandom)
+
+Another few minutes for unpacking
+
+confirm you have sources
+ls ~/rpmbuild/BUILD/kernel*/linux*/ 
+
+sudo halt
+snap centos-kernel-sources-installed
+---------------------------------------------------------------------
+
+## Install and Build the 2.6.34 Kernel
+
+start the vm
+login as wsenn
+
+gpg --locate-keys torvalds@kernel.org gregkh@kernel.org
+gpg --recv-keys 0D3B3537C4790F9D
+
+mkdir ~/Downloads
+cd ~/Downloads
+
+On this attempt, picked 2.6.32 kernel, next time 2.6.32.27 and beyond
+
+download a tarball https://cdn.kernel.org/pub/linux/kernel/v2.6/
+wget https://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.tar.xz
+wget https://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.tar.sign
+
+mkdir ~/linux
+cd ~/linux
+cp ~/Downloads/linux-* .
+unxz linux-2.6.34.tar.xz
+
+gpg --verify linux-2.6.34.tar.sign linux-2.6.34.tar
+...
+gpg: Good signature from "Linux Kernel Archives Verification Key (One-off resign
+ing of old releases) <ftpadmin@kernel.org>" [unknown]
+...
+
+tar xvf linux-2.6.34.tar 
+cd linux-2.6.34
+make clean && make mrproper
+
+(about make config commands from gentoo/arch wiki w/mods)
+make config
+Text based configuration. The options are prompted one after another. All options need to be answered, and out-of-order access to former options is not possible.
+
+make menuconfig
+An ncurses-based pseudo-graphical menu (only text input). Navigate through the menu to modify the desired options.
+
+make defconfig
+Generates a new config with default from the Centos? supplied defconfig file. Use this option to get back the default configuration file that came with the sources.
+
+make oldconfig
+Review changes between kernel versions and update to create a new .config for the kernel.
+
+Before you run 'make oldconfig' You need to copy an kernel configuration file from an older kernel into the root directory of the new kernel.
+
+make olddefconfig
+Generates a new configuration with default values from the ARCH supplied defconfig file while, at the same time, maintaining all the previous options set in the .config file found at /usr/src/linux/.config. This is a fast and safe method for upgrading a config file that has all the configuration options it needs for hardware support while at the same time gaining bug fixes and security patches.
+
+cp /usr/src/kernels/2.6.32-696.20.1.el6.i686/.config .
+make oldconfig
+
+take the 50 or so defaults
+
+time make -j8
+real	41m26.502s
+user	34m34.099s
+sys	5m4.724s
+
+sudo make modules_install
+sudo make install
+
+ignoring modinfo error nf_defrag_ipv6
+
+/boot/grub/menu.lst is modified with the new kernel as first in list, but not default
+
+sudo reboot
+
+uname -a
+Linux centos69.sentech.home 2.6.34 #1 SMP Fri Mar 2 09:50:21 CST 2018 i686 i686 i386 GNU/Linux
+
+sudo halt
+snapshot running-2.6.34
+
+
+
+
+
+
