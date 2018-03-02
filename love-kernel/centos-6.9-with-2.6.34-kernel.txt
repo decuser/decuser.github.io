@@ -235,6 +235,11 @@ snapshot running-2.6.34
 
 Celebrate - you are ready to begin kernel hackery.
 
+If you wanna boot to this kernel by default
+sudo vi /boot/grub/menu.lst
+change to
+default=0
+
 ---------------------------------------------------------------------
 Some words about make config commands from gentoo/arch wiki w/mods
 
