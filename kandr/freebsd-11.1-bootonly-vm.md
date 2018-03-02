@@ -81,8 +81,8 @@ The BSD installer gets the install files from the ftp server and installs the se
 - Set root password and confirm
 - Select Yes to choose UTC for local clock
   -Select 2. America
-  - 49. United States
-  - 11. Central Time
+  - 49 United States
+  - 11 Central Time
   - Select Yes for CDT
 - Select sshd, moused, ntpd, powerd, dumpdev as services to start at boot
 - Select Yes to add user
@@ -98,7 +98,7 @@ The BSD installer gets the install files from the ftp server and installs the se
 from host:
 
 ```
-ssh freebsd1
+ssh localhost -p 2222
 ```
 
 login as normal user and become root:
@@ -156,7 +156,7 @@ start the vm from the gui
 from the host:
 
 ```
-ssh freebsd1
+ssh localhost -p 2222
 ```
 
 on the guest:
@@ -174,15 +174,12 @@ pkg upgrade
 
 exit
 
-ssh-keygen
-ssh-copy-id -i ~/.ssh/id_rsa.pub host
-
 ```
 
 and from host
 
 ```
-ssh-copy-id freebsd1
+ssh-copy-id localhost -p 2222
 ```
 
 on the guest:
@@ -197,11 +194,6 @@ freebsd-version -uk
 pkg install doas bash subversion vim htop
 mount -t fdescfs fdescfs /dev/fd
 
-vi .profile
-edit EDITOR=vim
-add alias vi='vim'
-
-
 vi /usr/local/etc/doas.conf
 permit keepenv :wheel
 exit
@@ -210,6 +202,11 @@ exit
 as user
 
 ```
+vi .profile
+edit EDITOR=vim
+add alias vi='vim'
+exit
+
 doas ls to test
 chsh
 /usr/local/bin/bash
@@ -226,14 +223,16 @@ kern.ipc.shmmax=67108864
 kern.ipc.shmall=32768
 hw.ata.ata_dma="1"
 hw.ata.atapi="1"
+
+doas halt
 ```
 
-halt, powerdown and snapshot the vm post-setup
+powerdown and snapshot the vm post-setup
 
 restart vm
 
 ```
-ssh freebsd1
+ssh localhost -p 2222
 ```
 
 login as user
@@ -252,17 +251,20 @@ enter a cleanroom environment
 doas env -i bash
 ```
 
-build the userland and kernel - takes a long time (as in an hour and a half)
+build the userland and kernel - takes a long time (as in an hour to an hour and a half)
 
 ```
 cd /usr/src
 time make -j4 buildworld buildkernel
 ...
-real	95m58.850s
-user	336m16.186s
-sys	36m58.213s
+real	66m10.801s
+user	215m11.281s
+sys	40m35.153s
+```
 
 install the kernel - takes a minute or so
+
+```
 cd /usr/src
 make installkernel
 shutdown -r now
@@ -297,7 +299,8 @@ freebsd-version -uk
 11.1-RELEASE-p6
 
 uname -a
-FreeBSD freebsd1.my.home 11.1-RELEASE-p6 FreeBSD 11.1-RELEASE-p6 #0 r329423: Fri Feb 16 16:48:10 CST 2018     root@freebsd1.my.home:/usr/obj/usr/src/sys/GENERIC  amd64
+
+FreeBSD freebsd1 11.1-RELEASE-p6 FreeBSD 11.1-RELEASE-p6 #0 r330245: Thu Mar  1 07:19:35 CST 2018     root@freebsd1:/usr/obj/usr/src/sys/GENERIC  amd64
 ```
 
 ## set up git repo for c explorations
