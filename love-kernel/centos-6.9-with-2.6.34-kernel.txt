@@ -180,31 +180,31 @@ gpg --recv-keys 0D3B3537C4790F9D
 mkdir ~/Downloads
 cd ~/Downloads
 
-On this attempt, picked 2.6.32 kernel, next time 2.6.32.27 and beyond
+On this attempt, picked 2.6.34.7 kernel
 
 download a tarball https://cdn.kernel.org/pub/linux/kernel/v2.6/
-wget https://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.tar.xz
-wget https://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.tar.sign
+wget https://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.7.tar.xz
+wget https://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.7.tar.sign
 
 mkdir ~/linux
 cd ~/linux
 cp ~/Downloads/linux-* .
-unxz linux-2.6.34.tar.xz
+unxz linux-2.6.34.7.tar.xz
 
-gpg --verify linux-2.6.34.tar.sign linux-2.6.34.tar
+gpg --verify linux-2.6.34.7.tar.sign linux-2.6.34.7.tar
 ...
 gpg: Good signature from "Linux Kernel Archives Verification Key (One-off resign
 ing of old releases) <ftpadmin@kernel.org>" [unknown]
 ...
 
-tar xvf linux-2.6.34.tar 
-cd linux-2.6.34
+tar xvf linux-2.6.34.7.tar 
+cd linux-2.6.34.7
 make clean && make mrproper
 
 cp /usr/src/kernels/2.6.32-696.20.1.el6.i686/.config .
 make oldconfig
 
-take the 50 or so defaults (keep hitting enter)
+take the 108 or so defaults (keep hitting enter)
 
 time make -j8
 
@@ -228,8 +228,7 @@ ignoring modinfo error nf_defrag_ipv6
 sudo reboot (make sure you're seeing the console as you will need to select the kernel to boot from - click Show in VirtualBox while booting)
 
 uname -a
-Linux centos69.sentech.home 2.6.34 #1 SMP Fri Mar 2 09:50:21 CST 2018 i686 i686 i386 GNU/Linux
-
+Linux centos69.sentech.home 2.6.34.7 #1 SMP Fri Mar 2 22:34:26 CST 2018 i686 i686 i386 GNU/Linux
 sudo halt
 snapshot running-2.6.34
 
