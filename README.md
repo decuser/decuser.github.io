@@ -8,5 +8,6 @@ added algebra of sets note: https://github.com/decuser/decuser.github.io/blob/ma
 
 added k&r area: https://github.com/decuser/decuser.github.io/blob/master/kandr/knr.md
 
-added linux kernel development area https://decuser.github.io/love-kernel/centos-6.9-with-2.6.34-kernel.txt 
+added linux kernel development note https://decuser.github.io/love-kernel/centos-6.9-with-2.6.34-kernel.txt 
 
+added another linux kernel development note https://decuser.github.io/bovet-cesati-kernel/centos-4.8-with-2.6.11-kernel.txt 
