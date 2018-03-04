@@ -1,0 +1,344 @@
+#********************************************************************
+#** centos-4.8-with-2.6.11-kernel.txt
+#** created 20180303.1319
+#********************************************************************
+The purpose of installing this system is to have a system capable of working through Bovet & Cesati's 2006 book, Understanding the Linux Kernel, 3rd. ed. In the book, the author is uses the 2.6.11 kernel. The system described below is suitable for working with the 2.6.11 kernel and through the book.
+
+I had a bit of trouble getting the 2.6.11 kernel to boot. Eventually, I punted and changed the VM settings. The kernel kept crashing trying to find the disk. Apparently it needed an AHCI module that there didn't appear to be a config parameter for... I'm sure it's just me not understanding things, but to make things simpler, I just removed the SATA adapter and attached the VDI to the IDE adapter when I configured the VM.
+
+Don't install Virtual Box additions or try to use vagrant with this set up. Trouble if you do :). 
+---------------------------------------------------------------------
+System Information
+
+MacBook Pro (15-inch, Mid 2012):
+Processor 2.6 GHz Intel Core i7 - 4 cores
+Memory 16 GB 1600 MHz DDR3
+Mac OS High Sierra 10.13.3
+Darwin giar 17.4.0 Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64 x86_64
+VirtualBox 5.2.8-121009
+
+Guest OS:
+Centos 4.8 32 bit
+---------------------------------------------------------------------
+References
+
+Kroah-Hartman, G. (2007). Linux Kernel in a Nutshell. Sebastopol, CA: O'Reilly Media, Inc.
+
+Bovet, D. P., & Cesati, M., (2006). Understanding the Linux Kernel (3rd ed.). Sebastopol, CA.: O'Reilly Media, Inc.
+
+https://web.archive.org/web/20070207061128/https://wiki.centos.org/HowTos/Custom_Kernel
+2.6.18 https://web.archive.org/web/20080613161831/http://wiki.centos.org:80/HowTos/Custom_Kernel
+---------------------------------------------------------------------
+Download Centos 4.8 in order to have 2.6.11 kernel
+
+It's not actually on the vault:
+http://vault.centos.org/4.8/isos/i386/
+
+But rather it's on archive:
+http://archive.kernel.org/centos-vault/4.8/isos/i386/
+
+mkdir ~/bovet
+cd ~/bovet
+
+wget http://archive.kernel.org/centos-vault/4.8/isos/i386/CentOS-4.8-i386-bin1of4.iso
+wget http://archive.kernel.org/centos-vault/4.8/isos/i386/sha1sums
+
+cat sha1sums
+...
+0c27102deadee01974176d5603aeac1fc6756b6b  CentOS-4.8-i386-bin1of4.iso
+...
+
+openssl sha1 CentOS-4.8-i386-bin1of4.iso
+SHA1(CentOS-4.8-i386-bin1of4.iso)= 0c27102deadee01974176d5603aeac1fc6756b6b
+
+mkdir -p ~/_workarea/_CD_DVD/_iso/centos/4.8
+cp CentOS-4.8-i386-bin1of4.iso ~/_workarea/_CD_DVD/_iso/centos/4.8
+cp sha1sums ~/_workarea/_CD_DVD/_iso/centos/4.8
+---------------------------------------------------------------------
+Create a Centos Instance in Virtual Box
+
+New VirtualBox VM
+Name: centos48
+Version: Red Hat (32-bit)
+Memory: 4096MB
+HDD: 20GB
+System-Motherboard-Extended Features-Enable I/O APIC
+System-Processor-Processors 4
+Storage Devices
+  Remove Controller: SATA
+  Add Existing Hard Disk to Controller:IDE
+Add iso to Empty CD
+Network Advanced - Port Forwarding - SSH 3334 22
+---------------------------------------------------------------------
+Install in the VM
+
+Press Enter to Boot the Install Media
+Press Enter twice to Test the media
+Press Enter to accept success :)
+Reattach the iso (it has been ejected)
+Press Tab to select Continue and Press Enter
+Click Next in the Graphic Installer to begin the Graphical Installation Process
+Click Next to accept English as the Installer Language
+Click Next to accept US English as the keyboard mapping
+Choose Server and click Next to Continue
+Click Next to accept Automatic Partitioning
+Click Yes to initialize hda
+Click Next to Remove existing partitions
+Click Yes to confirm removal
+Click Next to confirm partition layout
+Click Next to confirm Grub settings
+Click Next to confirm Boot loader destination
+nter centos48.sentech.home as the Hostname and then click Next
+Choose America/Chicago and Click Next
+Enter and confirm a root password and click Next
+Unselect all packages (will require 749MB)
+The installer will finish up and install the system
+Click Reboot, eject the media and power off the VM
+
+snapshot installed
+---------------------------------------------------------------------
+Create a user with wheel privileges
+
+start VM
+login as root
+adduser -m -G wheel wsenn
+passwd wsenn
+visudo
+uncomment wheel login
+halt
+snapshot baseline
+---------------------------------------------------------------------
+Make VM headless and prep for ssh from host
+
+VBoxManage list vms
+...
+"centos48" {someuuid}
+...
+
+VBoxManage modifyvm "centos48" --defaultfrontend headless
+
+start VM
+from host
+ssh-copy-id localhost -p 3334
+
+---------------------------------------------------------------------
+Update Centos
+
+ssh localhost -p 3334
+
+uname -a
+Linux centos48.sentech.home 2.6.9-89.ELsmp #1 SMP Mon Jun 22 12:32:43 EDT 2009 i686 i686 i386 GNU/Linux
+
+sudo -s 
+
+cat > /etc/yum.repos.d/CentOS-Base.repo <<EOF
+# CentOS-Base.repo
+#
+# This file uses a new mirrorlist system developed by Lance Davis for CentOS.
+# The mirror system uses the connecting IP address of the client and the
+# update status of each mirror to pick mirrors that are updated to and
+# geographically close to the client.  You should use this for CentOS updates
+# unless you are manually picking other mirrors.
+#
+# If the mirrorlist= does not work for you, as a fall back you can try the 
+# remarked out baseurl= line instead.
+#
+#
+
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+baseurl=http://vault.centos.org/4.8/os/i386/
+gpgcheck=1
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos4
+priority=1
+protect=1
+
+#released updates 
+[update]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+baseurl=http://vault.centos.org/4.8/updates/i386/
+gpgcheck=1
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos4
+priority=1
+protect=1
+
+#packages used/produced in the build but not released
+[addons]
+name=CentOS-$releasever - Addons
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=addons
+#baseurl=http://mirror.centos.org/centos/$releasever/addons/$basearch/
+baseurl=http://vault.centos.org/4.8/addons/i386/
+gpgcheck=1
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos4
+priority=1
+protect=1
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras
+#baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
+baseurl=http://vault.centos.org/4.8/extras/i386/
+gpgcheck=1
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos4
+priority=1
+protect=1
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus
+#baseurl=http://mirror.centos.org/centos/$releasever/centosplus/$basearch/
+baseurl=http://vault.centos.org/4.8/centosplus/i386/
+gpgcheck=1
+enabled=0
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos4
+priority=2
+protect=1
+
+#contrib - packages by Centos Users
+[contrib]
+name=CentOS-$releasever - Contrib
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=contrib
+#baseurl=http://mirror.centos.org/centos/$releasever/contrib/$basearch/
+baseurl=http://vault.centos.org/4.8/contrib/i386/
+gpgcheck=1
+enabled=0
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos4
+priority=2
+protect=1
+EOF
+
+exit
+
+sudo yum update
+install 2, update 96, 109M
+
+sudo halt
+
+snapshot updated
+---------------------------------------------------------------------
+Install the devtools
+
+Start the VM back up
+uname -a
+Linux centos48.sentech.home 2.6.9-103.ELsmp #1 SMP Fri Dec 9 04:31:51 EST 2011 i686 i686 i386 GNU/Linux
+
+sudo yum groupinstall 'Development Tools'
+install 145, 131M
+
+sudo yum install xmlto audit-libs-devel  elfutils-devel
+install 20, 55M
+
+sudo halt
+snapshot devtools
+---------------------------------------------------------------------
+Install canonical kernel sources for Centos 4.8
+
+start VM
+mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+
+find the current source:
+http://vault.centos.org/4.8/updates/SRPMS/kernel-2.6.9-103.EL.src.rpm
+
+wget http://vault.centos.org/4.8/updates/SRPMS/kernel-2.6.9-103.EL.src.rpm
+rpm -ivh kernel-2.6.9-103.EL.src.rpm
+
+This can take a few minutes depending on the download speed
+
+cd ~/rpmbuild/SPECS
+rpmbuild -bp --target=$(uname -m) kernel-2.6.spec
+ls ~/rpmbuild/BUILD/kernel*/linux*/ 
+
+sudo halt
+snap centos-kernel-sources
+---------------------------------------------------------------------
+Install and Build the 2.6.11 Kernel
+
+start the vm
+gpg --keyserver hkp://pgp.mit.edu --recv-keys C4790F9D
+
+mkdir ~/Downloads
+cd ~/Downloads
+
+wget http://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.11.tar.gz
+wget http://cdn.kernel.org/pub/linux/kernel/v2.6/linux-2.6.11.tar.sign
+
+mkdir ~/linux
+cd ~/linux
+cp ~/Downloads/linux-* .
+
+gzip -d linux-2.6.11.tar.gz
+gpg --verify linux-2.6.11.tar.sign linux-2.6.11.tar
+...
+gpg: Good signature from "Linux Kernel Archives Verification Key (One-off resigning of old releases) <ftpadmin@kernel.org>"
+...
+
+tar xvf linux-2.6.11.tar 
+cd linux-2.6.11
+make clean && make mrproper
+
+cp ~/rpmbuild/SOURCES/kernel-2.6.9-i686-smp.config .config
+make oldconfig
+accept all the many defaults
+
+time make -j8
+
+Results on MacBook:
+real	3m0.507s
+user	8m47.931s
+sys	1m33.694s
+
+sudo make modules_install
+sudo make install
+
+just ignore WARNING: No module ata_piix found for kernel 2.6.11, continuing anyway
+
+/boot/grub/menu.lst is modified with the new kernel as first in list, but not default
+
+sudo vi /boot/grub/menu.lst
+change to
+default=0
+
+sudo reboot
+
+uname -a
+Linux centos48.sentech.home 2.6.11 #1 SMP Sat Mar 3 17:40:24 CST 2018 i686 i686 i386 GNU/Linux
+
+If you choose to boot to the 2.6.9 kernel in the future, Kudzu will notify you that hardware has been changed, choose whatever option you like, I don't think it makes a difference.
+
+sudo halt
+
+snapshot running-2.6.11
+
+export appliance, ovf 1.0 with manifest to Documents, move to workarea
+
+centos48.ova 1.72GB
+
+Celebrate - you are ready to begin kernel hackery.
+
+----------------------
+The instance running 2.6.11 is capable of building the 2.6.11 kernel
+
+cd ~/linux/linux-2.6.11
+make clean && make mrproper
+
+cp ~/rpmbuild/SOURCES/kernel-2.6.9-i686-smp.config .config
+make oldconfig
+accept all the many defaults
+
+time make -j8
+
+Results on MacBook (simultaneous backup going on, so not a benchmark):
+real	4m22.728s
+user	8m37.613s
+sys	1m20.529s
+
+
+
+
