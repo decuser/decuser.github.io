@@ -11,3 +11,5 @@ added k&r area: https://github.com/decuser/decuser.github.io/blob/master/kandr/k
 added linux kernel development note https://decuser.github.io/love-kernel/centos-6.9-with-2.6.34-kernel.txt 
 
 added another linux kernel development note https://decuser.github.io/bovet-cesati-kernel/centos-4.8-with-2.6.11-kernel.txt 
+
+added another linux kernel development note https://decuser.github.io/kroah-hartman-kernel/centos-5.11-with-2.6.18-kernel.txt 
