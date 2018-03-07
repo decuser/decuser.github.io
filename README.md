@@ -13,3 +13,5 @@ added linux kernel development note https://decuser.github.io/love-kernel/centos
 added another linux kernel development note https://decuser.github.io/bovet-cesati-kernel/centos-4.8-with-2.6.11-kernel.txt 
 
 added another linux kernel development note https://decuser.github.io/kroah-hartman-kernel/centos-5.11-with-2.6.18-kernel.txt 
+
+added a corrected linux kernel development note https://decuser.github.io/kroah-hartman-kernel/centos-5.11-with-2.6.17.8-kernel.txt
