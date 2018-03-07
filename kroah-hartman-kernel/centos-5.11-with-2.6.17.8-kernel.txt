@@ -1,9 +1,9 @@
 #********************************************************************
-#** centos-5.11-with-2.6.18-kernel.txt
+#** centos-5.11-with-2.6.17.8-kernel.txt
 #** created 20180303.2024
 #********************************************************************
 
-The purpose of installing this system is to have a system capable of working through Kroah-Hartman's 2007 book, Linux Kernel in a Nutshell. In the book, the author describes the 2.6.18 kernel. The system described below is suitable for working with the 2.6.18 kernel as described in Kroah-Hartman.
+The purpose of installing this system is to have a system capable of working through Kroah-Hartman's 2007 book, Linux Kernel in a Nutshell. In the book, the author describes the 2.6.17.8 kernel. The system described below is suitable for working with the 2.6.17.8 kernel as described in Kroah-Hartman.
 
 ---------------------------------------------------------------------
 System information
@@ -361,7 +361,7 @@ change to
 default=0
 
 sudo halt
-snapshot running-2.6.18
+snapshot running-2.6.17.8
 
 Celebrate - you are ready to begin kernel hackery.
 
