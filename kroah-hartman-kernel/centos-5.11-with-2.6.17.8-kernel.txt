@@ -68,9 +68,6 @@ Memory: 4096MB
 HDD: 20GB
 System-Motherboard-Extended Features-Enable I/O APIC
 System-Processor-Processors 4
-Storage Devices
-  Remove Controller: SATA
-  Add Existing Hard Disk to Controller:IDE
 Add iso to Empty CD
 Network Advanced - Port Forwarding - SSH 3335 22
 ---------------------------------------------------------------------
@@ -90,7 +87,7 @@ Click Yes to initialize sda
 Click Next to allow partitioning
 Click Yes to remove all partitions
 Enter centos511.sentech.home as the Hostname and then click Next
-Choose America/Chicago and Click Next
+Choose America/Chicago and Click Next (or Mountain Time or whatever)
 Enter and confirm a root password and click Next
 Deselect Gnome and Select Sever, click Customize now, and Click Next
 Deselect all packages in all categories except for the Base Package Click Next
@@ -104,8 +101,8 @@ Create a user with wheel privileges
 
 start VM
 
-Pass on Setup screen
-
+Setup Agent will run, just Exit without modifications
+Login as root
 adduser -m -G wheel wsenn
 passwd wsenn
 visudo
@@ -135,7 +132,7 @@ start VM
 ssh localhost -p 3335
 
 uname -a
-Linux centos69.sentech.home 2.6.32-696.el6.i686 #1 SMP Tue Mar 21 18:53:30 UTC 2017 i686 i686 i386 GNU/Linux
+Linux centos511.sentech.home 2.6.18-398.el5PAE #1 SMP Tue Sep 16 21:31:44 EDT 2014 i686 i686 i386 GNU/Linux
 
 sudo -s
 cat > /etc/yum.repos.d/CentOS-Base.repo <<EOF
@@ -246,17 +243,13 @@ snap centos-kernel-sources
 ---------------------------------------------------------------------
 
 ## Install and Build the 2.6.17.8 Stock Kernel
+start VM
+mkdir ~/Downloads
 
-start the vm
-login as wsenn
-
+on the host
 gpg --keyserver pgp.surfnet.nl --recv-keys C4790F9D
 gpg --keyserver pgp.surfnet.nl --recv-keys C86BA06A517D0F0E
 
-mkdir ~/Downloads
-cd ~/Downloads
-
-on the host
 mkdir -p ~/_workarea/_CD_DVD/_iso/centos/5.11/kernel
 cd ~/_workarea/_CD_DVD/_iso/centos/5.11/kernel
 wget https://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.17.tar.gz
@@ -285,10 +278,12 @@ gpg: Good signature from "Linux Kernel Archives Verification Key <ftpadmin@kerne
 gpg: WARNING: This key has been revoked by its owner!
 ...
 
+cd ~/_workarea/_CD_DVD/_iso/centos/5.11/kernel/test
 scp -P 3335 ./* localhost:Downloads
 
-on the guest
-cd Downloads
+on the guest:
+gpg --keyserver pgp.surfnet.nl --recv-keys C4790F9D
+gpg --keyserver pgp.surfnet.nl --recv-keys C86BA06A517D0F0E
 
 mkdir ~/linux
 cd ~/linux
@@ -298,13 +293,11 @@ gpg --verify linux-2.6.17.tar.sign linux-2.6.17.tar
 gpg --verify patch-2.6.17.8.sign patch-2.6.17.8
 gpg --verify patch-2.6.17.8-9.sign patch-2.6.17.8-9
 
-
 tar xvf linux-2.6.17.tar
 cd linux-2.6.17
 patch -p1 < ../patch-2.6.17.8
-should be no errors
-
 head -n 5 Makefile 
+
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 17
@@ -332,6 +325,26 @@ cd linux-2.6.17.8
 make clean && make mrproper
 
 cp /usr/src/kernels/2.6.18-419.el5-i686/.config .
+make menuconfig
+/ to search
+IKCONFIG
+in General Setup
+
+/ to search again
+SATA
+In Device Drivers->SCSI device support->SCSI device support (SCSI [=m])
+  ->SCSI low-level drivers->Serial ATA (SATA) support (SCSI_SATA [=n])
+
+Select the settings:
+* Kernel .config support
+* Enable access to .config through /proc/config.gz
+
+M Serial ATA (SATA) support
+M AHCI SATA support 
+M Intel PIIX/ICH SATA support
+
+Save and Exit menuconfig
+
 make oldconfig
 
 take the defaults (keep hitting enter)
@@ -339,22 +352,21 @@ take the defaults (keep hitting enter)
 time make -j8
 
 Results on MacBook:
-real	4m34.899s
-user	14m5.928s
-sys	2m36.931s
+real	4m11.244s
+user	12m44.299s
+sys	2m23.462s
 
 sudo make modules_install
 sudo make install
 
-ignoring:
-WARNING: No module ahci found for kernel 2.6.17.8, continuing anyway
-WARNING: No module ata_piix found for kernel 2.6.17.8, continuing anyway
-WARNING: No module ahci found for kernel 2.6.17.8, continuing anyway
-
 sudo reboot (make sure you're seeing the console as you will need to select the kernel to boot from - click Show in VirtualBox while booting)
 
 uname -a
-Linux centos511.sentech.home 2.6.17.8 #1 SMP Mon Mar 5 19:43:33 CST 2018 i686 i686 i386 GNU/Linux
+Linux centos511.sentech.home 2.6.17.8 #1 SMP Wed Mar 7 00:19:57 MST 2018 i686 i686 i386 GNU/Linux
+
+cp /proc/config.gz .
+gunzip config.gz 
+diff config linux/linux-2.6.17.8/.config
 
 sudo vi /boot/grub/menu.lst
 change to
