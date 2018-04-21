@@ -15,3 +15,7 @@ added another linux kernel development note https://decuser.github.io/bovet-cesa
 added another linux kernel development note https://decuser.github.io/kroah-hartman-kernel/centos-5.11-with-2.6.18-kernel.txt 
 
 added a corrected linux kernel development note https://decuser.github.io/kroah-hartman-kernel/centos-5.11-with-2.6.17.8-kernel.txt
+
+fix utf issue in mint - sheesh, dunno why this persists, but I think it's just the fact that they use a lowercase utf
+
+```sudo update-locale LANG=en_US.UTF-8```
