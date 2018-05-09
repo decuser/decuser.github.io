@@ -22,8 +22,10 @@ fix utf issue in mint - sheesh, dunno why this persists, but I think it's just t
 
 Put the following in /etc/default/grub:
 
+```
 GRUB_DEFAULT=saved
 GRUB_SAVEDEFAULT=true
+```
 
 Then run:
 
