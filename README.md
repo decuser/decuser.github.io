@@ -19,3 +19,12 @@ added a corrected linux kernel development note https://decuser.github.io/kroah-
 fix utf issue in mint - sheesh, dunno why this persists, but I think it's just the fact that they use a lowercase utf
 
 ```sudo update-locale LANG=en_US.UTF-8```
+
+Put the following in /etc/default/grub:
+
+GRUB_DEFAULT=saved
+GRUB_SAVEDEFAULT=true
+
+Then run:
+
+```sudo update-grub```
