@@ -16,11 +16,14 @@ added another linux kernel development note https://decuser.github.io/kroah-hart
 
 added a corrected linux kernel development note https://decuser.github.io/kroah-hartman-kernel/centos-5.11-with-2.6.17.8-kernel.txt
 
-fix utf issue in mint - sheesh, dunno why this persists, but I think it's just the fact that they use a lowercase utf
+FIX: 'Warning: No support for locale: en_US.utf8' issue in mint - sheesh, dunno why this persists. The folks on the forums say it's not a real problem. Apparently, they don't work with apt much. This stupid error causes apt to pause multiple times during updates while it 'figures out' that the utf files are 'missing'. To fix:
 
-```sudo update-locale LANG=en_US.UTF-8```
+```sudo locale-gen --purge --no-archive```
 
-Put the following in /etc/default/grub:
+This gets rid of the local-archive in /usr/lib/locale and generates the 'missing' utf8 files.
+
+
+FIX: To boot mint to the last booted OS by default, put the following in /etc/default/grub:
 
 ```
 GRUB_DEFAULT=saved
