@@ -1,0 +1,7 @@
+---
+layout:	post
+title:	centos-5.11-with-2.6.17.8-kernel
+date:	2018-03-06 00:00:00 -0600
+categories:	general
+---
+
