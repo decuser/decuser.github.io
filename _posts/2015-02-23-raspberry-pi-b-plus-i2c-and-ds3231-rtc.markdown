@@ -134,4 +134,4 @@ print "DS3231=\t\t%s" % ds3231.read_datetime()
 time.sleep(10.0)
 ```
 
-*wds added 2022-11-30 12:16:00 -600*
+*post added 2022-11-30 12:16:00 -600*
