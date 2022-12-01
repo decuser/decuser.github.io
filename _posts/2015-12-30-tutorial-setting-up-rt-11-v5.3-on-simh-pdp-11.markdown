@@ -2,7 +2,7 @@
 layout:	post
 title:	tutorial-setting-up-rt-11-v5.3-on-simh-pdp-11
 date:	2015-12-30 12:17:00 -0600
-categories:	general
+categories:	pdp-11 rt-11
 ---
 
 # Tutorial - Setting up RT-11 v5.3 on SimH PDP-11

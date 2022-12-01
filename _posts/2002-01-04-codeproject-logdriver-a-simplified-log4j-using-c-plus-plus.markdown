@@ -2,7 +2,7 @@
 layout:	post
 title:	codeproject-logdriver-a-simplified-log4j-using-c-plus-plus
 date:	2002-01-04 00:00:00 -0600
-categories:	general
+categories:	programming c++
 ---
 
 # LogDriver - A simplified log4j using C++

@@ -2,7 +2,7 @@
 layout:	post
 title:	pdp-11-basic-booting-the-hard-way
 date:	2015-12-24 09:47:00 -0600
-categories:	general pdp-11 basic bootstrap
+categories:	pdp-11 analysis
 ---
 # PDP-11 BASIC, booting the hard way
 

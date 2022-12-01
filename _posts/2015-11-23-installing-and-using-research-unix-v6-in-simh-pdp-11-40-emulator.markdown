@@ -2,7 +2,7 @@
 layout:	post
 title:	installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator
 date:	2015-11-23 13:41:00 -0600
-categories:	general unix research-unix v6
+categories:	unix research-unix v6 
 ---
 # Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emulator
 

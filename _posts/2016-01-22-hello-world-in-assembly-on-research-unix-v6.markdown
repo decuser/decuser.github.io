@@ -2,7 +2,7 @@
 layout:	post
 title:	hello-world-in-assembly-on-research-unix-v6
 date:	2016-01-22 18:30:00 -0600
-categories:	unix research-unix v6 assembly code
+categories:	unix research-unix v6
 ---
 # Hello, World! in Assembly on Research Unix Version 6
 

@@ -2,7 +2,7 @@
 layout:	post
 title:	codeproject-hello-world-a-primitive-view-of-the-state-of-the-art
 date:	2004-04-30 00:00:00 -0600
-categories:	general
+categories:	programming c#
 ---
 
 # hello, world - A primitive view of the state of the art

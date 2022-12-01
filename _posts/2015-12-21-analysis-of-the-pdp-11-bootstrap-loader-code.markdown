@@ -2,7 +2,7 @@
 layout:	post
 title:	analysis-of-the-pdp-11-bootstrap-loader-code
 date:	2015-12-21 16:34:00 -0600
-categories:	general pdp-11 bootstrap code
+categories:	pdp-11 analysis
 ---
 
 # Analysis of the PDP-11 bootstrap loader code

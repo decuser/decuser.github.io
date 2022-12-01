@@ -2,7 +2,7 @@
 layout:	post
 title:	quick-setup-rt-11v5.3-mac-linux
 date:	2016-01-20 12:17:00 -0600
-categories:	retro macro-11 rt-11 tutorial
+categories:	pdp-11 rt-11 macro-11s
 ---
 # Quick Setup RT-11v5.3 (Mac/Linux)
 

@@ -2,7 +2,7 @@
 layout:	post
 title:	adding-tar-to-research-unix-v6-running-on-pdp-11-40-in-simh
 date:	2015-12-11 20:14:00 -0600
-categories:	general unix research-unix v6
+categories:	unix research-unix v6
 ---
 
 # Adding tar to Research Unix Version 6 Running on a PDP 11/40 in SimH

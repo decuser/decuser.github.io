@@ -2,7 +2,7 @@
 layout:	post
 title:	codeproject-hellomono-mono-on-windows-xp
 date:	2004-05-06 00:00:00 -0600
-categories:	general
+categories:	programming mono
 ---
 
 # HelloMono - Mono on Windows XP

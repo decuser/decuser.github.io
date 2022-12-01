@@ -2,7 +2,7 @@
 layout: post
 title:  "Welcome Post"
 date:   2022-11-29 15:17:00 -0600
-categories: general welcome
+categories: general
 ---
 # Welcome to Decuser's Blog on GitHub
 

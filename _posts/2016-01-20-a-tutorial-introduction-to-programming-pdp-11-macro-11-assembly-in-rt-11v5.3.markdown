@@ -2,7 +2,7 @@
 layout:	post
 title:	a-tutorial-introduction-to-programming-pdp-11-macro-11-assembly-in-rt-11v5.3
 date:	2016-01-20 10:19:00 -0600
-categories:	retro macro-11 rt-11 tutorial
+categories:	pdp-11 rt-11 macro-11
 ---
 
 # A tutorial introduction to programming PDP-11 Macro-11 Assembly in RT-11 v5.3
