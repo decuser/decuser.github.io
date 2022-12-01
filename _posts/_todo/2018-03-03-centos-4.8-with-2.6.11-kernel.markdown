@@ -1,7 +1,0 @@
----
-layout:	post
-title:	centos-4.8-with-2.6.11-kernel
-date:	2018-03-03 00:00:00 -0600
-categories:	general
----
-
