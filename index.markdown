@@ -4,6 +4,5 @@
 title: ""
 layout: home
 ---
-![decuser's blogspace](/assets/img/banner.png)
-## A Repository of Mostly Techie Notes
+![A Repository of Mostly Techie Notes](/assets/img/banner.png)
 
