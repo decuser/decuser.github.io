@@ -1,19 +1,14 @@
 ---
 layout:	post
-title:	installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.0
+title:	Installing and Using Research Unix Version 7 in SimH PDP-11/45 Emulator
 date:	2015-12-07 00:47:00 -0600
 categories:	unix research-unix v7
 ---
+This note is intended to document the process of running v7 in a PDP-11/45 emulated environment. A previous note covers [v6]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %}) originally posted November 23, 2015 and there is a more recent note covering [v7]({% post_url 2017-10-11-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.6 %}).
 
-# Installing and Using Research Unix Version 7 in SimH PDP-11/45 Emulator
+<!--more-->
 
 Minor updates on November 30, 2022.
-
-Installing and Using Research Unix Version 7 in SimH PDP-11/45 Emulator
-
-This note is intended to document the process of running v7 in a PDP-11/45 emulated environment. A previous note covers [v6]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %}) originally posted November 23, 2015.
-
-A 2017 updated PDF and expanded version covering multi-session support (telnet) is available at [http://decuser.blogspot.com/2017/10/research-unix-7-pdp11-45pdf.html](http://decuser.blogspot.com/2017/10/research-unix-7-pdp11-45pdf.html).
 
 Helpful Reference Sites:
 

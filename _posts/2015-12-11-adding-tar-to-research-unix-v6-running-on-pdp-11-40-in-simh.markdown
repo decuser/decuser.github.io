@@ -1,15 +1,14 @@
 ---
 layout:	post
-title:	adding-tar-to-research-unix-v6-running-on-pdp-11-40-in-simh
+title:	Adding tar to Research Unix Version 6 Running on a PDP 11/40 in SimH
 date:	2015-12-11 20:14:00 -0600
 categories:	unix research-unix v6
 ---
-
-# Adding tar to Research Unix Version 6 Running on a PDP 11/40 in SimH
-
 This note explains an approach to getting a working version of tar running on Research Unix Version 6 (v6) running in a SimH PDP-11/40 Simulator.
 
 NOTE: After working at this for a bit, it is clear to me that while this is workable as a solution to move files from v6 to v7, it is not workable as a true tar for v6. The program has difficulty with directories, timestamps and such when working natively on v6. The issues are not with the instructions outlined below, but rather with limitations of the original program as delivered with v7. More investigation is required to understand its limitations.
+
+<!--more-->
 
 ## Prerequisites
 

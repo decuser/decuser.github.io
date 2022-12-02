@@ -1,15 +1,13 @@
 ---
 layout:	post
-title:	tutorial-setting-up-rt-11-v5.3-on-simh-pdp-11
+title:	Tutorial - Setting up RT-11 v5.3 on SimH PDP-11
 date:	2015-12-30 12:17:00 -0600
 categories:	pdp-11 rt-11
 ---
-
-# Tutorial - Setting up RT-11 v5.3 on SimH PDP-11
-
-In Support of MACRO-11 Assembly Development and Experimentation
+A tutorial about how to set up an RT-11 v5.3 in a SimH PDP-11 instance in Support of MACRO-11 Assembly Development and Experimentation.
 
 The RT-11 is a small, single-user, real-time operating system for the PDP-11, 16-bit family of computers. It is simple to install and it works fine with SimH, it just takes some getting used to. If you have ever used DOS, it will seem mildly familiar. This tutorial is enough to get you started with RT-11, but it is by no means a complete introduction. Once you have the environment up and running, I recommend that you read Introduction to RT-11 referenced below. That document will take the reader through a number of exercises to get more familiar with the operating system.
+<!--more-->
 
 Please message me after you work through the tutorial and let me know if there are any needed corrections or changes that would be helpful to add.
 

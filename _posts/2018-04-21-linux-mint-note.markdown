@@ -1,11 +1,11 @@
 ---
 layout:	post
-title:	linux-mint-note
+title:	Linux Mint Note
 date:	2018-04-21 00:00:00 -0600
 categories:	unix linux mint
 ---
-
-# Linux Mint Note
+A note with fixes for issues arising with the use of linux mint.
+<!--more-->
 
 ## Mint 18 - utf issue
 

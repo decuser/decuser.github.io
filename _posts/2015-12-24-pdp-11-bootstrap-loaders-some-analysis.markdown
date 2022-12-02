@@ -1,13 +1,12 @@
 ---
 layout:	post
-title:	pdp-11-bootstrap-loaders-some-analysis
+title:	PDP-11 Bootstrap loaders - some analysis
 date:	2015-12-24 17:20:00 -0600
 categories:	pdp-11
 ---
-
-# PDP-11 Bootstrap loaders - some analysis
-
 This note provides some short analyses of several of the PDP-11 bootstrap loaders used to install the Research Unix Sixth edition. It is a work in progress...
+
+<!--more-->
 
 Each bootstrap loader described below is presented without much explanation in Setting Up Unix - Sixth edition, in Unix Programmer's Manual Sixth Edition Volume II, by K. Thompson and D.M. Ritchie, 1975.
  

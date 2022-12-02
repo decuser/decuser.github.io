@@ -1,14 +1,15 @@
 ---
 layout:	post
-title:	centos-4.8-with-2.6.11-kernel
+title:	Installing Centos 4.8 with 2.6.11 Kernel
 date:	2018-03-03 00:00:00 -0600
 categories:	unix linux centos
 ---
-# Installing Centos 4.8 with 2.6.11 Kernel
+A note describing the process of installing Centos 4.8 with 2.6.11 Kernel in order to be able to work along with Bovet & Cesati's 2006 book, Understanding the Linux Kernel, 3rd. ed., in the modern era.
+<!--more-->
 
 created 20180303.1319
 
-for use with Bovet & Cesati's 2006 book, Understanding the Linux Kernel, 3rd. ed.
+for use with 
 
 ## Overview
 

@@ -1,13 +1,11 @@
 ---
 layout:	post
-title:	restoring-grub-dual-boot-freebsd-and-linux
+title:	Restoring Grub - dual boot FreeBSD and Linux
 date:	2018-08-09 14:29:00 -0600
 categories:	unix
 ---
-
-# Restoring Grub - dual boot FreeBSD and Linux
-
-This note may be specific to my setup:
+Note describing how to restore the grub bootloader after it is catastrophically removed. Please note that it may be specific to my setup:
+<!--more-->
 
 ```
 FreeBSD 11.2 running root on ZFS alongside Linux Mint 18.2
@@ -20,6 +18,7 @@ FreeBSD 11.2 running root on ZFS alongside Linux Mint 18.2
 ```
 
 Notice that there isn't a bios-boot or efi boot.
+
 
 When I installed Mint, FreeBSD was already installed. The Mint installer happily installed its root system into /dev/sda4 and the grub boot manager into /dev/sda. I had to create a 40_custom file in /etc/grub.d and tell it how to find my freebsd instance, but once that was done and update-grub did its thing, I got dual boot working.
 

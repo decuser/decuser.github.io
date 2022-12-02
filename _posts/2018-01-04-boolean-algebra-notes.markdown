@@ -1,19 +1,18 @@
 ---
 layout:	post
-title:	boolean-algebra-notes
+title:	Boolean Algebra Notes
 date:	2018-01-04 00:00:00 -0600
 categories:	math algebra boolean
 ---
+This set of notes is a synthesis of many sources. I was having a very difficult time understanding some of the simplifications that were being done in videos and texts on digital logic, so I dug a little deeper until I had enough of a grasp to appreciate the elegance of the boolean logic system.
 
-# Boolean Algebra Notes
+<!--more-->
 
 Originally created 20171213
 
 Last modified 20180104-2008
 
 ## Overview
-
-This set of notes is a synthesis of many sources. I was having a very difficult time understanding some of the simplifications that were being done in videos and texts on digital logic, so I dug a little deeper until I had enough of a grasp to appreciate the elegance of the boolean logic system.
 
 The set of notes is comprised in three parts:
 

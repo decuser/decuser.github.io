@@ -1,13 +1,11 @@
 ---
 layout:	post
-title:	centos-6.9-with-2.6.34-kernel
+title:	Installing Centos 6.9 with 2.6.34 Kernel
 date:	2018-03-02 00:00:00 -0600
 categories:	unix linux centos
 ---
-
-# Installing Centos 6.9 with 2.6.34 Kernel
-
-for use with Robert Love's 2010 book, Linux Kernel Development, 3rd. ed.
+A note describing the process of installing Centos 6.9 with 2.6.34 Kernel in order to be able to work along with Robert Love's 2010 book, Linux Kernel Development, 3rd. ed., in the modern era.
+<!--more-->
 
 ## Overview
 

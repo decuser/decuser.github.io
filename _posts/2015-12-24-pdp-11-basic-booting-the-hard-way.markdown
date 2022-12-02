@@ -1,14 +1,14 @@
 ---
 layout:	post
-title:	pdp-11-basic-booting-the-hard-way
+title:	PDP-11 BASIC, booting the hard way
 date:	2015-12-24 09:47:00 -0600
 categories:	pdp-11 analysis
 ---
-# PDP-11 BASIC, booting the hard way
-
-This note describes the process of running PDP-11 Basic from the PDP-11 Basic Paper Tape System. It is informed and inspired by Malcolm Macleod's webpage entitled, "PDP-11 Paper Tape BASIC" located at http://www.avitech.com.au/ptb/ptb.html. This work describes the process step by step of keying in the bootstrap loader, running it to load the absolute loader from paper tape stored in bootstrap loader format, and then running the absolute loader to load the PDP-11 BASIC program from paper tape stored in absolute loader format.
+This note describes the process of running PDP-11 Basic from the PDP-11 Basic Paper Tape System. It is informed and inspired by Malcolm Macleod's webpage entitled, "PDP-11 Paper Tape BASIC" located at http://www.avitech.com.au/ptb/ptb.html. It describes the process, step by step, of keying in the bootstrap loader, running it to load the absolute loader from paper tape stored in bootstrap loader format, and then running the absolute loader to load the PDP-11 BASIC program from paper tape stored in absolute loader format.
 
 To learn more about how the bootstrap loader works, see my [prior note ]({% post_url 2015-12-21-analysis-of-the-pdp-11-bootstrap-loader-code %})
+
+<!--more-->
 
 ## Prerequisites
 

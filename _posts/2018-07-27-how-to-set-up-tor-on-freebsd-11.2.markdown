@@ -1,11 +1,11 @@
 ---
 layout:	post
-title:	how-to-set-up-tor-on-freebsd-11.2
+title:	How to set up tor on FreeBSD 11.2
 date:	2018-07-27 10:38:00 -0600
 categories:	unix freebsd
 ---
-
-# How to set up tor on FreeBSD 11.2
+A note describing how to install and set up the tor browser on freebsd 11.2
+<!--more-->
 
 created 20180727.1036
 

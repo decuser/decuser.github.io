@@ -1,15 +1,13 @@
 ---
 layout:	post
-title:	centos-5.11-with-2.6.17.8-kernel
+title:	Installing Centos 5.11 with-2.6.17.8 kernel
 date:	2018-03-06 00:00:00 -0600
 categories:	unix linux centos
 ---
-
-# Installing Centos 5.11 with-2.6.17.8 kernel.txt
+A note describing the process of installing Centos 5.11 with the 2.6.17.8 kernel in order to be able to work along with Kroah-Hartman's 2007 book, Linux Kernel in a Nutshell, in the modern era.
+<!--more-->
 
 created 20180303.2024
-
-for use with Kroah-Hartman's 2007 book, Linux Kernel in a Nutshell
 
 ## Overview
 

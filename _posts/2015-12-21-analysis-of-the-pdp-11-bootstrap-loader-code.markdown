@@ -1,15 +1,14 @@
 ---
 layout:	post
-title:	analysis-of-the-pdp-11-bootstrap-loader-code
+title:	Analysis of the PDP-11 bootstrap loader code
 date:	2015-12-21 16:34:00 -0600
 categories:	pdp-11 analysis
 ---
-
-# Analysis of the PDP-11 bootstrap loader code
-
 This note describes, in detail, how the bootstrap loader code operates. While it is only 14 words, it is not trivial to understand. The bootstrap loader is self-modifying code
 
 The note is a work in progress. It begins by describing the first iteration where the loader loads a single byte from the tape reader. In this case the byte is octal 351, which is the first byte of the absolute loader and is the tape leader byte. Octal 351, when read by the bootstrap loader has the effect of causing the boot strap loader to overwrite a portion of itself that results in no change to its memory contents. Any other value, when read will cause the bootstrap loader to begin copying bytes into a memory location prior to the bootstrap loader itself and continuing to copy bytes until the bootstrap loader overwrites itself with the contents of the loaded program. Programs that are bootstrap loader programs contain a footer that restores they original bytes of the bootstrap loader except for the starting location.
+
+<!--more-->
 
 The language I use below needs further refinement, but it should adequately explain what's going on to the reader.
  

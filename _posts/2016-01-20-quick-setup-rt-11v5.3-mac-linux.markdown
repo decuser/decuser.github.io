@@ -1,14 +1,15 @@
 ---
 layout:	post
-title:	quick-setup-rt-11v5.3-mac-linux
+title:	Quick Setup RT-11v5.3 (Mac/Linux)
 date:	2016-01-20 12:17:00 -0600
 categories:	pdp-11 rt-11 macro-11s
 ---
-# Quick Setup RT-11v5.3 (Mac/Linux)
+A quick start note for getting up and running with RT-11v5.3 on PDP-11 with little to no fuss.
 
 see [Tutorial - Setting up RT-11 v5.3 on SimH PDP-11 (Dec 30, 2015)]({% post_url 2015-12-30-tutorial-setting-up-rt-11-v5.3-on-simh-pdp-11 %}) for a more verbose version.
+<!--more-->
 
-## Minimalist Version
+## The Minimalist Version
 
 see **truly minimalist version** section below for a truly minimalist version
 
@@ -203,7 +204,7 @@ Future booting can be accomplished by:
 `pdp11 boot.ini`
 
 
-## Truly Minimalist version
+## The Truly Minimalist version
 
 Here is the minimalist version sans the bulk of the comments:
 

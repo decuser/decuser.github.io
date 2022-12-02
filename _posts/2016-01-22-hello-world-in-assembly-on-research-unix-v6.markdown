@@ -1,12 +1,12 @@
 ---
 layout:	post
-title:	hello-world-in-assembly-on-research-unix-v6
+title:	Hello, World! in Assembly on Research Unix Version 6
 date:	2016-01-22 18:30:00 -0600
 categories:	unix research-unix v6
 ---
-# Hello, World! in Assembly on Research Unix Version 6
+A note demonstrating the process of assembling and running a simple **hello, world** Unix assembly language application on Research Unix Sixth Edition. It's short and sweet, but gets the job done!
 
-This note demonstrates assembling and running a simple **hello, world** Unix assembly language application on Research Unix Sixth Edition. It's short and sweet, but gets the job done!
+<!--more-->
 
 ## Prerequisites
 

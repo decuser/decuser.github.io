@@ -1,20 +1,16 @@
 ---
 layout:	post
-title:	algebra-of-sets
+title:	Algebra of sets
 date:	2018-01-14 00:00:00 -0600
 categories:	math algebra
 ---
+A note about the algebra of sets. This note informs [Boolean Algebra Notes (Jan 4, 2018)]({% post_url 2018-01-04-boolean-algebra-notes %}). The algebra of sets is a somewhat intuitive boolean algebra and it was the study of the algebra of sets that helped me better understand boolean algebra. I was introduced to the idea in NAVEDTRA, but this development is based solely on Whitesitt (1961).
 
-# Algebra of sets
+<!--more-->
 
-Created on 20180114
+created on 20180114
 
 last modified 20180114-2008
-
-See also [Boolean Algebra Notes (Jan 4, 2018)]({% post_url 2018-01-04-boolean-algebra-notes %})
-
-
-This note precedes the boolean note. The algebra of sets is a somewhat intuitive boolean algebra and it was the study of the algebra of sets that helped me better understand boolean algebra. I was introduced to the idea in NAVEDTRA, but this development is based solely on Whitesitt (1961).
 
 ## Select Bibliography
 

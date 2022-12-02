@@ -50,3 +50,6 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+show_excerpts: true
+excerpt_separator: <!--more-->
+

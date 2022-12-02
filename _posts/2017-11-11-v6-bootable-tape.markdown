@@ -1,10 +1,12 @@
 ---
 layout:	post
-title:	v6-bootable-tape
+title:	v6 Bootable Tape
 date:	2017-11-11 00:00:00 -0600
 categories:	unix research-unix v6
 ---
-# v6 Bootable Tape
+A note describing how to boot from Dennis Rithchie's v6 disk-set. It shows two methods, one that builds a bootable tape from scratch, and another that extracts the bootblock of a running v6 system.
+
+<!--more-->
 
 ## References
 
