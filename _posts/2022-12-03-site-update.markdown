@@ -1,7 +1,6 @@
 ---
 layout: post
 title:  "Site Update for December 3, 2022"
-date:   2022-12-03 08:49:00 -0600
 categories: general
 ---
 

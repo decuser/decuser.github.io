@@ -1,7 +1,6 @@
 ---
 layout:	post
 title:	Creating a github pages jekyll minima themed site with pagination
-date:	2022-12-05 18:54:00 -0600
 categories:	github-pages jekyll minima
 ---
 
