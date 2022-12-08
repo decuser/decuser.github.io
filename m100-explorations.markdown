@@ -3,5 +3,22 @@ layout: page
 title: M-100 Explorations
 permalink: /m-100/
 ---
+This page represents all of my blog posts related to exploring the Tandy TRS-80 Model 100.
 
-[Under Construction Notice (Nov 30, 2022)]({% post_url 2022-11-30-under-construction-notice %})
+<!--more-->
+
+The posts in reverse chronological order:
+
+* Talking over Serial (coming soon)
+
+* 80C85 Assembly Language Programming (coming soon)
+
+* BASIC and Machine Language shenanigans (coming soon)
+
+* [Notoriously S.L.O.W. BASIC]({% post_url 2022-10-26-notoriously-s.l.o.w-basic %})
+
+* [M100 Bibliography]({% post_url 2022-10-23-model-100-bibliography %})
+
+* [Long Road Back to the Tandy TRS-80 Model 100]({% post_url 2022-10-22-long-road-back-to-the-tandy-trs-80-model-100 %})
+
+*last updated 2022-12-08 13:20:00 -0600*
