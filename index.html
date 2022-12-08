@@ -12,9 +12,23 @@ layout: home
 <h1 class="page-heading"></h1><p><img src="/assets/img/banner.png" alt="A Repository of Mostly Techie Notes" /></p>
 
 <h1 id="welcome-to-decusers-blog">Welcome to decuser’s blog</h1>
-
 <p>Topics on this blog include computing, retro-computing, operating systems, math, and whatever other technical subjects I happen to be exploring that I find interesting enough to take and share notes about.</p>
-
-<p>Enjoy!</p>
-
+<!-- Html Elements for Search -->
 <h2 class="post-list-heading">Posts</h2>
+<div id="search-container">
+<input type="text" id="search-input" placeholder="search...">
+<ul id="results-container"></ul>
+</div>
+
+<!-- Script pointing to search-script.js -->
+<script src="/assets/js/simple-jekyll-search.min.js" type="text/javascript"></script>
+
+<!-- Configuration -->
+<script>
+SimpleJekyllSearch({
+  searchInput: document.getElementById('search-input'),
+  resultsContainer: document.getElementById('results-container'),
+  json: '/search.json'
+})
+</script>
+

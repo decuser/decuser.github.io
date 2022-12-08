@@ -8,6 +8,8 @@ The Blog is completely migrated! It's good to be over that google blog experienc
 
 We are live! Of course, if you see any issues, just shoot me an email. Yeeha!
 
+Oh, and I added search :).
+
 <!--more-->
 
 \- will 
