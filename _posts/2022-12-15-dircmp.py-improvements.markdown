@@ -10,6 +10,8 @@ categories: unix python
 
 This note pertains to [dircmp.py](https://github.com/decuser/decuser_python_playground/blob/master/dircmp/dircmp.py) a program that I wrote to give me information about two directories for the purpose of deciding what to keep and what to remove and to learn about python. The note is a draft note and as such it's not very refined and it may lack in many ways, but I thought it might be interesting to put it out there and let anyone see it. Email me if you have comments or suggestions.
 
+<!--more-->
+
 #### Caveats
 
 The comparisons here are between simple folders and files (including hidden files). By simple, I don't mean small - I use the program to compare very large directories. However, the tool was developed for comparing directories containing user files and not as a system maintenance tool. I haven't done much investigating of hard / soft symlinks or exotic setups.
