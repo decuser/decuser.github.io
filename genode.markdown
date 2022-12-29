@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Genode Explorations
+title: Genode
 permalink: /genode/
 ---
 This page represents all of my blog posts related to exploring the Genode Operating Systems Framework.
