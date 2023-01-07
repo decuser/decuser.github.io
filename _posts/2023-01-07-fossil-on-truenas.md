@@ -9,7 +9,7 @@ Fossil is brought to us by the same people who developed SQLite. It was created 
 
 I have been running Fossil for about a year to see if it was worth replacing git for my own use. After this year, while I still like git and I will continue to use it for disposable repos, I have completely jumped ship for my own repos and won't be going back to hosting them on anything else anytime soon. Fossil is very lightweight, fast and responsive, has a fantastic server side ui, and is slightly more intuitive to use. It is also easier to recover from when things go wonky.
 
-<!-- more -->
+<!--more-->
 
 I will be posting more about TrueNAS Core in the near future, as I learn more about it (so far, it rocks!).
 
