@@ -9,6 +9,12 @@ This page represents all of my blog posts related to exploring Unix Sixth Editio
 
 The posts in reverse chronological order:
 
+* [Installing and running DragonFly BSD 6.4]({% post_url 2023-01-16-dragonfly %})
+
+* [Installing and running Fossil on TrueNAS Core]({% post_url 2023-01-07-fossil-on-truenas %})
+
+* [Warren Toomey Awarded 2022 USENIX Flame]({% post_url 2022-12-15-usenix-flame-award-2022 %})
+
 * [Installing and Using Research Unix Version 7 in the OpenSIMH PDP-11/45 and 11/70 Emulators (Revision 3.1)]({% post_url 2022-10-29-installing-and-using-research-unix-v7-in-open-simh-pdp-11-45-and-70-emulators-rev-3.1 %})
 
 * [Installing and Using Research Unix Version 7 in the OpenSIMH PDP-11/45 and 11/70 Emulators (Revision 3.0)]({% post_url 2022-10-28-installing-and-using-research-unix-v7-in-open-simh-pdp-11-45-and-70-emulators-rev-3.0 %})
