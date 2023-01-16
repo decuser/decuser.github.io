@@ -18,12 +18,16 @@ Link to high res image:
 I like DragonFly BSD, but there is a bit of a learning curve, even for someone used to FreeBSD... I say this as someone who has been using FreeBSD for more than a decade and while there is some overlap, it's still pretty different. Maybe if I had used an earlier version of FreeBSD it would seem more familiar, but I started with 8.
 
 ### Requirements
--
+
+----
+
 * A machine to run it on - I put it on my Dell Optiplex 755, Core 2 Quad  CPU   Q9550  @ 2.83GHz w/8GB RAM, and a 240 GB SSD
 * DragonFly BSD 6.4 USB image from [https://www.dragonflybsd.org/download/](https://www.dragonflybsd.org/download/)
 
 ### Resources
--
+
+----
+
 * DragonFly BSD Handbook [https://www.dragonflybsd.org/docs/handbook/](https://www.dragonflybsd.org/docs/handbook/)
 * Mailing List and IRC [https://www.dragonflybsd.org/mailinglists/](https://www.dragonflybsd.org/mailinglists/)
 * DragonFly Digest [https://www.dragonflydigest.com/](https://www.dragonflydigest.com/)
@@ -31,7 +35,7 @@ I like DragonFly BSD, but there is a bit of a learning curve, even for someone u
 
 ### Getting started
 
---
+----
 
 #### Create a workarea on your existing system
 
@@ -56,7 +60,8 @@ MD5 (dfly-x86_64-6.4.0_REL.img) = b3b23e1a18292c46643f8df435e4ab68
 
 
 ### Installing DragonFly BSD
--
+
+----
 
 #### Boot to the USB stick
 
@@ -70,7 +75,7 @@ The bootup process takes a minute or so... be patient.
 
 #### Running the DragonFly BSD Installer
 
-***
+----
 
 * login as `installer` with no password
 
@@ -168,7 +173,7 @@ The base installation, now it's time to configure the system.
 
 #### Configuring the newly installed system
 
-***
+----
 
 #### Timezone configuration
 
@@ -317,7 +322,7 @@ I had to power cycle the computer at this point.
 
 ### Running DragonFly BSD
 
--
+----
 
 The computer will reboot and display the Dragonfly BSD Boot manager.
 
@@ -476,6 +481,8 @@ logging out of windowmaker takes 10 seconds then beep
 
 
 ### Post installation rigamarole
+
+----
 
 I have an ASUS ATI Radeon HD 650 Silence video card. I did the following to learn more about it.
 
