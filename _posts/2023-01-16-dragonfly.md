@@ -538,5 +538,8 @@ I mucked up loader.conf and booting became an issue. Here's the fix.
 
 I originally had a janky mouse, the fix was to install `xf86-input-evdev`
 
+To enable X11 over ssh
+sudo vi /etc/ssh/sshd_config
+X11Forwarding yes
 
-*post last updated 2023-01-16 13:12:00 -0600*
+*post last updated 2023-01-19 13:12:00 -0600*
