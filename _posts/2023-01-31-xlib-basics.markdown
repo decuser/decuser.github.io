@@ -33,7 +33,7 @@ First things first, old books and old notes are fantastic, but don't expect thin
 * MacPorts - [https://www.macports.org/install.php](https://www.macports.org/install.php)
 * X.org Foundation - [https://www.x.org/wiki](https://www.x.org/wiki)
 * Xlib - C Language X Interface [https://www.x.org/docs/X11/xlib.pdf](https://www.x.org/docs/X11/xlib.pdf)
-* The source code for the program developed in this note is [available here](/assets/files/xlib/xlibxlib-article-files.tar.gz)
+* The source code for the program developed in this note is [available here](/assets/files/xlib/xlib-article-files.tar.gz)
 
 ## A bibliography
 
@@ -1087,6 +1087,8 @@ Here are the Xlib things (macros, defines, functions, etc) that we used:
 * XWMHints - a struct containing window manager hints
 
 All of these are described in great detail in the Xlib Reference Manual (Vol. 2 of O'Reilly's Definitive Guides to the X Window System) cited at the top of the note.
+
+Here's the link to the source code for the program developed in the note. It is [available here](/assets/files/xlib/xlib-article-files.tar.gz)
 
 Reach out to me if you find any issues or have suggestions.
 
