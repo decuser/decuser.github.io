@@ -311,7 +311,7 @@ rm -f basicwin
 /usr/bin/cc -o basicwin -Os -Wall -Wpointer-arith -no-cpp-precomp     -L/opt/local/lib   basicwin.o -lXext -lX11      
 ```
 
-Nevermind the warnings, a lot has changed with our c environment, over the years. The good news is we now have a new executable:
+Nevermind the warnings, a lot has changed with our c environment over the years. The good news is we now have a new executable:
 
 ```
 ls -l basicwin

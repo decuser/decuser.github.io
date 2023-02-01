@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Unix Explorations
+title: unix
 permalink: /unix/
 ---
 This page represents all of my blog posts related to exploring Unix Sixth Edition, v6 and Unix Seventh Edition, v7 in a simulated PDP-11 environment provided by Bob Supnik's SimH simulator in its current incarnation OpenSIMH [https://opensimh.org](https://opensimh.org).

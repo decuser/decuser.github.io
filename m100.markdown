@@ -1,6 +1,6 @@
 ---
 layout: page
-title: M-100
+title: m-100
 permalink: /m-100/
 ---
 This page represents all of my blog posts related to exploring the Tandy TRS-80 Model 100.

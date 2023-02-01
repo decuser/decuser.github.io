@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Pal-1
+title: pal-1
 permalink: /pal-1/
 ---
 This page represents all of my blog posts related to exploring the PAL-1, a KIM-1 Clone.
