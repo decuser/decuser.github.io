@@ -294,7 +294,7 @@ tar xvf ~/sandboxes-git/xlib-pm/xlibprgs4.tar.Z
 cd xlib/basicwin/basic
 ```
 
-#### Build xeyes from source
+#### Build basicwin from source
 
 Unlike xeyes, above, we don't need any special incantations to make this next part work. We can follow what Adrian Nye wrote nearly 30 years ago:
 
@@ -354,4 +354,4 @@ Links to high res images:
 * [x windows running root window mac os](/assets/img/xwindows/01-big.png)
 
 
-*post last updated 2023-01-23 12:13:00 -0600*
+*post last updated 2023-02-13 21:02:00 -0600*
