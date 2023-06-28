@@ -78,6 +78,9 @@ The differences between Gallesio's STk and the UCB Scheme environment are summed
 And an FAQ is also available:
 [faq.html](/assets/files/scheme/faq.html)
 
+A quick test on my system:
+
+![three](/assets/img/scheme/03.png)
 
 ### Build the Debian Package from the RPM distribution
 
@@ -150,10 +153,6 @@ Build the source and optionally install it (don't do this if you have the modifi
 make
 sudo make install
 ```
-
-A quick test on my system:
-
-![three](/assets/img/scheme/03.png)
 
 Reach out to me if you find any issues or have suggestions.
 
