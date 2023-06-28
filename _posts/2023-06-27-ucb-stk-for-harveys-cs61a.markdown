@@ -6,9 +6,9 @@ categories: development scheme ucb-stk
 
 This note describes how to install the UCB STk 4.0.1 Scheme interpreter on modern 64 bit Debian based systems. It also describes a method of building the Debian Package used to install the program. This is the version of scheme used by Brian Harvey in his 2011 course, CS61A: Structure and Interpretation of Computer Programs, named after and using famed text, Structure and Interpretation of Computer Programs by Harold Abelson and Gerald Jay Sussman with Julie Sussman, a phenomenally good computer science textbook.
 
-Now, I'm not a package maintainer and I certainly don't know the nuances of building packages, this is just meant to document how I was able to get this working in 2023 after reading tons of "too bad, so sad, I can't get it to work posts", YMMV.
+Now, I'm not a package maintainer and I certainly don't know the nuances of building packages, this is just meant to document how I was able to get this working in 2023 after reading tons of "too bad, so sad, I can't get it to work posts", YMMV, but I've tested on LMDE5 (Elsie), Mint 21.1 (Vera), MX Linux 21.3 (Wildflower), and Ubuntu 22.04.2 (Jammy Jellyfish).
 
-Here's a screenshot of the working system:
+Here's a screenshot of the working system running on LMDE5:
 
 ![one](/assets/img/scheme/01.png)
 
@@ -24,9 +24,12 @@ Here's a screenshot of the working system:
 
 * Erick Gallesio's github repo - [https://github.com/egallesio/STk](https://github.com/egallesio/STk)
 
-### Test Environment
+### Test Environments
 
-* IBM ThinkCentre M92p running Linux Mint Debian Edition 5 (I expect this would work with any Mint 20+, but haven't tested it)
+* IBM ThinkCentre M92p running Linux Mint Debian Edition 5 (Elsie)
+* Virtualbox 7 running Linux Mint 21.1_64 (Vera)
+* Virtualbox 7 running Ubuntu-22.04.2_64 (Jammy Jellyfish)
+* Virtualbox 7 running MX-21.3_64 (Wildflower)
 
 ### Build Environment
 * Ubuntu 16.04.1 LTS 64 bit (not eol before mid 2026) - VirtualBox instance
@@ -35,9 +38,9 @@ Here's a screenshot of the working system:
 
 The package requires that you have 32bit support in your environment which LMDE does. Other than this, it requires:
 
-* libsm6:i386
+* libsm6:i386 libx11-6:i386 along with their dependencies
 
-`sudo apt install libsm6:i386`
+`sudo apt install libsm6:i386 libx11-6:i386`
 
 * [stk_4.0.1-1_amd64.deb](/assets/files/scheme/stk_4.0.1-1_amd64.deb)
 
