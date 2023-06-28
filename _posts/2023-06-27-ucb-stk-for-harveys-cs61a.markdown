@@ -29,7 +29,7 @@ Here's a screenshot of the working system:
 * IBM ThinkCentre M92p running Linux Mint Debian Edition 5 (I expect this would work with any Mint 20+, but haven't tested it)
 
 ### Build Environment
-* Ubuntu 16.04.1 LTS 64 bit - VirtualBox instance
+* Ubuntu 16.04.1 LTS 64 bit (not eol before mid 2026) - VirtualBox instance
 
 ### Installation using the debian package
 
