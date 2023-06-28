@@ -1,0 +1,164 @@
+								Aug 25, 2006
+								March 1, 2010
+README-explorin-vs-simply.txt
+
+
+For CS61A/SICP, use stk-simply in the instructions below.
+
+
+*stk-explorin and stk-simply*:
+---------------------------
+
+  UCB Scheme includes several load modules that define the functions that
+  make up the Berkeley extensions for UCB CS classes.
+
+  The UCB Scheme package now installs these options for starting scheme:
+  
+    "stk-simply"	loads UCB procedures for CS3 and CS61A
+    "stk-explorin"	loads UCB procedures for CS3S
+    "stk-grfx"		loads UCB procedures for CS9D and CS47B (not on InstCD)
+    "stk"		loads no UCB procedures
+  
+  (Prior to 2004, there were stk-cs3, stk-cs3s, stk-cs61a, stk-cs61a-2, 
+  stk-cs9, etc.  Those versions are now obsolete.)
+  
+  "stk-simply" loads the procedures as defined in these texts:
+  
+    "Simply Scheme - Introducing Computer Science" (Harvey and Wright)
+    "Structure and Interpretation of Computer Programs" (Abelson and Sussman)
+
+  "stk-explorin" load the procedures as defined in this text:
+  
+    "Exploring Computer Science with Scheme" (Grillmeyer) 
+  
+  Each program loads ALL of the UCB-defined procedures but, in the case of
+  conflicting definitions, favors the definition from the text book after
+  which it is named: "simply" or "explorin".  ("explorin" omits the "g" for 
+  historical reasons: MS-DOS required 8-character file names!)
+  
+  In these texts, there are 7 procedures that conflict because they use the 
+  same names and arguments but behave differently.  The conflicting 
+  definitions are:
+  
+    count	
+    first
+    every
+    accumulate
+    reduce
+    remove!
+    atom?	(an STk primitive that is refined in Exploring)
+
+  The 7 procedures are defined one way in simply.scm and another way in 
+  explorin.scm.  To load all the UCB procedures and resolve the conflicts:
+  
+    stk-simply loads everything else, then simply.scm 
+    stk-explorin loads everything else, then explorin.scm 
+  
+  This causes the desired definitions to replace the undesired ones.
+
+  Here is how stk-simply and stk-explorin load on Windows (for example):
+  
+    The file "stk-simply" contains
+  	stk -load "C:/Program Files/STk/site-scheme/load-simply"
+
+    The file "load-simply" contains
+	;; simply.scm  must be loaded after explorin.scm
+	;; modeler.stk must be loaded after simply.scm 
+		(load "C:/Program Files/STk/site-scheme/berkeley.scm")
+		(load "C:/Program Files/STk/site-scheme/explorin.scm")
+		(load "C:/Program Files/STk/site-scheme/simply.scm")
+		(load "C:/Program Files/STk/site-scheme/modeler.stk")
+		(load "C:/Program Files/STk/site-scheme/obj.scm")
+		(load "C:/Program Files/STk/site-scheme/turtle-grfx.scm")
+		(load "C:/Program Files/STk/site-scheme/which-modeler.scm")
+
+    The file "stk-explorin" contains
+  	stk -load "C:/Program Files/STk/site-scheme/load-explorin"
+
+    The file "load-explorin" contains
+	;; explorin.scm  must be loaded after simply.scm
+	;; modeler.stk must be loaded after simply.scm 
+		(load "C:/Program Files/STk/site-scheme/berkeley.scm")
+		(load "C:/Program Files/STk/site-scheme/simply.scm")
+		(load "C:/Program Files/STk/site-scheme/explorin.scm")
+		(load "C:/Program Files/STk/site-scheme/modeler.stk")
+		(load "C:/Program Files/STk/site-scheme/obj.scm")
+		(load "C:/Program Files/STk/site-scheme/turtle-grfx.scm")
+		(load "C:/Program Files/STk/site-scheme/which-modeler.scm")
+
+  The (atom? '()) function is an STk primitive that is defined in the STk
+  sources as returning #t.   It is redefined in explorin.scm to return #f.
+  To compensate for that, the original definition is copied to berkeley.scm
+  to ensure that it is set properly for those users.
+
+  
+*"(explorinOrSimply)" procedure*
+------------------------------
+
+  If you are running stk-explorin, invoking the function (explorinOrSimply) 
+  will return the string "explorin", but if you are running stk-simply,
+  invoking (explorinOrSimply) will return the string "simply".  This can
+  be used within user scheme code to determine which version has been 
+  loaded.
+
+
+*Replacement Modeler*
+-------------------
+
+  The Replacement Modeler is a separate window that is invoked in stk by a 
+  command such as	 (model (map odd? '(1 2 3 4))) 
+
+  The Modeler procedures are defined in the file "modeler.stk".   The file
+  "which-modeler.stk" defines flags that are used to distinguish behaviors
+  for CS3 vs CS3S students.  The flags are:
+
+    (using-berkeley-scm?)	(false for "explorin" users, true for others)
+    *harvey+wright* 		(false for "explorin" users, true for others)
+    *grillmeyer* 		(true  for "explorin" users, false for others)
+    *they-know-lambda*  	(false for everyone)
+
+  which-modeler.stk replaces the older cs3-modeler.stk and cs3s-modeler.stk.
+
+
+*stk-grfx*
+--------
+
+  'stk-grfx' loads the Berkeley extensions in obj.scm and turtle-grfx.scm.
+  It is a new variant that was added to for cs9d and cs47b in Spring 2005.
+  It can be run as 
+
+	~scheme/bin/stk-grfx
+	~cs9d/bin/stk-grfx
+	~cs47b/bin/stk-grfx
+
+  It is only available on the computers in the EECS Instructional labs.  It is
+  not available on the pre-packaged versions of Berkeley Scheme for Windows,
+  MacOSX or Linux.
+
+  To test that turtle graphics is installed:
+
+    STk> (cs)             ;; TurtleGraphics X window pops up
+    STk> (ht)             ;; the turtle pointer disappears
+    STk> (st)             ;; the turtle pointer reappears
+
+
+*STKDB Debugger*
+--------------
+  The STKDB Debugger was developed by Prof Hilfinger in 2003.   It is 
+  documented in https://people.cs.berkeley.edu/~bh/Scheme/stkdb.pdf.
+
+  The debugger module is loaded into the scheme interpreter after you
+  start it.  The debugger files are included in the UCB Scheme 
+  distribution.  The required files are:
+
+	stk VERSION 4.0.1-ucb1.16 or newer
+	$DIR/stkdb/*.scm
+	$DIR/stk/slib
+	$DIR/emacs/lisp/stkdb.el
+
+  $DIR is usually '/usr/local/lib' on your home computer, which is the
+  same as C:\cygwin\usr\local\lib on a Windows computer that is using
+  Cygwin with the latest version (Feb 2006) of UCB Scheme on Windows.
+
+
+
