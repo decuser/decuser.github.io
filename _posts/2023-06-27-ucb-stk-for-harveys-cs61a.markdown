@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "UCB STk Interpreter for Working Through Brian Harvey's CS61A Course"
+title:  "UCB STk Scheme Interpreter for Working Through Brian Harvey's CS61A Course"
 categories: development scheme ucb-stk
 ---
 
