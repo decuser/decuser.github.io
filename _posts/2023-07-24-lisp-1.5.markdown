@@ -1,6 +1,6 @@
 ---
 layout:	post
-title:	LISP 1.5
+title:	LISP 1.5 running on an emulated IBM 7094
 date:	2023-07-24 12:23:00 -0600
 categories:	LISP
 ---

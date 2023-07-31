@@ -1,6 +1,6 @@
 ---
 layout:	post
-title:	pdp1-lisp
+title:	pdp1-lisp running on an emulated PDP-1
 date:	2023-07-30 12:38:00 -0600
 categories:	LISP
 ---

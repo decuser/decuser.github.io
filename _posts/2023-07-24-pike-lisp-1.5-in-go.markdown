@@ -1,6 +1,6 @@
 ---
 layout:	post
-title:	Rob Pike's LISP 1.5 in Go
+title:	Rob Pike's LISP 1.5 in Go running on Debian 12
 date:	2023-07-24 13:35:00 -0600
 categories:	LISP
 ---
