@@ -1,0 +1,115 @@
+---
+layout:	post
+title:	pdp1-lisp
+date:	2023-07-30 12:38:00 -0600
+categories:	LISP
+---
+## Overview
+This note describes how to set up and run PDP-1 lisp. It's a pretty brief walkthrough. If you run into any issues, let me know.
+
+
+![one](/assets/img/lisp/Terminal_003.png)
+
+
+<!--more-->
+PDP-1 LISP is a LISP 1.5 dialect created at BBN by L. Peter Deutsch. It was released as a DECUS tape in 1964, it currently runs on the Open SimH PDP-1 emulator.
+
+## Resources 
+* **The LISP Implementation for the PDP-1 Computer**
+[https://www.computerhistory.org/pdp-1/_media/pdf/DEC.pdp_1.1964.102650371.pdf](https://www.computerhistory.org/pdp-1/_media/pdf/DEC.pdp_1.1964.102650371.pdf)
+
+* **OpenSIMH** [https://opensimh.org/](https://opensimh.org/)
+
+* **Trailing-edge Software Kits** [http://simh.trailing-edge.com/software.html](http://simh.trailing-edge.com/software.html)
+
+## Prerequisites
+
+* Linux - I'm running Debian 12 (bookworm)
+* A build environement (make, cc, and ld) - build-essential package on debian systems
+* OpenSIMH - any reasonably recent version should work
+
+## Getting Started
+
+* Create a workarea
+
+```
+mkdir -p ~/workarea/retro/pdp-1-lisp
+cd ~/workarea/retro/pdp-1-lisp
+```
+
+* Download the pdp-1 lisp software kit and upack it
+
+```
+wget http://simh.trailing-edge.com/kits/lispswre.zip
+unzip lispswre.zip
+```
+
+## Compile the macro assembler
+
+`cc macro1.c -o macro1`
+
+## Assemble the lisp interpreter
+
+`./macro lisp.mac`
+
+## Create an ini file for the PDP-1 emulator
+
+
+```
+cat <<EOF >run.ini
+set cpu mdv
+load lisp.rim
+d extm_init 1
+run
+
+d tw 7777
+c
+
+d tw 400
+c
+
+d ss 2
+save lisp.sav
+
+echo READY
+c
+EOF
+```
+
+## Run the emulator and load the lisp binary
+
+```
+pdp1 run.ini
+
+PDP-1 simulator Open SIMH V4.1-0 Current        simh git commit id: cf47a20f
+
+HALT instruction, PC: 002353 (CLA LAT CLI)
+
+HALT instruction, PC: 002357 (CLA LAT)
+
+HALT instruction, PC: 000005 (STF6)
+READY
+```
+
+The system is ready to act as a repl, but it's funny, you have to end a lisp form with a space in order for the interpreter to process it! So, if you want to add two numbers, you would use
+(plus 2 2) , with a trailing space - as in, (plus 2 2)<SPACE>, replacing <SPACE> with the actual space character ' '.
+
+The system will reply with the evaluation:
+
+a
+
+To end the simulation, type CTL-e, then at the sim> prompt type q to exit.
+
+A full session would look like this:
+
+![one](/assets/img/lisp/Terminal_003.png)
+
+
+If you encounter an interpreter error, during your session, the system will halt after displaying the error message, but can often be continued, by typing `c` at the sim> prompt.
+
+This is similar to modern lisps that dump you into a debugger where you can look around and then restart the interpreter, only the debugger, in this case, is simh.
+
+
+Later - Will
+
+*post added 2023-07-30 20:02:00 -0600*
