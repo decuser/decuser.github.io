@@ -9,6 +9,9 @@ This page represents all of my blog posts related to exploring LISP, Scheme, SML
 
 The posts in reverse chronological order:
 
+
+* [MACLISP in ITS running on an emulated PDP-10]({% post_url 2023-07-31-maclisp %})
+
 * [Franz LISP Opus 32 in 3BSD running on an emulated VAX 780]({% post_url 2023-07-31-franz-lisp %})
 
 * [pdp1-lisp running on an emulated PDP-1]({% post_url 2023-07-30-pdp-1-lisp %})

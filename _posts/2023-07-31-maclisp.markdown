@@ -1,0 +1,522 @@
+---
+layout:	post
+title:	"MACLISP in ITS running on an emulated PDP-10"
+date:	2023-07-31 09:03:00 -0600
+categories:	LISP
+---
+This is a longer note that describes the process of getting ITS (Incompatible Timesharing System) up and running in order to run MACLISP. ITS is quite a large system and it has many different programming languages and programs available. In this note, we will only be using lisp and emacs, but future notes will explore logo, and perhaps other languages found in the distribution.
+
+![one](/assets/img/lisp/Terminal_006.png)
+
+<!--more-->
+
+
+## Resources
+
+* **The ITS operating system github repo** [https://github.com/PDP-10/its](https://github.com/PDP-10/its)
+
+* **The MACLISP manual** [http://www.maclisp.info/pitmanual](http://www.maclisp.info/pitmanual)
+
+* **OpenSIMH** [https://opensimh.org/](https://opensimh.org/)
+
+## Prerequisites
+
+* Linux - I'm running Debian 12 (bookworm)
+* A build environement (make, cc, and ld) - build-essential package on debian systems
+* OpenSIMH - any reasonably recent version should work
+
+## Getting Started
+
+* Install some dependencies
+
+The pdp10-ka emulator requires - git, c compiler, make, expect, curses, autoconf, sdl2, sdl2-image, sdl2-net, gtk3. You will also need telnet and some network dependencies. Generally, whenever something complains about a missing dependency, google it and then `sudo apt install whatever`.
+
+My own incanation was:
+
+```
+sudo apt install -y bridge-utils build-essential expect gawk git libgtk-3-dev libpcap-dev libpcre3-dev ncurses-base ncurses-bin libncurses5-dev libpcap-dev libsdl2-2.0-0 libsdl2-dev libsdl2-image-dev libsdl2-net-dev make net-tools telnet uml-utilities
+```
+
+* Create a Workarea
+
+```
+mkdir -p ~/workarea/retro/its/{dist,work}
+cd ~/workarea/retro/its/dist
+```
+
+* Clone the ITS repository
+
+```
+git clone https://github.com/PDP-10/its.git
+```
+
+* Download a working system
+
+This will just take a few minutes. The repo can also be completely built from source, but that takes a long time (an hour or more).
+
+```
+cd its
+make download EMULATOR=pdp10-ka
+```
+
+## Prepare the sytem to be run
+
+* Backup the original run file, so we can edit it
+
+```
+cp out/pdp10-ka/run out/pdp10-ka/run.original
+```
+
+* Edit the run file for no network to start
+
+```
+vi out/pdp10-ka/run
+# comment out lines dealing with imp
+# set imp enabled
+# set imp mac=e2:6c:84:1d:34:a3
+# set imp ip=192.168.2.101/24
+# set imp gw=172.31.1.100
+# set imp host=10.3.0.6
+# at imp tap:tap0
+```
+
+* Create a back up of the untested baseline
+
+This is a good starting point. If you run into problems, you can revert to this baseline without having to redownload stuff.
+
+```
+cd ..
+tar cvjf untested-baseline.tar.bz2 its/build/pdp10-ka its/start its/out its/tools/sims/BIN/pdp10-ka
+```
+
+* Unpack the basline into work
+
+```
+cd ../work
+tar xvf ../dist/untested-baseline.tar.bz2
+cd its
+```
+
+## Run ITS the first time
+
+* Start the simulator
+
+```
+./start
+KA-10 simulator V4.0-0 Current        git commit id: 48186c90
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-22> at -u tk 10000 speed=300
+%SIM-INFO: Listening on port 10000
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-25> at -u dpk 10002 speed=4800
+%SIM-INFO: Listening on port 10002
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-26> at -u dpk line=11,10019 speed=4800
+%SIM-INFO: Line 11 Listening on port 10019
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-27> at -u dpk line=15,10020 speed=4800
+%SIM-INFO: Line 15 Listening on port 10020
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-29> at -u mty 10003 speed=50000
+%SIM-INFO: Listening on port 10003
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-30> at -u mty line=9,10018 speed=9600
+%SIM-INFO: Line 9 Listening on port 10018
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-31> at -u mty line=8,10017 speed=9600
+%SIM-INFO: Line 8 Listening on port 10017
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-32> at -u mty line=7,10016;notelnet speed=50000
+%SIM-INFO: Line 7 Listening on port 10016
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-33> at -u mty line=6,10015 speed=9600
+%SIM-INFO: Line 6 Listening on port 10015
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-35> at ten11 10011
+%SIM-INFO: Listening on port 10011
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-37> at auxcpu 10006
+%SIM-INFO: Listening on port 10006
+
+ DSKDMP
+```
+
+If all went well, nothing failed and you ITS prints DSKDMP in the terminal window.
+
+* Start ITS
+
+When DSKDMP is displayed, you can start ITS by typing `its<CR><ESC>g` and it will start working. Ignore the NET message. We haven't provided a working network, and won't in this note. It isn't needed.
+
+```
+DSKDMP
+its
+$G
+SALVAGER.317
+
+
+IT IS NOW  3:25:48 PM EDT, MONDAY, JUL 31, 2023
+
+KA ITS 1651 IN OPERATION AT 15:25:48
+KA ITS 1651 SYSTEM JOB USING THIS CONSOLE.
+TV 11 WENT DOWN -- 15:25:48
+ LOGIN  TARAKA 0 15:25:49
+TOP LEVEL INTERRUPT 200 DETACHED JOB # 4, USR:TARAKA CNAVRL 15:25:50
+NET: TIMED OUT TRYING TO COME UP  15:25:58
+IT IS NOW  3:26:17 PM EDT, MONDAY, JUL 31, 2023
+ LOGIN  .BATCH 0 15:26:50
+ LOGIN  GUNNER 0 15:27:50
+```
+
+## Login to ITS over telnet (locally)
+
+* Determine the port
+
+After the time is displayed, you can connect via telnet or login at the console itself. Let's connect via telnet. Look up above to where the dpk is attached:
+
+```
+...> at -u dpk 10002 speed=4800
+%SIM-INFO: Listening on port 10002
+```
+
+* Connect to the ITS sever using telnet
+
+That's our telnet port, fire up telnet and connect:
+
+```
+$ telnet localhost 10002
+Trying ::1...
+Connected to localhost.
+Escape character is '^]'.
+
+
+Connected to the KA-10 simulator DPK device, line 0
+```
+
+* Initiate a session
+
+To begin a session with ITS, press `C-z`, that is press and hold Ctrl and z at the same time. In this note anytime you see C-char, this is a control chord and works this way. If you see M-char, it means press Esc, let it go, then press the char. The ordinary Meta-char chord where you press Alt and char at the same time doesn't seem to work. Alternatively and in the output a control chord may appear as ^char.
+
+```
+^Z
+KA ITS.1651. DDT.1548.
+TTY 21
+You're all alone, Fair share = 99%
+Welcome to ITS!
+
+For brief information, type ?
+For a list of colon commands, type :? and press Enter.
+For the full info system, type :INFO and Enter.
+
+Happy hacking!
+```
+
+* Actually login to ITS
+
+And it's ready for you to login. The system is not secure, which is a good thing. Sorta like when you live somewhere where you don't have to lock the doors - hint, move outta the city... but still, lock the doors :).
+
+So, to login we will use a : command, that is a command that begins with a colon. The command to login is `:login loginname`. Initials were in vogue back when, so I will use my initials:
+
+```
+:login wds
+```
+
+The system will respond with:
+
+`KA: WDS; WDS MAIL - NON-EXISTENT DIRECTORY`
+
+No worries, even though it complains about a non-existent directory, it'll log you in anyway.
+
+## First Steps
+
+In this section we will set the terminal type, create a user directory and log out and back in so that ITS knows about the directory going forward. Otherwise, ITS will occasionally refuse to acknowledge the existence of the directory, usually at inopportune moments like when you are trying to save a ledit session.
+
+* Set the terminal type
+
+We need to tell ITS about our terminal (it may think we're a line printer terminal ATM). The command needed here is `:tctyp AAA`:
+
+```
+:tctyp AAA
+:KILL
+*
+```
+
+* Create the user directory
+
+This is  a little tricky and a lot weird, but what we are going to do is type `<C-r>wds; ..new. (udir).<CR>` where <CR> is an actual carriage return. This will create a new directory named `wds`:
+
+```
+^R wds; ..new. (udir).
+DSK: WDS; ..NEW. (UDIR) - FILE NOT FOUND
+```
+
+Ignore the FILE NOT FOUND error, it created the directory. To see this, change into the directory and type `C-f` to see the files, or just type `:listf wds;<CR>`. I'll stop saying `<CR>` after : commands from this point forward, just know you need to end : commands with `<CR>`.
+
+```
+:cwd wds
+^F
+KA   WDS
+FREE BLOCKS #2=784 #3=1523 #0=568 #1=1541
+*
+```
+
+* Create a file in the directory to keep the salvager happy
+
+Apparently, there is a salvager that will get rid of empty directories. Let's create a file in the directory. Let's use emacs (this is a VERY early version, but should be quite familiar to any current emacs user). This version is a set of macros running in TECO, after RMS renamed it to EMACS, but before it became a standalone editor:
+
+```
+:emacs --read-- --me--
+```
+
+Yup, that's exactly as typed, files have two names (somebody smarter than me knows why, just trust me for now). This file is called "--read--" and "--me--". For me it's easier to just think of it as a name and extension separated by a space instead of a ., but ymmv.
+
+The screen should clear and emacs should fire up in all it's ancient glory:
+
+![two](/assets/img/lisp/Terminal_005.png)
+
+
+Let's enter `This file is to prevent directory salvage.`, Then type `C-x C-s` to save and `C-x C-c` to exit emacs. See, familiar, and easy right (says the :wq vi guy)? Then to list the file in the directory, type `C-f`:
+
+```
+*^F
+KA   WDS
+FREE BLOCKS #2=784 #3=1523 #0=568 #1=1540
+  2   --READ --ME-- 1 ! 7/31/2023 15:57:23
+*
+```
+
+yay? I think so, and hopefully, you feel the same way.
+
+* Logout and back in again
+
+Let's quickly logout and back in to get ITS to recognize our user directory properly:
+
+```
+:logout
+KA ITS 1651  Console 21 Free. 16:32:00
+```
+
+and back in with `C-z`:
+
+```
+^Z
+KA ITS.1651. DDT.1548.
+TTY 21
+You're all alone, Fair share = 99%
+Welcome to ITS!
+
+For brief information, type ?
+For a list of colon commands, type :? and press Enter.
+For the full info system, type :INFO and Enter.
+
+Happy hacking!
+:login wds
+
+To see system messages, do ":MSGS<CR>"
+```
+
+and set the terminal type:
+
+```
+tctyp AAA
+:KILL
+*
+```
+
+## Program in MACLISP
+
+Let's create some lisp and run MACLISP. This example uses emacs initially to create a lisp source file, then we run lisp standalone, load the file we created and use it's function in our interpreter session. Then we will use ledit, a special mode of MACLISP using emacs from MACLISP on a special buffer.
+
+* Use emacs to create the file `addtwo lisp`:
+
+```
+:EMACS addtwo lisp
+
+(defun addtwo (x y)
+    (+ x y))
+```
+
+If you've been cutting and pasting as you followed along with the note, you might find that doesn't work so great with emacs, so be careful. You may need to do it a line at a time. Anyway, enter the text, then `C-x C-s` and `C-x C-c`.
+
+* Run MACLISP
+
+```
+*:LISP
+LISP 2156
+Alloc? n
+*
+```
+
+We're in! Let's load our lisp file:
+
+```
+(LOAD "addtwo lisp")
+T
+```
+
+Lisp responds T if it was able to load. Let's use it in our session:
+
+```
+(addtwo 5 3)
+10
+```
+
+Sure 5+3 is 8, right? Ha, it's base 8 (octal). Yes, you can change it, but it is running on a dec vm, so base 8 is just, right, right?
+
+That's it for this first session, let's quit:
+
+```
+(quit)
+:KILL  EMACS0$J
+*
+```
+
+![one](/assets/img/lisp/Terminal_006.png)
+
+yay again!
+
+
+* Use LEDIT in MACLISP
+
+Let's use ledit now. Start lisp up again, and invoke (ledit) straightaway:
+
+```
+*:LISP
+LISP 2156
+Alloc? n
+*
+(ledit)
+```
+
+As soon as you type the closing parenthesis, emacs ledit will start up and your cursor will be top-left. The status line will display: `EMACS LEDIT (LISP)  Main:   *`:
+
+![three](/assets/img/lisp/Terminal_007.png)
+
+In ledit, let's create the timestwo function:
+
+```
+(defun timestwo (x y)
+  (* x y))
+```
+
+This time, we will use some ledit magic and not treat it as a normal emacs session. To push the defined funtion to the environment, press `M-z` (<ESC> let go, then 'z'), then to exit ledit and return to lisp, type `C-x z`.
+
+```
+;Reading from LEDIT
+TIMESTWO
+;Edit Completed
+
+*
+```
+
+Let's try it out in our lisp environment:
+
+```
+(timestwo 5 2)
+12
+```
+
+Nice, and correct!
+
+We can still load the existing lisp file and use it too:
+
+```
+(load "addtwo lisp")
+(addtwo (timestwo 2 3) (timestwo 3 7))
+33
+```
+
+Cool.
+
+* Exit LISP
+
+Let's exit lisp:
+
+```
+(quit)
+:KILL  LEDIT$J
+*
+```
+
+![four](/assets/img/lisp/Terminal_008.png)
+
+## Shutdown the system
+
+To bring the system down, we will first logout out of our user account with `:logout`. Then we will `:login` with no user and proceed with a normal shutdown (if you don't logout of the user account first, the shutdown will take 5 minutes).
+
+* Logout of the user account
+
+```
+* :logout
+
+KA ITS 1651  Console 21 Free. 16:42:56
+```
+
+* Login as an unnamed user
+
+```
+^Z
+KA ITS.1651. DDT.1548.
+TTY 21
+You're all alone, Fair share = 99%
+Welcome to ITS!
+
+For brief information, type ?
+For a list of colon commands, type :? and press Enter.
+For the full info system, type :INFO and Enter.
+
+Happy hacking!
+```
+
+* Initiate the shutdown
+
+First we initiate lock with `:lock`, then initiate the shutdown with `5down`, we will answer `Y` and `byeC-c`, to the prompts:
+
+```
+:lock
+(Please Log In)
+ LOCK.156
+_5down
+DO YOU REALLY WANT THE SYSTEM TO GO DOWN?
+Y
+___002 LOCK   SYS    DOWN   MAIL   WRITE
+
+PLEASE ENTER A BRIEF MESSAGE TO USERS, ENDED BY ^C
+bye^C
+
+KA ITS 1651 NOT IN OPERATION 16:45:23
+```
+
+Since we are running in a telnet session, we can just end it. To exit telnet, press `^]` and at the telnet> prompt, type `q`:
+
+```
+^]
+telnet> q
+Connection closed.
+$
+```
+
+You can close the terminal and switch to the other terminal with our console session. You will see some console messages that are new and the last few should look like:
+
+```
+SHUTDOWN COMPLETE
+PI LEVEL 7 BUGDDT.  TYPE <ALTMODE>P TO CONTINUE.
+YOU ARE NOW IN DDT.
+BUGPC/   CAI COFFI4+1   $Q-2/   JRST COFFI7
+```
+
+At this point ITS is shut down. To exit, we will type `^\` to suspend the emulator and return to the sim> prompt, then type `q` to exit the sim:
+
+```
+^\
+Simulation stopped, PC: 773121 (CONSO 120,40)
+sim> q
+Goodbye
+$
+```
+
+## Back up the working system
+
+It is a really good idea to back up the tested working system. This way, you can always get back to what worked with minimal fuss:
+
+```
+cd ../../dist
+tar cvjf tested-working.tar.bz2 its/build/pdp10-ka its/start its/out its/tools/sims/BIN/pdp10-ka
+```
+
+That's it for now. In another note, I will walk through setting up networking and using LOGO in ITS with a graphical terminal and turtle.
+
+Let me know if you run into any issues.
+
+Later, Will
+
+
+*post added 2023-07-31 18:07:00 -0600*

@@ -4,7 +4,6 @@ title:	Rob Pike's LISP 1.5 in Go running on Debian 12
 date:	2023-07-24 13:35:00 -0600
 categories:	LISP
 ---
-## Overview
 This note describes how to set up and run Rob Pike's LISP 1.5 in Go.
 
 LISP 1.5 was the first LISP that was made generally available. Rob Pike implemented a minimalist version of the EVALQUOTE function described on page 13 of the LISP 1.5 Programmer's Manual [https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) or grab a [local copy](/assets/files/lisp/LISP%201.5%20Programmers%20Manual.pdf)

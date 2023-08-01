@@ -4,7 +4,6 @@ title:	"Franz LISP Opus 32 in 3BSD running on an emulated VAX 780"
 date:	2023-07-31 07:03:00 -0600
 categories:	LISP
 ---
-## Overview
 This note describes how to set up and run Franz LISP Opus 32 running on 3BSD running on an emulated VAX 780. This version of Franz LISP is Opus 32 and it is a LISP 1.5 derived LISP from 1979.
 
 ![one](/assets/img/lisp/Terminal_004.png)

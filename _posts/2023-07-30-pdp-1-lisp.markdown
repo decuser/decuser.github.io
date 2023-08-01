@@ -4,7 +4,6 @@ title:	pdp1-lisp running on an emulated PDP-1
 date:	2023-07-30 12:38:00 -0600
 categories:	LISP
 ---
-## Overview
 This note describes how to set up and run PDP-1 lisp. It's a pretty brief walkthrough. If you run into any issues, let me know.
 
 
