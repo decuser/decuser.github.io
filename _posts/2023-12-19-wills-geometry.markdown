@@ -1,6 +1,6 @@
 ---
 layout:	post
-title:	Will's Geometry
+title:	Will's Geometry - A Setting Out.
 date:	2023-12-19 06:05:00 -0600
 categories:	GEOMETRY
 ---
@@ -9,11 +9,13 @@ This is a note where I begin to develop my own geometry based on the example of 
 
 <!--more-->
 
+Gotta start somewhere!
+
 Start from first principles - the evidents.
 
 Shapes exist and are perceived. That is, we see and describe the world around us in abstract terms and shapes are abstract. As we abstract away details and try to describe things that exist, we highlight some things / aspects of things, and disregard others. We strive to arrive at useful ways of referring to groups of / sets of objects. Geometry, which started as a way of measuring land, has evolved into an ever-abstracting study of shape. What is shape? Wow, so hard to establish the bare necessities. Maybe a shape is a collection of points? What is a collection and what is a point? 
 
-Let's just say (posit) that a collection is just what it sounds like, one or more than one of something, or nothing at all (for convenience, later). In this case, a collection of points. A point being the idea of the smallest thing (or not), imaginable. We represent this idea generally with a dot drawn on a page. Keep in mind that a point is an idea and doesn't have width, height, or any physical measure, whereas the dot does.
+Let's just say (posit) that a collection is just what it sounds like, one or more than one of something, or nothing at all (for convenience, later). In this case, a collection of points. A point being the idea of the smallest thing (or not thing), imaginable. We represent this idea generally with a dot drawn on a page. Keep in mind that a point is an idea and doesn't have width, height, or any physical measure, whereas the dot does.
 
 Maybe think of the dot as a graph (physical representative) of the point and imagine zooming in on the dot, imagine it never changing in appearance, whereas the area around it expands, endlessly.
 
@@ -24,7 +26,7 @@ We have our first postulates:
 
 What can we do with our postulates? Not much, at this "point" :). We can put points into a collection and take them out again. We can imagine that our collection, thus created, refers to different points. But, if a point has no measure, or other attribute, how can two be different?
 
-Now we can posit something new about points, relationship. Points can be different. If they are different, they cannot be the same point :). This is an intuition related to the nature of information - any difference that makes a difference to a knowing subject. But again, how are they different? We are in desperate need of a property or aspect of points with which to differentiate them. Naming them provides one basis - we can call our points by name. Let's say A is one of our imaginary points and B is another - difference! But, that's of limited utility in the context of shapes, so we look for another. How about location. Wow! That "maps" to our intution pretty well, points are located. What this means will be expanded on, but for now, just know that location simply means that point A is not in the same place as B, there is difference. In space, this would mean that points A and B do not occupy the same space, and that's reasonable and seems consistent with reality, but in this case we are only suggesting that A and B are different and that difference is location.
+Now we can posit something new about points, relationship. Points can be different. If they are different, they cannot be the same point :). This is an intuition related to the nature of information - any difference that makes a difference to a knowing subject. But again, how are they different? We are in desperate need of a property or aspect of points with which to differentiate them. Naming them provides one basis - we can call our points by name. Let's say A is one of our imaginary points and B is another - difference! But, that's of limited utility in the context of shapes, so we look for another. How about location. Wow! That "maps" to our intuition pretty well, points are located. What this means will be expanded on, but for now, just know that location simply means that point A is not in the same place as B, there is difference. In space, this would mean that points A and B do not occupy the same space, and that's reasonable and seems consistent with reality, but in this case we are only suggesting that A and B are different and that difference is location.
 
 This brings us to our next postulate:
 
@@ -38,7 +40,7 @@ The hard part comes when we add a third point. Where are the points in relation 
 
 * order - the universe has order
 
-That is, one thing can be said to be ordered (precede, or follow) with repect to another. Order is imposed, so, without knowing the established order, one can only detect it and not know what the origin or orientation of that order is in its entirety.
+That is, one thing can be said to be ordered (precede, or follow) with respect to another. Order is imposed, so, without knowing the established order, one can only detect it and not know what the origin or orientation of that order is in its entirety.
 
 Now, betweeness becomes evident as the established order of three objects (points). We say, determine, decree, demand, etc. that a point is between two others. This may sound silly and needlessly complex, but it is what it is and betweeness is our next postulate:
 
@@ -58,7 +60,7 @@ Here's a thought exercise to be integrated into the discussion as it is determin
 
 	Bring a third point C, into existence, such that we say B is between A and C. Again, difference, but not measurable. Why not? Because points have no measure!
 
-	But when we bring our points into the real world, and of necessity given them measure, voila! There's going to be measureable differences. But, very local. Perspective is hinted at here - we need it in order to appreciate our new universe. If we were to place our consciousness at a point and look, as it were, around, what would we "see". If we were at A, we would see B, if we were at C, we could also see B, but from A, we could not see C and from C we could not see A. Wow!
+	But when we bring our points into the real world, and of necessity given them measure, voila! There's going to be measurable differences. But, very local. Perspective is hinted at here - we need it in order to appreciate our new universe. If we were to place our consciousness at a point and look, as it were, around, what would we "see". If we were at A, we would see B, if we were at C, we could also see B, but from A, we could not see C and from C we could not see A. Wow!
 
 But, for now, we're sticking with betweeness being nothing more than established by fiat and being definitional in nature. B is between A and C because I say it is and beyond establishing order between A, B, C, has no material effect on anything.
 
@@ -85,4 +87,4 @@ The point is fairly standard to think about in this way, collection or set is wh
 
 -- will
 
-*post added 2023-12-19 13:29:00 -0600*
+*post edited 2023-12-19 13:58:00 -0600*
