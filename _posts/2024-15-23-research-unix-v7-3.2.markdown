@@ -12,7 +12,7 @@ The note explains each step of the process in detail.
 
 Last Updated May 23, 2024
 
-## Changes since revision 2.1
+### Changes since revision 3.1
 
 Revision 3.2 - minor revision:
 
