@@ -1,0 +1,108 @@
+---
+layout:	post
+title:	Rob Pike's LISP 1.5 in Go running on Debian 12
+date:	2023-07-24 13:35:00 -0600
+categories:	LISP
+---
+This note describes how to set up and run Rob Pike's LISP 1.5 in Go.
+
+LISP 1.5 was the first LISP that was made generally available. Rob Pike implemented a minimalist version of the EVALQUOTE function described on page 13 of the LISP 1.5 Programmer's Manual [https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) or grab a [local copy](/assets/files/lisp/LISP%201.5%20Programmers%20Manual.pdf)
+
+![one](/assets/img/lisp/Terminal_002.png)
+
+
+<!--more-->
+
+## Resources
+
+* **LISP 1.5 Programmer's Manual** [https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) or grab a [local copy](/assets/files/lisp/LISP%201.5%20Programmers%20Manual.pdf)
+
+* **LISP 1.5 Primer** [https://www.softwarepreservation.org/projects/LISP/book/Weismann_LISP1.5_Primer_1967.pdf](https://www.softwarepreservation.org/projects/LISP/book/Weismann_LISP1.5_Primer_1967.pdf) or grab a [local copy](/assets/files/lisp/Weismann_LISP1.5_Primer_1967.pdf)
+
+## Prerequisites
+
+* Linux - I'm running Debian 12 (bookworm)
+
+## Getting Started
+
+* Get Go
+
+```
+cd ~/Downloads
+wget https://go.dev/dl/go1.20.6.linux-amd64.tar.gz
+```
+
+* Install Go
+
+```
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.20.6.linux-amd64.tar.gz
+```
+
+* Add it to the path (logout and back in after making change)
+
+```
+vi ~/.bashrc
+export PATH=$PATH:/usr/local/go/bin
+```
+
+* Create a work area
+
+```
+mkdir -p ~/workarea/go/pike
+cd ~/workarea/go/pike
+```
+
+* Clone Rob Pike's repo
+
+```
+git clone https://github.com/robpike/lisp.git
+```
+
+* Initialize the module
+
+```
+cd lisp/
+go mod init
+```
+
+Should result in:
+
+```
+go: creating new go.mod: module robpike.io/lisp
+go: to add module requirements and sums:
+	go mod tidy
+```
+
+* Tidy the module
+
+```
+go mod tidy
+```
+
+Good news is no news.
+
+* Build the module
+
+```
+go build
+```
+
+Again, good news is no news.
+
+* Run the lisp
+
+```
+./lisp lib.lisp
+(fac gcd ack equal not negate mapcar length opN member union intersection)
+> (add 1 3)
+4
+>
+^D
+```
+
+Tool around and try things out. Pretty amazing work.
+
+
+Later - Will
+
+*post added 2023-07-24 19:28:00 -0600*

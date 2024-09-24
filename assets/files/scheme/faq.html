@@ -1,0 +1,71 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>UCB Scheme - Frequently Asked Questions</title>
+</head>
+<body>
+
+<h1>UCB Scheme - Frequently Asked Questions</h1>
+<p>
+Nov 21, 2005
+</p><ol>
+  <li> "<i>The <b>arrow keys</b> output certain escape sequences (^[]A to ^[]D) 
+  instead of moving the cursor." </i>
+  <p>STk does not support arrow keys. You can run STk from within Emacs (using,
+  e.g., M-x shell or M-x run-scheme) if you want to use arrow keys.</p></li>
+
+  <li> "<i>I'm trying to install the STk rpm on <b>redhat linux 7.3</b> but 
+  when I type in the command 'rpm -i STk-4.0.1-UCB6.i386.rpm' or 
+  'rpm -Uvh STk-4.0.1-UCB6.i386.rpm', an error message tells me that 
+  there is a failed dependency because my system doesn't have the korn 
+  shell running."</i>
+  <p>You can go ahead and run the command &nbsp;
+  'rpm --nodeps -i STk-4.0.1-UCB6.i386.rpm'. &nbsp; 
+  Or you could install ksh, with the command: &nbsp;
+  'rpm -i ftp://ftp.redhat.com/pub/redhat/linux/7.3/en/os/i386/RedHat/RPMS/pdksh-5.2.14-16.i386.rpm'</p></li>
+
+  <li> "<i> The 'File Save' window and the 'envdraw' command don't work. &nbsp;
+  I'm using the STk version of scm on a <b>Windows 9x</b> system."</i>
+  <p>This is a known bug that we cannot fix.  The Tk calls that are
+  needed for the 'File Save' window and the 'envdraw' command do not 
+  work on Windows9x. &nbsp; They do work on WindowsNT/2000/XP.</p></li>
+
+  <li> "<i> I can't get STK to load onto my laptop with <b>Windows Me</b>.  
+  &nbsp; I follow the instructions, add it to the start menu, but when I 
+  click on the program to load it, it doesn't do anything: &nbsp; the cursor
+  goes to an hourglass to indicate action, but no window opens.  What do I
+  do?"</i>
+  <p>The problem was that when you unzipped the file, it automatically saved 
+  as C:\Program Files\STkWin32, so when you'd click on stk.exe, it would not 
+  execute because the path was incorrect. &nbsp; To solve this, you just had 
+  to drag the STk folder within STkWin32 to the Program Files folder.</p></li>
+
+  <li> "<i> I'm logged into an Instructional UNIX system from a Mac [or Linux].
+  &nbsp; I type 'stk' and I get an error that starts with:<p></p><ul>
+  <b>X Error of failed request:  BadAtom (invalid Atom parameter)</b>
+  </ul></i>
+  <p>To correct this, use the "-Y" option with ssh, for example:
+  <b>ssh -l cs3 solar -X -Y</b>. &nbsp; This is not an bug in stk; it is 
+  related to how openssh sends certain X calls over the encrypted channel.
+
+</p></li></ol><p></p>
+<hr>
+<h3>To Instructional Support:</h3>
+The source for this faq.html file is 
+<b>/home/aa/projects/scheme/public_html/faq.html</b>.
+To make it accessible from ~scheme and ~instcd, there is a hard link between
+<ul>
+<li>/home/aa/projects/scheme/public_html/faq.html</li>
+<li>/home/aa/projects/instcd/public_html/inst-cd/source/stk/faq.html</li>
+</ul>
+References to it from the ~scheme and ~instcd WEB pages are relative to 
+one of those, ie
+<ul>
+<!-- Convert < to CGI-speak so it won't be interpreted as start of tag -->
+<li><xmp>&lt;A HREF="../../faq.html"&gt; under ~scheme</xmp></li>
+<li><xmp>&lt;A HREF="../../source/stk/faq.html"&gt; under ~instcd</xmp></li>
+</ul>
+This is to ensure that a single, current version is always accessible from
+both WEB sites, and that a copy of it will always be burned into the ~instcd 
+ISO file when we make one.
+
+</body></html>

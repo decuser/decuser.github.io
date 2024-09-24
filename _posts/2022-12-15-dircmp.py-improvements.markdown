@@ -1,0 +1,146 @@
+---
+layout: post
+title:  "dircmp.py - a plan to improve and extend"
+categories: unix python
+---
+
+## dircmp.py
+
+### A plan to improve and extend
+
+This note pertains to [dircmp.py](https://github.com/decuser/decuser_python_playground/blob/master/dircmp/dircmp.py) a program that I wrote to give me information about two directories for the purpose of deciding what to keep and what to remove and to learn about python. The note is a draft note and as such it's not very refined and it may lack in many ways, but I thought it might be interesting to put it out there and let anyone see it. Email me if you have comments or suggestions.
+
+<!--more-->
+
+#### Caveats
+
+The comparisons here are between simple folders and files (including hidden files). By simple, I don't mean small - I use the program to compare very large directories. However, the tool was developed for comparing directories containing user files and not as a system maintenance tool. I haven't done much investigating of hard / soft symlinks or exotic setups.
+
+#### Random Observation
+
+When originally creating the program, I had the thought that git's organization would provide an ideal filesystem for keeping changes and being able to see those changes easily. Just keep file contents in blobs, their digests, names, and locations elsewhere. Files with identical contents would share the blob and digests, but the names and locations could differ. When saving a new file, do a digest, check the registry, link to the blob, etc. Sure, it'd be slow, but integral. A little above my paygrade, but percolating in the back of my mind. 
+
+#### Features under consideration
+
+* Synchronization Planning
+* Synchronization Execution with Undo and potentially segregation
+
+#### Other potential enhancements
+
+* Historical comparisons (save results and use for future compares)
+
+#### Future research
+
+* symlinks and exotic setups :)
+
+#### Background
+Currently, the program does a great job of identifying differences and matches between two directory trees. However, it does not do a good job of providing the user with plans to synchronize those trees or the ability to synchronize directories.
+
+When I started this project, my goal was to identify, not address, so the program met its objectives. Now, I want to have the program generate plans to synchronize and perform the synchroniztion.
+
+#### Current functionality
+
+Looking at the program as a whole and as a black box, it takes a directory or pair of directories and compiles a set of results...
+
+##### Results
+
+Pair Results Report
+
+* duplicate files found in either directory
+* exact matches found in both directories
+* files that only exist in one of the directories
+* files that have the same names but different digests
+* files that have different names but same digest
+
+Single Results Report
+
+* duplicate files found in directory
+
+##### Method of Operation
+
+The comparisons are done using a calculated digest for every file that exists within the scope of the comparison, either a single level, or recursive.
+
+##### Options
+
+The program supports the following options for controlling its behavior:
+
+* -h, --help - show a help message and exit
+* -b, --brief - Brief mode - suppress file lists
+* -a, --all - Include hidden files in comparisons
+* -r, --recurse - Recurse subdirectories
+* -f, --fast - Perform shallow digests (super fast, but necessarily less accurate)
+* -d, --debug - Debug mode
+* -c, --compact - Compact mode
+* -s, --single - Single directory mode
+* -v, --version - show program's version number and exit
+
+#### Discussion
+
+All in all, it works great. I've used it a lot. It's fast and accurate. However, in using it, it has become apparent that what I really want it to do is tell me how to get two directories to synchronize.
+
+I have used rsync (prolly best of breed) and tried many, many other programs to quickly and easily sync directories, and I haven't liked any of them, in the end. Usually, I wind up losing files that I don't want to lose, sometimes through unintentional misuse of the tool, especially with rsync's arcane syntax, but usually through an inability to figure out what the tool actually does (not how it does what it does, but what the results are) and thinking two directories are synced after running the tool only to find out later that they weren't ... not exactly.
+
+At least with dirsync.py as it exists today, I know exactly what it is doing. The results are detailed and precise. It lives to tell me, in detail, what differences exist between two directories. With this information in hand, it is possible to determine a finite plan to synchronize them.
+
+Interestingly, synchronization can be accomplished with several distinct outcomes, as follows.
+
+#### Synchronize how?
+
+In the following discussions, I will use left and right to differentiate the two directories being discussed and will only discuss synchronizing two directories.
+
+##### One Way Synchronizations
+
+* Left to Right - *right directory is made to exactly match the left directory*
+* Right to Left - *left directory is made to exactly match the right directory*
+
+Conflicts arising in one way synchronizations are resolved by order definition - files and directories from one side are chosen whenever there is a mismatch.
+
+##### Two Way Sychronizations
+
+Whenever two way synchronizations are performed, there is a likelihood of conflicts and it is important to consider strategies to resolve those conflicts. This is where synchronization gets tricky.
+
+Here are the possible strategies
+
+* Preserve None - *remove conflicts from left and right (neither win)*
+* Preserve Left - *merge left into right (left wins)*
+* Preserve Right - *merge right into left (right wins)*
+* Preserve Both (versioning) *merge both ways (both win) and create versions when there is a conflict*
+
+
+##### Thoughts before diving into the details
+
+I think that inline with providing undo, it may be useful to preserve conflicts for the user... as in, when there's a conflict, move the loser (one side, or both) into a separate area (preserving prior location information) for the user to decide what to do with. Given a robust enough functionality, this may be moot, but I remember doing this sorta thing before and it being useful.
+
+#### Rough sketch strategy
+
+* Analyze directories to determine what needs to change
+* Report status
+* Stage changes
+* Make changes (as economically and safely as possible)
+ * Stage a modification
+ * Save recovery information
+ * Make the modification
+* Report changes
+
+#### Thoughts related to the economics
+
+The expenses in this program are the costs of computing digests, comparing those digests, and copying files. Deletions are cheap, as are moves. So, the program should only compute digests as requested. When fast mode is active, the algorithm only reads a portion of the file, rather than the entirety, so this must be taken into account. Comparisons of the digest are mandatory. Copying files is expensive and should be minimized.
+
+Interestingly, when I started looking at this part of the code, I figured out that my fast digest approach probably needs to be improved. My premise, when I wrote it was that big files tend not to change in small ways over time - movies, images, and such. So, files over 10MB were considered candidates for an optimization of the digest process... This has proved to be a good intuition, but there are certainly some exceptions that could cause problems with the simple approach currently in the code (read the file size in bytes, read the first 1MB and the last 1MB and use these for the digest). I remember coming up with a strategy more along the lines of 100MB being the threshold and taking 100MB of random samples from the file. I don't remember why I changed it, but it was prolly just a matter of it taking too long and/or being somewhat more complicated to implement for the time I set aside to do the work... either way, the current code is quite basic, but fast... and it's worked fine because the only large files that I've used it on have been normal user files that simply don't change much in the middle. Still, this is definitely an area to optimize. The easiest example of a file that would be problematic that I can think of is a VM drive file... When in doubt, don't use fast mode :). 
+
+#### Stuff to think about
+ 
+* Fast digest - what's a better approach that's still fast (sampling is slow, but is it necessary)?
+* I seem to remember counting being challenging - does the program count correctly or does it need a fix?
+* Symlinks are weird, but are they a problem?
+* How to develop a changeset - linear, in a single pass, what?
+* How to handle the undo functionality
+* What to do about destructive changes - save the to be destroyed file somewhere
+* How to handle duplicate versioning - naming, save somewhere
+* Given past experience, what to do about voluminous reporting - definitely need better delineation of sections (very hard to differentiate in terminal)
+* Tkinter? I dunno, I prefer something like avalonia, but that's .net, still should this have a ui?
+* Order to do the coding - left to right and right to left first, then merges, which preservation strategies in what order?
+
+The playground has the latest code and branches [https://github.com/decuser/decuser_python_playground](https://github.com/decuser/decuser_python_playground)
+
+*post last updated 2022-12-15 17:53:00 -0600*

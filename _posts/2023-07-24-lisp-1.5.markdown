@@ -1,0 +1,251 @@
+---
+layout:	post
+title:	LISP 1.5 running on an emulated IBM 7094
+date:	2023-07-24 12:23:00 -0600
+categories:	LISP
+---
+This note describes how to set up and run the oldest available ancestor of all extant LISPS and Schemes.
+
+LISP 1.5 was the first LISP that was made generally available. It is available to run on the OpenSIMH IBM 7094 emulator.
+
+![one](/assets/img/lisp/Terminal_001.png)
+
+
+<!--more-->
+
+## Resources
+
+* **LISP 1.5 Programmer's Manual** [https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) or grab a [local copy](/assets/files/lisp/LISP%201.5%20Programmers%20Manual.pdf)
+
+* **LISP 1.5 Primer** [https://www.softwarepreservation.org/projects/LISP/book/Weismann_LISP1.5_Primer_1967.pdf](https://www.softwarepreservation.org/projects/LISP/book/Weismann_LISP1.5_Primer_1967.pdf) or grab a [local copy](/assets/files/lisp/Weismann_LISP1.5_Primer_1967.pdf)
+
+* **OpenSIMH** [https://opensimh.org/](https://opensimh.org/)
+
+* **LISP 1.5 2023 tarball** [lisp15.2023.tar.gz](/assets/files/lisp/lisp15.2023.tar.gz) - note, this is a slightly modified version of Andre Luvisi's tarball.
+
+## Prerequisites
+
+* Linux - I'm running Debian 12 (bookworm)
+* A build environement (make, cc, and ld) - build-essential package on debian systems
+* OpenSIMH - any reasonably recent version should work
+
+## Getting Started
+
+* Create a workarea
+
+```
+mkdir -p ~/workarea/retro/lisp-1.5/{dist,work}
+cd ~/workarea/retro/lisp-1.5/dist
+```
+
+* Download the tarball
+
+```
+wget https://decuser.github.io/assets/files/lisp/lisp15.2023.tar.gz
+```
+
+## Build the System
+
+* Unpack the tarball and the utils tarball inside it
+
+```
+cd ../work
+tar xvzf ../dist/lisp15.2023.tar.gz
+cd lisp15
+tar xvf utils-1.1.8.tar.gz
+```
+
+* Build the utils and copy txt2bcd to a directory on the path (critically important)
+
+```
+cd utils
+make
+cp ./txt2bcd ~/bin
+```
+
+* Test txt2bcd
+
+```
+txt2bcd
+Usage: txt2bcd infile [outfile] [reclen, default 80 [blklen, default 84]]
+```
+
+* Clean up from utilts build
+
+```
+cd ..
+rm -fr utils
+```
+
+* Actually build the system
+
+```
+make realclean; make
+```
+
+A successful build will result in a sysboot.tp in the current directory and a transcript similar to this:
+
+```
+rm -f sys.log scratch/*
+(cd build; make clean)
+make[1]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+(cd boottape; make clean)
+make[2]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+rm -f syscore.tp sys.log scratch/*
+make[2]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+make[1]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+rm -f sysboot.tp
+(cd build; make realclean)
+make[1]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+(cd boottape; make clean)
+make[2]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+rm -f syscore.tp sys.log scratch/*
+make[2]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+rm -f sysboot.tp boottape/lisp.obj
+make[1]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+(cd build; make sysboot.tp)
+make[1]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+asm7090/asm7090 -o boottape/lisp.obj chist/lisp.job
+(cd boottape; make)
+make[2]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+i7094 lispimg.ini library.txt
+
+IBM 7094 simulator Open SIMH V4.1-0 Current        simh git commit id: cf47a20f
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-13> at mta1 -r scratch/lisp.job.mt
+%SIM-INFO: MTA1: unit is read only
+%SIM-INFO: MTA1: Tape Image 'scratch/lisp.job.mt' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-14> at mta2 scratch/systap.tp
+%SIM-INFO: MTA2: creating new file
+%SIM-INFO: MTA2: Tape Image 'scratch/systap.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-15> at mta3 syscore.tp
+%SIM-INFO: MTA3: creating new file
+%SIM-INFO: MTA3: Tape Image 'syscore.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-16> at mta4 scratch/syspot.tp
+%SIM-INFO: MTA4: creating new file
+%SIM-INFO: MTA4: Tape Image 'scratch/syspot.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-17> at mta5 scratch/sysppt.tp
+%SIM-INFO: MTA5: creating new file
+%SIM-INFO: MTA5: Tape Image 'scratch/sysppt.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-19> at cdr scratch/corrcards
+%SIM-INFO: CDR: creating new file
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-20> at cdp scratch/lispout.whatever
+%SIM-INFO: CDP: creating new file
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-21> at lpt sys.log
+%SIM-INFO: LPT: creating new file
+
+HALT instruction, PC: 10524 (TRA 10523)
+Goodbye
+make[2]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+cp boottape/syscore.tp sysboot.tp
+make[1]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+cp build/sysboot.tp sysboot.tp
+```
+
+## Run the system
+
+If you successfully built the system, you should be ready to run LISP 1.5. A few words are in order... Running LISP 1.5, so far as I can tell, consists of running the simulator against a tape image of a lisp source file. So, you type LISP 1.5 compatible code into a file and then invoke the emulator against that file. It processes your source and outputs the result.
+
+The tarball includes three source files that are in the correct format to be run in LISP 1.5:
+
+* factorial.txt - test code that will calculate the factorial of a number, in this case 10, which should result in 3,628,800.
+
+* funarg.txt - a function argument test
+
+* propcal.txt - test the Wang algorithm for propositional calculus
+
+To run them, invoke the emulator and provide the ini file to initialize the emulator and the text file with the source, for example, to run the factorial program type:
+
+```
+i7094 lisptape.ini factorial.txt
+```
+
+A successful run will generate a sys.log file and the output will resemble:
+
+```
+IBM 7094 simulator Open SIMH V4.1-0 Current        simh git commit id: cf47a20f
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-12> at mta1 -r scratch/lisp.job.mt
+%SIM-INFO: MTA1: unit is read only
+%SIM-INFO: MTA1: Tape Image 'scratch/lisp.job.mt' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-13> at mta2 -r sysboot.tp
+%SIM-INFO: MTA2: unit is read only
+%SIM-INFO: MTA2: Tape Image 'sysboot.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-14> at mta3 scratch/syscore.tp
+%SIM-INFO: MTA3: Tape Image 'scratch/syscore.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-15> at mta4 scratch/syspot.tp
+%SIM-INFO: MTA4: Tape Image 'scratch/syspot.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-16> at mta5 scratch/sysppt.tp
+%SIM-INFO: MTA5: Tape Image 'scratch/sysppt.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-20> at lpt sys.log
+%SIM-INFO: LPT: creating new file
+
+HALT instruction, PC: 10524 (TRA 10523)
+Goodbye
+```
+
+The results will be in the file sys.log:
+
+```
+cat sys.log
+             TEST  FACTORIAL
+
+
+
+  THE TIME ( 0/ 0  000.0) HAS COME, THE WALRUS SAID, TO TALK OF MANY THI
+NGS .....   -LEWIS CARROLL-
+ EVALQUOTE OPERATOR AS OF 1 MARCH 1961.    INPUT LISTS NOW BEING READ.
+
+
+  THE TIME ( 0/ 0  000.0) HAS COME, THE WALRUS SAID, TO TALK OF MANY THI
+NGS .....   -LEWIS CARROLL-
+  FUNCTION   EVALQUOTE   HAS BEEN ENTERED, ARGUMENTS..
+ DEFINE
+
+ (((FACTORIAL (LAMBDA (X) (COND ((EQUAL X 0) 1) (T (TIMES X (FACTORIAL (
+SUB1 X)))))))))
+
+ END OF EVALQUOTE, VALUE IS ..
+ *TRUE*
+
+  FUNCTION   EVALQUOTE   HAS BEEN ENTERED, ARGUMENTS..
+ FACTORIAL
+
+ (10)
+
+
+ END OF EVALQUOTE, VALUE IS ..
+ 3628800
+
+
+
+  THE TIME ( 0/ 0  000.0) HAS COME, THE WALRUS SAID, TO TALK OF MANY THI
+NGS .....   -LEWIS CARROLL-
+ END OF EVALQUOTE OPERATOR
+             FIN      END OF LISP RUN
+```
+
+## Conclusions
+
+This was an interesting exploration. I enjoyed getting it up and running with a minimum of fuss. I didn't appreciate the fact that it was effectively a job submission environment and not an interactive system.
+
+Something to note is the use of evaluquote as the top-level, not eval...
+
+In the next exploration, I will investigate a system that is much more modern, yet directly descended from LISP 1.5. Rob Pike's LISP 1.5 interpreter in Go. A minimal implementation of 1.5's evalquote from pg. 13 of the Programming LISP 1.5 text.
+
+
+### Afterthoughts
+
+Andre Luvisi's original work exists (for now) in Archive.org's repository of crawled pages:
+
+* **Luvisi's LISP 1.5 tarball** [https://web.archive.org/web/20211202101850/http://web.sonoma.edu/users/l/luvisi/lisp/lisp15.tar.gz](https://web.archive.org/web/20211202101850/http://web.sonoma.edu/users/l/luvisi/lisp/lisp15.tar.gz)
+
+It won't build because of duplicate names (fin and fon are defined in multiple files), but the fix is easy, just change line 19 of prsf2.c to read:
+
+```
+static char fin[300], fon[300];
+```
+
+and it should work the same way as described above.
+
+Later - Will
+
+*post added 2023-07-24 19:28:00 -0600*
