@@ -1,8 +1,8 @@
 ---
 layout:	post
-title:	Fix for Thunderbird hangs while indexing messages
-date:	2024-08-16 05:05:00 -0600
-categories:	unix
+title:	Geometry Explorations
+date:	2023-12-19 05:05:00 -0600
+categories:	GEOMETRY
 ---
 This note describes a method for fixing Thunderbird when it hangs while indexing.
 
@@ -33,10 +33,8 @@ When it gets to the place where it hangs, in the terminal, press CTRL-C to end t
 
 In my strace output, the last occurance(s) are:
 
-```
 access("/home/wsenn/Thunderbird/Mail/Local Folders-maildir/Archives.sbd/2002-2020.sbd/2016/cur", F_OK) = 0
 openat(AT_FDCWD, "/home/wsenn/Thunderbird/Mail/Local Folders-maildir/Archives.sbd/2002-2020.sbd/2016/cur/1723773452464.eml", O_RDONLY) = 147
-```
 
 This is likely (so far, it's always, but time may tell if there are exceptions) the file that's breaking the indexing. Move it off somewhere to review:
 
