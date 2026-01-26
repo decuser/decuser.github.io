@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installing and running DragonFly BSD 6.4 - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Installing and running DragonFly BSD 6.4</h1>
+    <p class="post-meta">Jan 16, 2023
+      <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/bsd/" class="tag">bsd</a> <a href="/tags/dragonfly-bsd/" class="tag">dragonfly-bsd</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note is about installing and running DragonFly BSD 6.4</p>
+<p><img src="/assets/img/dragonfly/01.jpeg" alt="one"></p>
+<p>DragonFly BSD from <a href="https://dragonflybsd.org">https://dragonflybsd.org</a> is a BSD :). As such, it is a rock and the userland is sane. It was forked from FreeBSD long ago and is renowned for its HAMMER FS. I started the exploration with the intention of learning more about HAMMER and have enjoyed the journey.</p>
+<p>Link to high res image:</p>
+<ul>
+<li><a href="/assets/img/dragonfly/01-big.jpeg">dragonfly-running on metal</a></li>
+</ul>
+<p>I like DragonFly BSD, but there is a bit of a learning curve, even for someone used to FreeBSD... I say this as someone who has been using FreeBSD for more than a decade and while there is some overlap, it's still pretty different. Maybe if I had used an earlier version of FreeBSD it would seem more familiar, but I started with 8.</p>
+<h3>Requirements</h3>
+<hr>
+<ul>
+<li>A machine to run it on - I put it on my Dell Optiplex 755, Core 2 Quad  CPU   Q9550  @ 2.83GHz w/8GB RAM, and a 240 GB SSD</li>
+<li>DragonFly BSD 6.4 USB image from <a href="https://www.dragonflybsd.org/download/">https://www.dragonflybsd.org/download/</a></li>
+</ul>
+<h3>Resources</h3>
+<hr>
+<ul>
+<li>DragonFly BSD Handbook <a href="https://www.dragonflybsd.org/docs/handbook/">https://www.dragonflybsd.org/docs/handbook/</a></li>
+<li>Mailing List and IRC <a href="https://www.dragonflybsd.org/mailinglists/">https://www.dragonflybsd.org/mailinglists/</a></li>
+<li>DragonFly Digest <a href="https://www.dragonflydigest.com/">https://www.dragonflydigest.com/</a></li>
+</ul>
+<h3>Getting started</h3>
+<hr>
+<h4>Create a workarea on your existing system</h4>
+<pre><code>mkdir -p ~/Downloads/dragonfly
+cd ~/Downloads/dragonfly/
+</code></pre>
+<h4>Download the image, decompress it, and verify it</h4>
+<p>Note that md5's of the releases are available at <a href="http://avalon.dragonflybsd.org/iso-images/md5.txt">http://avalon.dragonflybsd.org/iso-images/md5.txt</a></p>
+<p>MD5 (dfly-x86_64-6.4.0_REL.img) = b3b23e1a18292c46643f8df435e4ab68</p>
+<pre><code>aria2c https://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.4.0_REL.img.bz2
+bzip2 -d dfly-x86_64-6.4.0_REL.img.bz2
+md5 dfly-x86_64-6.4.0_REL.img
+MD5 (dfly-x86_64-6.4.0_REL.img) = b3b23e1a18292c46643f8df435e4ab68
+</code></pre>
+<h4>Burn it to USB - I use Balena Etcher</h4>
+<h3>Installing DragonFly BSD</h3>
+<hr>
+<h4>Boot to the USB stick</h4>
+<h4>DragonFly Boot Menu</h4>
+<p>The DragonFly Boot Menu will appear after a few seconds.</p>
+<ul>
+<li>Choose <code>1. Boot DragonFly [kernel]</code></li>
+</ul>
+<p>The bootup process takes a minute or so... be patient.</p>
+<h4>Running the DragonFly BSD Installer</h4>
+<hr>
+<ul>
+<li>login as <code>installer</code> with no password</li>
+</ul>
+<p>The installer will begin  and display its dialogs:</p>
+<h5>Welcome screen and staring the installation</h5>
+<ul>
+<li>Welcome to DragonFly BSD</li>
+</ul>
+<p>A brief description of Dragonfly BSD is presented.</p>
+<ul>
+<li>
+<p>Choose <code>Install DragonFly BSD</code></p>
+</li>
+<li>
+<p>Begin Installation</p>
+</li>
+</ul>
+<p>The installer describes what it's about to do.</p>
+<ul>
+<li>Again, choose <code>Install DragonFly BSD</code></li>
+</ul>
+<h5>Disk Setup</h5>
+<ul>
+<li>
+<p>UEFI or legacy BIOS</p>
+</li>
+<li>
+<p>Choose <code>Legacy BIOS</code> (or UEFI, if you have it)</p>
+</li>
+<li>
+<p>Select Disk - a list of disks is presented.</p>
+</li>
+<li>
+<p>Choose <code>da0: 244198MB</code></p>
+</li>
+<li>
+<p>How Much Disk? - asks you how much of the disk (all of it, or just part of it).</p>
+</li>
+<li>
+<p>Choose <code>Use Entire Disk</code></p>
+</li>
+<li>
+<p>Are you absolutely sure?</p>
+</li>
+<li>
+<p>Acknowledge by choosing <code>OK</code></p>
+</li>
+<li>
+<p>Information</p>
+</li>
+</ul>
+<pre><code>The disk
+da0: 244198MB
+was formatted.
+</code></pre>
+<ul>
+<li>Acknowledge by choosing <code>OK</code></li>
+</ul>
+<h5>File System Setup</h5>
+<ul>
+<li>Select file system</li>
+<li>Choose <code>Use HAMMER2</code> as recommended.</li>
+<li>Create Subpartitions</li>
+</ul>
+<pre><code>/boot 1024M
+swap 16G
+/ 166G
+/build *
+</code></pre>
+<ul>
+<li>Choose <code>Accept and Create</code></li>
+</ul>
+<p>The filesystem is created.</p>
+<h5>OS Installation</h5>
+<ul>
+<li>
+<p>Install OS</p>
+</li>
+<li>
+<p>Choose <code>Begin Installing Files</code></p>
+</li>
+</ul>
+<p>It will take a couple of minutes for the operating system files to be written to disk.</p>
+<h5>Boot Block Installation</h5>
+<ul>
+<li>Install Bootblock(s)</li>
+</ul>
+<pre><code>Disk Drive   Install Bootblock? Packet Mode?
+[da0      ]  [X]                [X]
+</code></pre>
+<ul>
+<li>
+<p>Choose Accept and Install Bootblocks</p>
+</li>
+<li>
+<p>Information</p>
+<p><code>Bootblocks were successfully installed!</code></p>
+</li>
+<li>
+<p>Acknowledge by choosing <code>OK</code></p>
+</li>
+</ul>
+<h5>Completing the installation</h5>
+<ul>
+<li>DragonFly BSD is Installed!</li>
+</ul>
+<p>The base installation, now it's time to configure the system.</p>
+<ul>
+<li>Choose <code>Configure this system</code></li>
+</ul>
+<h4>Configuring the newly installed system</h4>
+<hr>
+<h4>Timezone configuration</h4>
+<ul>
+<li>
+<p>Choose <code>Select Timezone</code></p>
+</li>
+<li>
+<p>Local or UTC (Greenwich Mean Time) clock</p>
+<ul>
+<li>Choose <code>YES</code></li>
+</ul>
+</li>
+<li>
+<p>Select Timezone</p>
+</li>
+<li>
+<p>Choose <code>America</code></p>
+</li>
+<li>
+<p>Choose <code>Chicago</code></p>
+</li>
+<li>
+<p>Information</p>
+<pre><code></code></pre>
+</li>
+</ul>
+<p>The Time Zone has been set to
+/mnt/usr/share/zoneinfo/America/Chicago.</p>
+<pre><code> * Acknowledge by choosing `OK`
+
+##### Date and Time configuration
+
+* Set date and time
+
+ * Set Time/Date as you like
+
+ *  Confirm your choices by choosing `OK`
+
+ * Information
+
+     `The time and date have been set.`
+
+ * Acknowledge by choosing `OK`
+
+##### Keyboard map configuration
+
+* Choose `Set keyboard map`
+
+ * Select Keyboard Map
+
+     * Choose `us.pc-ctrl-kbd`
+
+##### Root password configuration
+
+* Choose `Set root password`
+
+ * Set Root Password
+
+     * Enter root password
+
+     * Enter root password again
+
+     * Choose `Accept and Set Password`
+
+     * Information
+
+         `The root password has been set.`
+
+     * Acknowledge by choosing `OK`
+
+##### Additional user configuration
+
+* Choose `Add a user`
+
+ * Add user
+
+ * 
+</code></pre>
+<p>Username wsenn
+Real Name Will Senn
+Password **
+Password again **
+Shell /bin/sh
+Home Directory /home/wsenn
+User ID (leave blank)
+Login Group (leave blank)
+Other Group Membership [wheel,video]</p>
+<pre><code>
+ * Choose `Accept and Add`
+
+ * Information
+
+     `The user 'wsenn' was added.`
+
+   * Acknowledge by choosing `OK`
+
+##### Network configuration
+
+* Choose `Configure network interfaces`
+
+ * Assign IP Address
+
+     * choose `em0`
+
+     * Use DHCP
+
+         * Choose `Use DHCP`
+
+             It takes a few seconds to initialize the nic.
+    
+     * Information
+
+         `Lots of em0 info is displayed`
+
+     * Acknowledge by choosing `OK`
+
+##### Hostname and domain configuration
+ 
+* Choose `Configure hostname and domain`
+
+ * Enter your hostname
+
+ * Enter your domain	
+
+ * Confirm your selections by choosing `OK`
+
+##### Console font configuration (optional)
+
+Probably don't need to change it but if you do...
+
+Choose cp437 fonts
+
+##### Screen map configuration
+
+Probably don't need to change it but if you do...
+
+Choose the iso-8859-1 to cp437 screen map
+
+##### Wrapping up configuration
+
+* Choose `Return to Welcome Screen`
+
+* Choose `Reboot This Computer`
+
+ * Reboot
+
+     * Choose `Reboot`
+
+* Remove the USB Stick and reboot
+
+I had to power cycle the computer at this point.
+
+### Running DragonFly BSD
+
+----
+
+The computer will reboot and display the Dragonfly BSD Boot manager.
+
+</code></pre>
+<p>F1 DF/FBSD
+Default: F1</p>
+<pre><code>
+After about 10 seconds, the computer will boot the default entry (DragonFly BSD).
+
+The Dragonfly BSD Boot menu will appear and a countdown timer will count down before booting the default entry - `1. DragonFly BSD (kernel)`.
+
+
+#### Login as regular user
+
+</code></pre>
+<p>login: wsenn
+password:</p>
+<pre><code>
+#### Get the ip
+
+</code></pre>
+<p>ifconfig
+...
+192.168.254.12
+...</p>
+<pre><code>
+#### Temporarily change ssh to allow password based logins
+
+</code></pre>
+<p>su -</p>
+<p>vi /etc/ssh/sshd_config
+PasswordAuthentication yes
+service sshd restart</p>
+<pre><code>
+#### Copy over your user key (if you plan to log in remotely)
+
+on remote host
+
+`ssh-copy-id loki`
+
+#### Change ssh back to only allow key based logins
+
+on loki
+
+</code></pre>
+<p>su -</p>
+<p>vi /etc/ssh/sshd_config
+PasswordAuthentication no
+service sshd restart</p>
+<pre><code>
+#### Log in over ssh
+
+</code></pre>
+<p>ssh loki</p>
+<pre><code>
+#### Do updates and upgrade
+
+Note: 6.4.0 ships with an old version of pkg and the upgrade fails as a result and blows away the pkg configuration. The simple solution is to copy the sample configuration over and rerun the upgrade as described below.
+
+</code></pre>
+<p>pkg update
+pkg upgrade</p>
+<pre><code>
+This results in the following error:
+
+</code></pre>
+<p>Updating Avalon repository catalogue...
+Avalon repository is up to date.
+All repositories are up to date.
+New version of pkg detected; it needs to be installed first.
+The following 1 package(s) will be affected (of 0 checked):</p>
+<p>Installed packages to be UPGRADED:
+pkg: 1.14.4 -&gt; 1.18.4 [Avalon]</p>
+<p>Number of packages to be upgraded: 1</p>
+<p>3 MiB to be downloaded.</p>
+<p>Proceed with this action? [y/N]: Y
+[1/1] Fetching pkg-1.18.4.pkg: 100%    3 MiB 790.6kB/s    00:04<br>
+Checking integrity... done (0 conflicting)
+[1/1] Upgrading pkg from 1.14.4 to 1.18.4...
+[1/1] Extracting pkg-1.18.4: 100%
+pkg: Failed to execute lua script: [string &quot;-- args: etc/pkg.conf.sample...&quot;]:12: attempt to call a nil value (field 'stat')
+pkg: lua script failed
+No active remote repositories configured.</p>
+<pre><code>
+##### Restore the borked configuration
+
+`cp /usr/local/etc/pkg/repos/df-latest.conf.sample /usr/local/etc/pkg/repos/df-latest.conf`
+
+##### Rerun the upgrade step
+
+`pkg upgrade`
+
+This time, things ought to be good.
+
+#### Install some useful baseline packages
+
+</code></pre>
+<p>pkg install sudo vim bash sysrc
+visudo
+uncomment
+%wheel ALL=(ALL:ALL) NOPASSWD: ALL</p>
+<p>exit</p>
+<pre><code>
+#### Change the user shell to bash
+
+as user
+
+</code></pre>
+<p>chsh
+/usr/local/bin/bash</p>
+<pre><code>
+
+#### Install a Windowing Environment
+
+</code></pre>
+<p>sudo -s
+pkg install xorg xf86-input-evdev windowmaker leafpad nautilus chromium slim slim-themes</p>
+<p>echo &quot;exec wmaker&quot; &gt; .xinitrc</p>
+<p>sysrc slim_enable=&quot;YES&quot;
+sysrc dbus_enable=&quot;YES&quot;
+sysrc snd_hda_load=&quot;YES&quot;</p>
+<p>sysrc -f /boot/loader.conf autoboot_delay=&quot;1&quot;</p>
+<p>sudo shutdown -r now</p>
+<pre><code>should restart with slim
+
+#### Login, fire up Chrome and youtube, stuff oughta just work
+
+* Right-click on the desktop, open a terminal, then
+
+`chrome`
+
+
+logging out of windowmaker takes 10 seconds then beep
+
+
+### Post installation rigamarole
+
+----
+
+I have an ASUS ATI Radeon HD 650 Silence video card. I did the following to learn more about it.
+
+</code></pre>
+<p>kldload radeon
+kldstat
+Id Refs Address            Size     Name
+1   26 0xffffffff80200000 1ada9a8  kernel
+2    1 0xffffffff81cdb000 7c550    ehci.ko
+3    1 0xffffffff81d58000 8a1f0    xhci.ko
+4    1 0xffffffff82600000 16000    ums.ko
+5    1 0xffffffff82616000 19a7000  radeon.ko
+6    1 0xffffffff83fbd000 baa000   drm.ko
+7    1 0xffffffff84b67000 1f000    iicbus.ko
+8    1 0xffffffff84b86000 a000     radeonkmsfw_CAICOS_pfp.ko
+9    1 0xffffffff84b90000 b000     radeonkmsfw_CAICOS_me.ko
+10    1 0xffffffff84b9b000 a000     radeonkmsfw_BTC_rlc.ko
+11    1 0xffffffff84ba5000 f000     radeonkmsfw_CAICOS_mc.ko
+12    1 0xffffffff84bb4000 f000     radeonkmsfw_CAICOS_smc.ko
+13    1 0xffffffff84bc3000 3b000    radeonkmsfw_SUMO_uvd.ko</p>
+<pre><code>
+I have onboard sound. Here's the exploration.
+
+</code></pre>
+<p>kldload snd_hda
+cat /dev/random &gt; /dev/dsp</p>
+<pre><code>
+Static sound ensues :).
+
+</code></pre>
+<p>cat /dev/sndstat
+Installed devices:
+pcm0: &lt;Analog Devices AD1984 (Analog)&gt; (play/rec) default
+pcm1: &lt;Analog Devices AD1984 (Analog)&gt; (play/rec)
+pcm2: &lt;ATI R6xx (HDMI)&gt; (play)</p>
+<p>dmesg|grep pcm
+pcm0: &lt;Analog Devices AD1984 (Analog)&gt; at nid 18 and 20 on hdaa0
+pcm1: &lt;Analog Devices AD1984 (Analog)&gt; at nid 17 and 21 on hdaa0
+pcm2: &lt;ATI R6xx (HDMI)&gt; at nid 3 on hdaa1</p>
+<pre><code>
+I mucked up loader.conf and booting became an issue. Here's the fix.
+
+* insert usb and boot to it
+* select r for ramdisk
+* in the booted system, `mount /dev/da0s1a`
+* find and edit `loader.conf` in /mnt
+* reboot
+
+
+I originally had a janky mouse, the fix was to install `xf86-input-evdev`
+
+To enable X11 over ssh
+sudo vi /etc/ssh/sshd_config
+X11Forwarding yes
+
+*post last updated 2023-01-19 13:12:00 -0600*
+</code></pre>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

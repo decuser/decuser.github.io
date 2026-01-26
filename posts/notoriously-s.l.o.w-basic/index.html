@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notoriously S.L.O.W BASIC - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Notoriously S.L.O.W BASIC</h1>
+    <p class="post-meta">Oct 26, 2022
+      <a href="/tags/retro-computing/" class="tag">retro-computing</a> <a href="/tags/m100/" class="tag">m100</a> <a href="/tags/basic/" class="tag">basic</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This week, I spent some time writing code for my m100. On my list of things to do with the little machine, was to write a disassembler. In order to disassemble memory, it helps to know what's there, so I decided to write a memory dump utility first.</p>
+<p>After a bit of thought and planning, I figured I would take a starting location and ending location, in hex, and display those locations line by line, in the form:</p>
+<p><code>HHHH: HH HH HH HH HH HH HH HH  AAAAAAAA</code></p>
+<p>Where H is a hex digit, HHHH is a location, HH are hex bytes, and A are ASCII characters. When run, this looks like:</p>
+<pre><code>0000: 36 B6 21 17 46 00 6A 06  6.!.F.j.
+0008: B5 F0 3D 2E 51 E3 A6 26  ..=.Q..&amp;
+</code></pre>
+<p>The plan was to loop through the addresses from the start address to the end address, peeking into each memory location and displaying the hex bytes and ascii characters along the way, 8 bytes at a time. Pretty simple, right? Well, not so fast, it turns out PEEK takes a decimal argument, so I needed to write a HEX to DECIMAL converter... and, PEEK returns a decimal value, so I needed to write a DECIMAL to HEX converter... and, old school BASIC lacks a formatted print statement for strings, so I needed a way to format the output, so I decided to write a padding function.</p>
+<p>After thinking through it a bit more, the strategy for this little app became:</p>
+<ul>
+<li>Ask the user for the start address in HEX</li>
+<li>Convert the HEX to DECIMAL and check bounds</li>
+<li>Ask the user for the end address in HEX</li>
+<li>Convert the HEX to DECIMAL and check bounds</li>
+<li>Check the range</li>
+<li>Loop through memory getting bytes using PEEK</li>
+<li>On each 8th byte or end of the range or memory, display a line with the location and as many bytes as have been collected in HEX and ASCII</li>
+</ul>
+<p>Where, we have three subroutines:</p>
+<ul>
+<li><strong>HEX2DEC</strong> - convert a string of hex digits to decimal in the range 0 to 65535</li>
+<li><strong>DEC2HEX</strong> - convert a decimal number to hex in the range 0 to FFFF</li>
+<li><strong>PADSTR</strong> - pad a string of a given length, with a given padding character</li>
+</ul>
+<p>Here's the minimally annotated code, with the full file attached below:</p>
+<h2>Main Program</h2>
+<h3>Get Starting Address</h3>
+<p>Get the starting address and see if it's valid, set HS to the start address</p>
+<pre><code>10 CLS
+20 INPUT &quot;Starting HEX address: &quot;;S$
+30 GOSUB 1000
+40 IF V = -1 THEN 20
+50 HS = V
+</code></pre>
+<h3>Get Ending Address</h3>
+<p>Get the ending address and see if it's valid, set HE to the end address</p>
+<pre><code>60 INPUT &quot;Ending HEX address: &quot;;S$
+70 GOSUB 1000
+80 IF V = -1 THEN 60
+90 HE = V
+</code></pre>
+<h3>Validations</h3>
+<p>Validate the bounds and range</p>
+<pre><code>100 IF HS &lt; 0 OR HE &gt; 65535 THEN 110 ELSE GOTO 120
+110 BEEP: PRINT &quot;INVALID RANGE &quot;;HS;&quot; to &quot;;HE : GOTO 20
+120 IF HS &gt; HE THEN GOTO 110
+</code></pre>
+<h3>Implement MORE</h3>
+<p>I thought I would need a <em>more</em> type functionality, but it's so slow, the pause button is sufficient</p>
+<pre><code>130 REM print &quot;Screenful at a time?&quot;
+140 REM a$ = inkey$ : if a$ = &quot;&quot; then 140
+150 REM if a$ = &quot;Y&quot; or a$ = &quot;y&quot; then s1 = 1 else s1 = 0
+160 REM
+170 REM
+</code></pre>
+<h3>Loop through the memory</h3>
+<pre><code>180 HL$ = &quot;&quot; : AL$ = &quot;&quot;
+190 B = 1 : P = 0
+200 FOR I = HS TO HE
+</code></pre>
+<h3>Handle Start of Line</h3>
+<p>If this is the beginning of a line, set the line address to a 4 digit HEX address, padded with 0's</p>
+<pre><code>210   IF P &lt;&gt; 0 THEN 270
+220   D = (HS+B)-1 : PL = 4 : PC$ = &quot;0&quot;
+230   GOSUB 3000
+240   GOSUB 4000
+250   LA$ = S$
+260   P = 1
+</code></pre>
+<h3>Get the contents of memory at a location (PEEK)</h3>
+<p><code>270   HB=PEEK(I)</code></p>
+<h3>Handle non-printable characters</h3>
+<p>Is it a printable character? If so, keep it, otherwise, change it to a &quot;.&quot;</p>
+<pre><code>290   IF HB &gt;= 32 AND HB &lt;= 122 THEN HA$ = CHR$(HB) ELSE HA$ = &quot;.&quot;
+</code></pre>
+<h3>Cruft</h3>
+<p>Leftover cruft from when I was using random chars, need to clean up</p>
+<p><code>300   ' hb = peek(i)</code></p>
+<h3>Padding</h3>
+<p>Pad each hex byte to 2 digits with 0's</p>
+<pre><code>310   D = HB : PL = 2 : PC$ = &quot;0&quot;
+320   GOSUB 3000
+330   GOSUB 4000
+</code></pre>
+<h3>Compose Line</h3>
+<p>Is this the 8th byte of a line? If so jump ahead, otherwise compose the line where each byte is separated with a space</p>
+<pre><code>340   IF B MOD 8 = 0 THEN 370 ' last byte
+350   HL$ = HL$+S$+&quot; &quot; : AL$ = AL$+HA$
+360   GOTO 450
+</code></pre>
+<h3>Handle End of Line</h3>
+<p>Don't add the space while composing</p>
+<p><code>370   HL$ = HL$+S$ : AL$ = AL$+HA$</code></p>
+<h4>reset start of line</h4>
+<p><code>380   P = 0</code></p>
+<h3>Format the line for display</h3>
+<pre><code>390   PL = 23 : PC$ = &quot; &quot; : S$ = HL$
+400   GOSUB 4000 : HL$ = S$
+410   PL = 8 : PC$ = &quot; &quot; : S$ = AL$
+420   GOSUB 4000 : AL$ = S$
+</code></pre>
+<h3>Print the line</h3>
+<pre><code>430   PRINT LA$;&quot;: &quot;;HL$;&quot;  &quot;;AL$
+440   HL$ = &quot;&quot; : AL$ = &quot;&quot;
+450   B = B+1
+460 NEXT I
+</code></pre>
+<h3>Print the last line</h3>
+<pre><code>470 PL = 23 : PC$ = &quot; &quot; : S$ = HL$
+480 GOSUB 4000 : HL$ = S$
+490 PL = 8 : PC$ = &quot; &quot; : S$ = AL$
+500 GOSUB 4000 : AL$ = S$
+510 PRINT LA$;&quot;: &quot;;HL$;&quot;  &quot;;AL$
+520 HL$ = &quot;&quot; : AL$ = &quot;&quot;
+530 END
+540 REM
+550 REM
+</code></pre>
+<h2>HEX2DEC Function</h2>
+<pre><code>1000 REM CONVERT HEX ADDRESS TO DECIMAL
+1010 V = 0 : C = 0
+1020 IF LEN(S$) &lt;&gt; 4 THEN 1130
+1030 FOR I = 4 TO 1 STEP -1
+1040   A$ = MID$(S$,I,1)
+1050   A = ASC(A$)
+1060   IF A &gt; 70 THEN A = A-32
+1070   IF A &lt; 58 THEN A = A-48
+1080   IF A &gt; 64 THEN A = A-55
+1090   IF A &lt; 0 OR A &gt; 15 THEN 1130
+1100   M = 16^C : V = V+(A*M) : C = C+1
+1110 NEXT I
+1120 GOTO 1140
+1130 BEEP: V = -1 : GOTO 1140
+1140 RETURN
+</code></pre>
+<h2>RANDOM cruft</h2>
+<pre><code>2000 REM GENERATE A RANDOM between 0 and 255
+2010 C = INT(RND(1)*256)
+2020 RETURN
+</code></pre>
+<h2>DEC2HEX Function</h2>
+<pre><code>3000 REM CONVERT DECIMAL ADDRESS TO HEX
+3010 REM d = decimal number
+3020 S$ = &quot;&quot;
+3030 D0 = D/16 : D1 = INT(D0) : D2 = (D0-D1)*16
+3040 IF D2 &gt; 9 THEN D2 = D2+55 : A$ = CHR$(D2) : GOTO 3070
+3050 A$ = STR$(D2) : IF LEFT$(A$,1) = &quot; &quot; THEN A$ = RIGHT$(A$,(LEN(A$)-1))
+3060 IF SGN(D0) = 0 THEN 3090
+3070 S$ = A$+S$
+3080 D = D1 : GOTO 3030
+3090 RETURN
+</code></pre>
+<h2>PADSTR Function</h2>
+<pre><code>4000 REM PSTR S$ - str, PL=padlength
+4010 REM PC$=padchar
+4015 X = PL-LEN(S$) : IF X &lt; 1 THEN 4060
+4020 FOR WI = 1 TO X
+4030    S$ = PC$+S$
+4040 NEXT WI
+4060 RETURN
+</code></pre>
+<p>It works! What's sad is that this is very, very slow - on the order of 3 seconds per line. So, I'm off to figuring out how to speed it up.</p>
+<p>After much discussion and back and forth, here is a fast and efficient best of breed solution that takes advantage of many intricacies of BASIC and the M100 implementation. It was provided by MikeS over on the m100 mailing list at <a href="http://lists.bitchin100.com/listinfo.cgi/m100-bitchin100.com">http://lists.bitchin100.com/listinfo.cgi/m100-bitchin100.com</a></p>
+<pre><code>1 REM Memory Dump 11/2022 Mike Stein V5
+10 DEFINTJ-Z:DIMH$(15):FORI=0TO15
+15 H$(I)=CHR$(48+I-(7*(I&gt;9))):NEXT:CLS
+20 GOSUB200:INPUT&quot;From&quot;;A:INPUT&quot;to&quot;;B
+25 T$=TIME$: FORI=ATOBSTEPW+1
+30 IFDTHENPRINT#1,USING&quot;#####&quot;;I;:PRINT#1,&quot;: &quot;;:GOTO50
+35 K=I/4096:PRINT#1,H$(K);
+40 L=(I-K*4096):PRINT#1,H$(L\256);
+45 PRINT#1,H$((LMOD256)\16)H$(LMOD16)&quot; &quot;;
+50 L$=&quot;&quot;:FORJ=0TOW:X=PEEK(I+J)
+55 PRINT#1,H$(X\16);H$(XMOD16)&quot; &quot;;
+60 Y$=&quot;.&quot;:IFX&gt;31ANDX&lt;127THENY$=CHR$(X)
+65 L$=L$+Y$:NEXT:PRINT#1,L$:NEXT
+70 E$=TIME$:PRINT#1,&quot; &quot;T$+&quot; to &quot;+E$
+100 T=VAL(MID$(TIME$,4,2))*60+VAL(RIGHT$(TIME$,2))
+110 R=VAL(MID$(T$,4,2))*60+VAL(RIGHT$(T$,2))
+120 PRINT#1,&quot; &quot;T-R&quot; seconds&quot;:END
+200 D$=&quot;H&quot;:INPUT&quot;(H)EX or (D)ec address&quot;;D$
+210 W=7:D=INSTR(&quot;dD&quot;,D$)&gt;0:B$=&quot;88n1e&quot;:C$=&quot;L&quot;
+220 INPUT&quot;(L)CD or (C)om output &quot;;C$
+230 IF INSTR(&quot;cC&quot;,C$)=0THENOPEN&quot;LCD:&quot;FOR OUTPUT AS 1:GOTO260
+240 W=15:INPUT&quot;Stat (88N1E)&quot;;B$
+250 F$=&quot;COM:&quot;+B$:OPENF$FOR OUTPUT AS 1
+260 RETURN
+</code></pre>
+<p>Here is a link to my SLOW DO file:</p>
+<ul>
+<li>Hex Dump - <a href="/assets/files/m100/HD.DO">HD.DO</a></li>
+</ul>
+<p><em>post added 2022-12-08 12:12:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

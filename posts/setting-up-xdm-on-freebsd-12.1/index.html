@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Setting up XDM on FreeBSD 12.1 - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Setting up XDM on FreeBSD 12.1</h1>
+    <p class="post-meta">Jul 21, 2020
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/freebsd/" class="tag">freebsd</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>A note about how I I got XDM working on my Thinkpad T430 in 2020. It's not difficult, but it's not common anymore.</p>
+<p>XDM is the x display manager and provides login capability for unix systems. It is particularly useful for old-style window managers like TWM.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>FreeBSD 12.1 Installed and Running on T430</li>
+<li>Xorg up and running with TWM (default)</li>
+</ul>
+<h2>Steps</h2>
+<ol>
+<li>Install XDM</li>
+</ol>
+<p><code>sudo pkg install xdm</code></p>
+<ol start="2">
+<li>Edit ttys to turn xdm on</li>
+</ol>
+<pre><code>sudo vi /etc/ttys
+# change 
+ttyv8   &quot;/usr/local/bin/xdm -nodaemon&quot;  xterm   off secure
+# to
+ttyv8   &quot;/usr/local/bin/xdm -nodaemon&quot;  xterm   on secure
+</code></pre>
+<ol start="3">
+<li>Create a basic .xsession file</li>
+</ol>
+<pre><code>vi ~/.xsession
+xrdb -Dhostname=astra $HOME/.Xresources
+xset c off s 300
+twm &amp;
+xterm -geometry 80x24+0-0
+</code></pre>
+<ol start="4">
+<li>reboot</li>
+</ol>
+<p><code>sudo reboot</code></p>
+<h2>Notes</h2>
+<ul>
+<li>/etc/ttys is the terminal control file and it's what starts all of</li>
+<li>the pseudo terminals. ttyv8 is the 9th tty (CTRL-ALT-F9)</li>
+<li>.xsession is basically .xinitrc for xdm, if it's missing xdm won't</li>
+<li>start a session when you login, so you will endlessly enter your</li>
+<li>name and password wondering why nothing is starting.</li>
+<li>xrdb will load your .Xresources file - here's an example</li>
+</ul>
+<pre><code>XTerm*foreground:   green
+XTerm*background:   black
+</code></pre>
+<ul>
+<li>the xset sets keyclick off and sets the screen saver to 5 minutes</li>
+</ul>
+<p>It's not magic, but oh, how long it took me to figure it out... I just
+received my copy of X Window System Users' Guide for X11 R3 and R4
+by Valerie Quercia and Tim O'Reilly Volume Three in the mail - written in 1990,
+but still amazing book. If it weren't for this book, I'd still be in the dark
+about .Xdefaults, .Xresources, .xsession, .xinitrc, and three dozen other
+Xisms.</p>
+<p><em>post added 2022-12-02 08:05:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

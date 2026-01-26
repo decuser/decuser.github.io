@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Using an el-cheapo logic analyser to detect address bus activity - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Using an el-cheapo logic analyser to detect address bus activity</h1>
+    <p class="post-meta">Jun 9, 2022
+      <a href="/tags/electronics/" class="tag">electronics</a> <a href="/tags/analysis/" class="tag">analysis</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note documents my exploration of using a $9.99 logic analyzer to watch my PAL-1 go through some address bus gyrations.</p>
+<h2>Planning</h2>
+<p>The program I used to exercise the PAL was from Don Lancaster's Micro Cookbook Vol. 2 (Part 1, Part 2), Chapter 7, Discover Module 2 - Figure 8:</p>
+<blockquote>
+<p>Write a program that starts on an even page, does nothing three times, jumps to an odd page, does nothing three times again, and then returns to the initial page.</p>
+<p>View address line A8 on an oscilloscope.</p>
+</blockquote>
+<p>The logic analyzer I used was this one <a href="https://www.az-delivery.de/en/products/saleae-logic-analyzer">https://www.az-delivery.de/en/products/saleae-logic-analyzer</a></p>
+<p>The software I used was the amazing opensource sigrok Pulseview - <a href="https://sigrok.org/wiki/PulseView">https://sigrok.org/wiki/PulseView</a></p>
+<p>I chose to start my program at $0200 (an even page in user RAM) and jump to $0300 (an odd page in user RAM), looking ahead to the addresses, this meant that bit 9 would be high all of the time and bit 8 would change from 0 to 1 over and over... more on this later.</p>
+<h2>Hooking up</h2>
+<p>The Logic Analyzer came with a USB-miniUSB cable and 10 female/female jumpers. I read the PAL-1 manual and found the expansion port pinout. I hooked the jumpers up to the logic analyzer and ran them as follows:</p>
+<ul>
+<li>Logic Analyzer  to   PAL-1 Expansion PINS</li>
+<li>GND to PIN-0</li>
+<li>CH0 to PIN-3 (A0)</li>
+<li>CH1 to PIN-38 (A1)</li>
+<li>CH2 to PIN-4 (A2)</li>
+<li>CH3 to PIN-37 (A3)</li>
+<li>CH4 to PIN-5 (A4)</li>
+<li>CH5 to PIN-36 (A5)</li>
+<li>CH6 to PIN-7 (A8)</li>
+<li>CH7 to PIN-34 (A9)</li>
+</ul>
+<p>I skipped A6, A7 because they should always be low during this program and I only have 8 channels!</p>
+<h3>Powered up:</h3>
+<p><img src="/assets/img/elcheapo/01.jpeg" alt="one"></p>
+<h2>Programming</h2>
+<p>The program was simple to write, starting at $0200 and jumping to $0300:</p>
+<pre><code>0200 NOP
+0201 NOP
+0202 NOP
+0203 JMP $0300
+0300 NOP
+0301 NOP
+0302 NOP
+0303 JMP $0200
+</code></pre>
+<p>In machine code:</p>
+<pre><code>0200 EA EA EA 4C 00 03
+0300 EA EA EA 4C 00 02
+</code></pre>
+<p>Since I wouldn't be stopping the program (other than by removing power), I didn't see a need to set IRQ or NMI to $1C00 as I normally would.</p>
+<h2>Running and Analyzing</h2>
+<p>I started up Pulseview and let it detect the logic analyzer. It found what it believed to be a Saleae Logic Analyzer, so I figured it was working.</p>
+<p>I set the sample settings to 1M samples and 4 Mhz for a 1/4 second sample. I added a timer on D6 to see how often the A8 line cycled (Lancaster said it would be 9 microseconds).</p>
+<p>On the PAL-1 I typed in 0200 and pressed GO to run the program.</p>
+<p>In Pulseview, I pressed Run and lo and behold, I got a readout. I zoomed in until I could read a section:</p>
+<p><img src="/assets/img/elcheapo/02.png" alt="two"></p>
+<p>Gobbledegook, or was it? I looked at it and wondered if I could just glom its secrets, but alas, it looked like data, but what kind of data, I wasn't sure.</p>
+<p>But, I thought some more, reread a bit of Lancaster's explanation of square waves and address lines, and then I got out pencil and paper and started putting 0's and 1's on the readout and doing hex conversions using A9-A0 (figuring A6,A7 to be 0's) and this is what I saw:</p>
+<p><img src="/assets/img/elcheapo/03.jpeg" alt="three"></p>
+<p>Woohoo! Numbers... my numbers! 0200...201...201...202...202...203... etc. Sure enough, just as Lancaster said it would, I was seeing the address change before my very eyes. Very satisfying.</p>
+<p>In case you were wondering, I did confirm on a subsequent sample that indeed, A6 and A7 were held low.</p>
+<p>I was left with one question. why are some addresses on the bus longer than others? At first I thought, maybe it's cuz NOP's are quicker than JMP's, which is true, but doesn't really explain why some NOPs seem quicker than others... 0200 is one count, 0201 is two, 0300 is one count, 0301 is two...</p>
+<p>Ah, well, lots to learn, so little time!</p>
+<p>Links to high res images:</p>
+<ul>
+<li><a href="/assets/img/elcheapo/01-big.jpeg">pal-1 powered up</a></li>
+<li><a href="/assets/img/elcheapo/02-big.png">pulseview before correction</a></li>
+<li><a href="/assets/img/elcheapo/03-big.jpeg">pulseview after correction</a></li>
+</ul>
+<p><em>post added 2022-12-02 17:52:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

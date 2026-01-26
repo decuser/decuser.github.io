@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>operating-systems - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<h1 class="page-heading">operating-systems</h1>
+<ul class="post-list">
+
+<li>
+  <span class="post-meta">Jan 24, 2023</span>
+  <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/mojave/" class="tag">mojave</a> <a href="/tags/x-windows/" class="tag">x-windows</a> 
+  <h3><a class="post-link" href="/posts/x-windows-dev-on-mac/">Setting up for X-Windows Development on MacOS</a></h3>
+  <div class="summary"><p>This note describes setting up a development environment for doing X Windows Development on Mac OS from the ground up. The notes do apply to other environments... with minor tweaks (I tried the same basic setup on Debian Linux, DragonFly BSD, and FreeBSD with no major issues).</p>
+<p>This is enough setup to build applications in X Windows using Xlib - the lowest level of programming in X... other than the X Protocol :). I did this because I have developed an interest in how graphical interfaces work and X, for all its quirks, is not self-limiting, crippled, partially proprietary or any of that nonsense and it is widely used.</p>
+<p>After setting up, downloading some source, building and deploying, here's what we're looking at... on a Mac:</p>
+<p><img src="/assets/img/xwindows/01-small.jpeg" alt="one"></p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 16, 2023</span>
+  <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/bsd/" class="tag">bsd</a> <a href="/tags/dragonfly-bsd/" class="tag">dragonfly-bsd</a> 
+  <h3><a class="post-link" href="/posts/dragonfly/">Installing and running DragonFly BSD 6.4</a></h3>
+  <div class="summary"><p>This note is about installing and running DragonFly BSD 6.4</p>
+<p><img src="/assets/img/dragonfly/01.jpeg" alt="one"></p>
+<p>DragonFly BSD from <a href="https://dragonflybsd.org">https://dragonflybsd.org</a> is a BSD :). As such, it is a rock and the userland is sane. It was forked from FreeBSD long ago and is renowned for its HAMMER FS. I started the exploration with the intention of learning more about HAMMER and have enjoyed the journey.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 7, 2023</span>
+  <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/truenas-core/" class="tag">truenas-core</a> <a href="/tags/fossil/" class="tag">fossil</a> 
+  <h3><a class="post-link" href="/posts/fossil-on-truenas/">Installing and running Fossil on TrueNAS Core</a></h3>
+  <div class="summary"><p>This note is about installing and running Fossil SCM on TrueNAS Core.</p>
+<p>Fossil is brought to us by the same people who developed SQLite. It was created to serve their needs, but is useful to everybody with a similar set of needs (pretty much any dev team). According to the fossil folks over at <a href="https://fossil-scm.org">https://fossil-scm.org</a>, &quot;Fossil is a simple, high-reliability, distributed software configuration management system...&quot; To mme, it's my git-killer.</p>
+<p>I have been running Fossil for about a year to see if it was worth replacing git for my own use. After this year, while I still like git and I will continue to use it for disposable repos, I have completely jumped ship for my own repos and won't be going back to hosting them on anything else anytime soon. Fossil is very lightweight, fast and responsive, has a fantastic server side ui, and is slightly more intuitive to use. It is also easier to recover from when things go wonky.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Dec 30, 2022</span>
+  <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/genode/" class="tag">genode</a> <a href="/tags/sculpt/" class="tag">sculpt</a> 
+  <h3><a class="post-link" href="/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/">Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop</a></h3>
+  <div class="summary"><p>Sheesh, live and learn. I didn't pay any attention to system requirements in the prior note [Building Sculpt 22.10 on Debian 11.6 Bullseye]({% post_url 2022-12-29-building-sculpt-22.10-on-debian-11.6 %}). I just glibly provisioned using a small portion of my available resources. In this note, I've corrected this oversight. The system requirements are much, much more modest than what I originally provisioned. There is no need for the overkill.</p>
+<p>This note is about building a bootable Sculpt OS 22.10 image using a Debian 11 &quot;Bullseye&quot; Guest OS running in VirtualBox without a desktop. If you were to include the desktop, expect that the system requirements would increase, but not by lot. I expect it would work with these same provisions, but would work better with more CPUs and RAM, as well as with a bigger allocation of hard disk space.</p>
+<p>Bottom line - The image can be built comfortably, in a reasonable amount of time (call it 15 minutes to download the toolchain, and source code, and do the build), on a system with 512 MB RAM, 1 CPU, 12 GB HDD, but it's faster with more resources provisioned, where CPU seems to be the biggest factor - more is better letting us use parallel threads in make.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Dec 30, 2022</span>
+  <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/genode/" class="tag">genode</a> <a href="/tags/sculpt/" class="tag">sculpt</a> 
+  <h3><a class="post-link" href="/posts/sculpt-os-22.10-a-truly-alternative-os/">Sculpt 22.10 - A Truly Alternative OS</a></h3>
+  <div class="summary"><p>This note is about installing and running Sculpt OS 22.10 in VirtualBox.</p>
+<p>SculptOS is an operating system built out of components provided by the Genode Operating System Framework and as such it qualifies as a truly alternative operating system. These days, that's quite a feat. Most 'alternatives' are linux distros or flavors. This OS runs on a microkernel - Nova or any one of several other choices. It is decidedly not unix, windows, linux, haiku, beos, os/2 or any other mainstream os.</p>
+<p>Sculpt OS is made so that it is relatively straightforward, if not easy, to provide a secure computing environment where applications and services are built on a Trusted Computing Base... that is an application is provisioned explicitly to depend on a tree of components that are known to be trustworthy, and are sandboxed. It is similar in some ways to Qubes OS, but significantly different in others.</p>
+<p>The learning curve is steep. So, as I explore the environment and learn more about it, I'll post more of these notes.</p>
+<p>Here's the OS running stuff.</p>
+<p><img src="/assets/img/genode/42.png" alt="fortytwo">{: width=&quot;560&quot; }</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Dec 29, 2022</span>
+  <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/genode/" class="tag">genode</a> <a href="/tags/sculpt/" class="tag">sculpt</a> 
+  <h3><a class="post-link" href="/posts/building-sculpt-22.10-on-debian-11.6/">Building Sculpt 22.10 on Debian 11.6 Bullseye</a></h3>
+  <div class="summary"><p>This note is about building a bootable Sculpt OS 22.10 image using a Debian 11 &quot;Bullseye&quot; Guest OS running in VirtualBox. This is useful as a starting point for building a custom image. My Thinkpad T430 runs Sculpt just fine, but wifi doesn't work, so I would like to add the needed firmware. This is work in that direction.</p>
+<p>The note also applies, leaving out the VirtualBox specifics, to building Sculpt OS 22.10 on a Debian instance running on metal (confirmed working 12/28).</p>
+</div>
+</li>
+
+</ul>
+<nav class="pagination">
+  
+  page 1 of 1
+  
+</nav>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

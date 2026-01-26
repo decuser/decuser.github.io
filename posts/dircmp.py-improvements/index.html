@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dircmp.py - a plan to improve and extend - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">dircmp.py - a plan to improve and extend</h1>
+    <p class="post-meta">Dec 15, 2022
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/python/" class="tag">python</a> 
+    </p>
+  </header>
+  <div class="post-content"><h2>dircmp.py</h2>
+<h3>A plan to improve and extend</h3>
+<p>This note pertains to <a href="https://github.com/decuser/decuser_python_playground/blob/master/dircmp/dircmp.py">dircmp.py</a> a program that I wrote to give me information about two directories for the purpose of deciding what to keep and what to remove and to learn about python. The note is a draft note and as such it's not very refined and it may lack in many ways, but I thought it might be interesting to put it out there and let anyone see it. Email me if you have comments or suggestions.</p>
+<h4>Caveats</h4>
+<p>The comparisons here are between simple folders and files (including hidden files). By simple, I don't mean small - I use the program to compare very large directories. However, the tool was developed for comparing directories containing user files and not as a system maintenance tool. I haven't done much investigating of hard / soft symlinks or exotic setups.</p>
+<h4>Random Observation</h4>
+<p>When originally creating the program, I had the thought that git's organization would provide an ideal filesystem for keeping changes and being able to see those changes easily. Just keep file contents in blobs, their digests, names, and locations elsewhere. Files with identical contents would share the blob and digests, but the names and locations could differ. When saving a new file, do a digest, check the registry, link to the blob, etc. Sure, it'd be slow, but integral. A little above my paygrade, but percolating in the back of my mind.</p>
+<h4>Features under consideration</h4>
+<ul>
+<li>Synchronization Planning</li>
+<li>Synchronization Execution with Undo and potentially segregation</li>
+</ul>
+<h4>Other potential enhancements</h4>
+<ul>
+<li>Historical comparisons (save results and use for future compares)</li>
+</ul>
+<h4>Future research</h4>
+<ul>
+<li>symlinks and exotic setups :)</li>
+</ul>
+<h4>Background</h4>
+<p>Currently, the program does a great job of identifying differences and matches between two directory trees. However, it does not do a good job of providing the user with plans to synchronize those trees or the ability to synchronize directories.</p>
+<p>When I started this project, my goal was to identify, not address, so the program met its objectives. Now, I want to have the program generate plans to synchronize and perform the synchroniztion.</p>
+<h4>Current functionality</h4>
+<p>Looking at the program as a whole and as a black box, it takes a directory or pair of directories and compiles a set of results...</p>
+<h5>Results</h5>
+<p>Pair Results Report</p>
+<ul>
+<li>duplicate files found in either directory</li>
+<li>exact matches found in both directories</li>
+<li>files that only exist in one of the directories</li>
+<li>files that have the same names but different digests</li>
+<li>files that have different names but same digest</li>
+</ul>
+<p>Single Results Report</p>
+<ul>
+<li>duplicate files found in directory</li>
+</ul>
+<h5>Method of Operation</h5>
+<p>The comparisons are done using a calculated digest for every file that exists within the scope of the comparison, either a single level, or recursive.</p>
+<h5>Options</h5>
+<p>The program supports the following options for controlling its behavior:</p>
+<ul>
+<li>-h, --help - show a help message and exit</li>
+<li>-b, --brief - Brief mode - suppress file lists</li>
+<li>-a, --all - Include hidden files in comparisons</li>
+<li>-r, --recurse - Recurse subdirectories</li>
+<li>-f, --fast - Perform shallow digests (super fast, but necessarily less accurate)</li>
+<li>-d, --debug - Debug mode</li>
+<li>-c, --compact - Compact mode</li>
+<li>-s, --single - Single directory mode</li>
+<li>-v, --version - show program's version number and exit</li>
+</ul>
+<h4>Discussion</h4>
+<p>All in all, it works great. I've used it a lot. It's fast and accurate. However, in using it, it has become apparent that what I really want it to do is tell me how to get two directories to synchronize.</p>
+<p>I have used rsync (prolly best of breed) and tried many, many other programs to quickly and easily sync directories, and I haven't liked any of them, in the end. Usually, I wind up losing files that I don't want to lose, sometimes through unintentional misuse of the tool, especially with rsync's arcane syntax, but usually through an inability to figure out what the tool actually does (not how it does what it does, but what the results are) and thinking two directories are synced after running the tool only to find out later that they weren't ... not exactly.</p>
+<p>At least with dirsync.py as it exists today, I know exactly what it is doing. The results are detailed and precise. It lives to tell me, in detail, what differences exist between two directories. With this information in hand, it is possible to determine a finite plan to synchronize them.</p>
+<p>Interestingly, synchronization can be accomplished with several distinct outcomes, as follows.</p>
+<h4>Synchronize how?</h4>
+<p>In the following discussions, I will use left and right to differentiate the two directories being discussed and will only discuss synchronizing two directories.</p>
+<h5>One Way Synchronizations</h5>
+<ul>
+<li>Left to Right - <em>right directory is made to exactly match the left directory</em></li>
+<li>Right to Left - <em>left directory is made to exactly match the right directory</em></li>
+</ul>
+<p>Conflicts arising in one way synchronizations are resolved by order definition - files and directories from one side are chosen whenever there is a mismatch.</p>
+<h5>Two Way Sychronizations</h5>
+<p>Whenever two way synchronizations are performed, there is a likelihood of conflicts and it is important to consider strategies to resolve those conflicts. This is where synchronization gets tricky.</p>
+<p>Here are the possible strategies</p>
+<ul>
+<li>Preserve None - <em>remove conflicts from left and right (neither win)</em></li>
+<li>Preserve Left - <em>merge left into right (left wins)</em></li>
+<li>Preserve Right - <em>merge right into left (right wins)</em></li>
+<li>Preserve Both (versioning) <em>merge both ways (both win) and create versions when there is a conflict</em></li>
+</ul>
+<h5>Thoughts before diving into the details</h5>
+<p>I think that inline with providing undo, it may be useful to preserve conflicts for the user... as in, when there's a conflict, move the loser (one side, or both) into a separate area (preserving prior location information) for the user to decide what to do with. Given a robust enough functionality, this may be moot, but I remember doing this sorta thing before and it being useful.</p>
+<h4>Rough sketch strategy</h4>
+<ul>
+<li>Analyze directories to determine what needs to change</li>
+<li>Report status</li>
+<li>Stage changes</li>
+<li>Make changes (as economically and safely as possible)</li>
+<li>Stage a modification</li>
+<li>Save recovery information</li>
+<li>Make the modification</li>
+<li>Report changes</li>
+</ul>
+<h4>Thoughts related to the economics</h4>
+<p>The expenses in this program are the costs of computing digests, comparing those digests, and copying files. Deletions are cheap, as are moves. So, the program should only compute digests as requested. When fast mode is active, the algorithm only reads a portion of the file, rather than the entirety, so this must be taken into account. Comparisons of the digest are mandatory. Copying files is expensive and should be minimized.</p>
+<p>Interestingly, when I started looking at this part of the code, I figured out that my fast digest approach probably needs to be improved. My premise, when I wrote it was that big files tend not to change in small ways over time - movies, images, and such. So, files over 10MB were considered candidates for an optimization of the digest process... This has proved to be a good intuition, but there are certainly some exceptions that could cause problems with the simple approach currently in the code (read the file size in bytes, read the first 1MB and the last 1MB and use these for the digest). I remember coming up with a strategy more along the lines of 100MB being the threshold and taking 100MB of random samples from the file. I don't remember why I changed it, but it was prolly just a matter of it taking too long and/or being somewhat more complicated to implement for the time I set aside to do the work... either way, the current code is quite basic, but fast... and it's worked fine because the only large files that I've used it on have been normal user files that simply don't change much in the middle. Still, this is definitely an area to optimize. The easiest example of a file that would be problematic that I can think of is a VM drive file... When in doubt, don't use fast mode :).</p>
+<h4>Stuff to think about</h4>
+<ul>
+<li>Fast digest - what's a better approach that's still fast (sampling is slow, but is it necessary)?</li>
+<li>I seem to remember counting being challenging - does the program count correctly or does it need a fix?</li>
+<li>Symlinks are weird, but are they a problem?</li>
+<li>How to develop a changeset - linear, in a single pass, what?</li>
+<li>How to handle the undo functionality</li>
+<li>What to do about destructive changes - save the to be destroyed file somewhere</li>
+<li>How to handle duplicate versioning - naming, save somewhere</li>
+<li>Given past experience, what to do about voluminous reporting - definitely need better delineation of sections (very hard to differentiate in terminal)</li>
+<li>Tkinter? I dunno, I prefer something like avalonia, but that's .net, still should this have a ui?</li>
+<li>Order to do the coding - left to right and right to left first, then merges, which preservation strategies in what order?</li>
+</ul>
+<p>The playground has the latest code and branches <a href="https://github.com/decuser/decuser_python_playground">https://github.com/decuser/decuser_python_playground</a></p>
+<p><em>post last updated 2022-12-15 17:53:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

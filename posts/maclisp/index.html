@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MACLISP in ITS running on an emulated PDP-10 - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">MACLISP in ITS running on an emulated PDP-10</h1>
+    <p class="post-meta">Jul 31, 2023
+      <a href="/tags/lisp/" class="tag">lisp</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This is a longer note that describes the process of getting ITS (Incompatible Timesharing System) up and running in order to run MACLISP. ITS is quite a large system and it has many different programming languages and programs available. In this note, we will only be using lisp and emacs, but future notes will explore logo, and perhaps other languages found in the distribution.</p>
+<p><img src="/assets/img/lisp/Terminal_006.png" alt="one"></p>
+<h2>Resources</h2>
+<ul>
+<li>
+<p><strong>The ITS operating system github repo</strong> <a href="https://github.com/PDP-10/its">https://github.com/PDP-10/its</a></p>
+</li>
+<li>
+<p><strong>The MACLISP manual</strong> <a href="http://www.maclisp.info/pitmanual">http://www.maclisp.info/pitmanual</a></p>
+</li>
+<li>
+<p><strong>OpenSIMH</strong> <a href="https://opensimh.org/">https://opensimh.org/</a></p>
+</li>
+</ul>
+<h2>Prerequisites</h2>
+<ul>
+<li>Linux - I'm running Debian 12 (bookworm)</li>
+<li>A build environement (make, cc, and ld) - build-essential package on debian systems</li>
+<li>OpenSIMH - any reasonably recent version should work</li>
+</ul>
+<h2>Getting Started</h2>
+<ul>
+<li>Install some dependencies</li>
+</ul>
+<p>The pdp10-ka emulator requires - git, c compiler, make, expect, curses, autoconf, sdl2, sdl2-image, sdl2-net, gtk3. You will also need telnet and some network dependencies. Generally, whenever something complains about a missing dependency, google it and then <code>sudo apt install whatever</code>.</p>
+<p>My own incanation was:</p>
+<pre><code>sudo apt install -y bridge-utils build-essential expect gawk git libgtk-3-dev libpcap-dev libpcre3-dev ncurses-base ncurses-bin libncurses5-dev libpcap-dev libsdl2-2.0-0 libsdl2-dev libsdl2-image-dev libsdl2-net-dev make net-tools telnet uml-utilities
+</code></pre>
+<ul>
+<li>Create a Workarea</li>
+</ul>
+<pre><code>mkdir -p ~/workarea/retro/its/{dist,work}
+cd ~/workarea/retro/its/dist
+</code></pre>
+<ul>
+<li>Clone the ITS repository</li>
+</ul>
+<pre><code>git clone https://github.com/PDP-10/its.git
+</code></pre>
+<ul>
+<li>Download a working system</li>
+</ul>
+<p>This will just take a few minutes. The repo can also be completely built from source, but that takes a long time (an hour or more).</p>
+<pre><code>cd its
+make download EMULATOR=pdp10-ka
+</code></pre>
+<h2>Prepare the sytem to be run</h2>
+<ul>
+<li>Backup the original run file, so we can edit it</li>
+</ul>
+<pre><code>cp out/pdp10-ka/run out/pdp10-ka/run.original
+</code></pre>
+<ul>
+<li>Edit the run file for no network to start</li>
+</ul>
+<pre><code>vi out/pdp10-ka/run
+# comment out lines dealing with imp
+# set imp enabled
+# set imp mac=e2:6c:84:1d:34:a3
+# set imp ip=192.168.2.101/24
+# set imp gw=172.31.1.100
+# set imp host=10.3.0.6
+# at imp tap:tap0
+</code></pre>
+<ul>
+<li>Create a back up of the untested baseline</li>
+</ul>
+<p>This is a good starting point. If you run into problems, you can revert to this baseline without having to redownload stuff.</p>
+<pre><code>cd ..
+tar cvjf untested-baseline.tar.bz2 its/build/pdp10-ka its/start its/out its/tools/sims/BIN/pdp10-ka
+</code></pre>
+<ul>
+<li>Unpack the basline into work</li>
+</ul>
+<pre><code>cd ../work
+tar xvf ../dist/untested-baseline.tar.bz2
+cd its
+</code></pre>
+<h2>Run ITS the first time</h2>
+<ul>
+<li>Start the simulator</li>
+</ul>
+<pre><code>./start
+KA-10 simulator V4.0-0 Current        git commit id: 48186c90
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-22&gt; at -u tk 10000 speed=300
+%SIM-INFO: Listening on port 10000
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-25&gt; at -u dpk 10002 speed=4800
+%SIM-INFO: Listening on port 10002
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-26&gt; at -u dpk line=11,10019 speed=4800
+%SIM-INFO: Line 11 Listening on port 10019
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-27&gt; at -u dpk line=15,10020 speed=4800
+%SIM-INFO: Line 15 Listening on port 10020
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-29&gt; at -u mty 10003 speed=50000
+%SIM-INFO: Listening on port 10003
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-30&gt; at -u mty line=9,10018 speed=9600
+%SIM-INFO: Line 9 Listening on port 10018
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-31&gt; at -u mty line=8,10017 speed=9600
+%SIM-INFO: Line 8 Listening on port 10017
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-32&gt; at -u mty line=7,10016;notelnet speed=50000
+%SIM-INFO: Line 7 Listening on port 10016
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-33&gt; at -u mty line=6,10015 speed=9600
+%SIM-INFO: Line 6 Listening on port 10015
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-35&gt; at ten11 10011
+%SIM-INFO: Listening on port 10011
+/home/wsenn/workarea/retro/its/work/its/out/pdp10-ka/run-37&gt; at auxcpu 10006
+%SIM-INFO: Listening on port 10006
+
+ DSKDMP
+</code></pre>
+<p>If all went well, nothing failed and you ITS prints DSKDMP in the terminal window.</p>
+<ul>
+<li>Start ITS</li>
+</ul>
+<p>When DSKDMP is displayed, you can start ITS by typing <code>its&lt;CR&gt;&lt;ESC&gt;g</code> and it will start working. Ignore the NET message. We haven't provided a working network, and won't in this note. It isn't needed.</p>
+<pre><code>DSKDMP
+its
+$G
+SALVAGER.317
+
+
+IT IS NOW  3:25:48 PM EDT, MONDAY, JUL 31, 2023
+
+KA ITS 1651 IN OPERATION AT 15:25:48
+KA ITS 1651 SYSTEM JOB USING THIS CONSOLE.
+TV 11 WENT DOWN -- 15:25:48
+ LOGIN  TARAKA 0 15:25:49
+TOP LEVEL INTERRUPT 200 DETACHED JOB # 4, USR:TARAKA CNAVRL 15:25:50
+NET: TIMED OUT TRYING TO COME UP  15:25:58
+IT IS NOW  3:26:17 PM EDT, MONDAY, JUL 31, 2023
+ LOGIN  .BATCH 0 15:26:50
+ LOGIN  GUNNER 0 15:27:50
+</code></pre>
+<h2>Login to ITS over telnet (locally)</h2>
+<ul>
+<li>Determine the port</li>
+</ul>
+<p>After the time is displayed, you can connect via telnet or login at the console itself. Let's connect via telnet. Look up above to where the dpk is attached:</p>
+<pre><code>...&gt; at -u dpk 10002 speed=4800
+%SIM-INFO: Listening on port 10002
+</code></pre>
+<ul>
+<li>Connect to the ITS sever using telnet</li>
+</ul>
+<p>That's our telnet port, fire up telnet and connect:</p>
+<pre><code>$ telnet localhost 10002
+Trying ::1...
+Connected to localhost.
+Escape character is '^]'.
+
+
+Connected to the KA-10 simulator DPK device, line 0
+</code></pre>
+<ul>
+<li>Initiate a session</li>
+</ul>
+<p>To begin a session with ITS, press <code>C-z</code>, that is press and hold Ctrl and z at the same time. In this note anytime you see C-char, this is a control chord and works this way. If you see M-char, it means press Esc, let it go, then press the char. The ordinary Meta-char chord where you press Alt and char at the same time doesn't seem to work. Alternatively and in the output a control chord may appear as ^char.</p>
+<pre><code>^Z
+KA ITS.1651. DDT.1548.
+TTY 21
+You're all alone, Fair share = 99%
+Welcome to ITS!
+
+For brief information, type ?
+For a list of colon commands, type :? and press Enter.
+For the full info system, type :INFO and Enter.
+
+Happy hacking!
+</code></pre>
+<ul>
+<li>Actually login to ITS</li>
+</ul>
+<p>And it's ready for you to login. The system is not secure, which is a good thing. Sorta like when you live somewhere where you don't have to lock the doors - hint, move outta the city... but still, lock the doors :).</p>
+<p>So, to login we will use a : command, that is a command that begins with a colon. The command to login is <code>:login loginname</code>. Initials were in vogue back when, so I will use my initials:</p>
+<pre><code>:login wds
+</code></pre>
+<p>The system will respond with:</p>
+<p><code>KA: WDS; WDS MAIL - NON-EXISTENT DIRECTORY</code></p>
+<p>No worries, even though it complains about a non-existent directory, it'll log you in anyway.</p>
+<h2>First Steps</h2>
+<p>In this section we will set the terminal type, create a user directory and log out and back in so that ITS knows about the directory going forward. Otherwise, ITS will occasionally refuse to acknowledge the existence of the directory, usually at inopportune moments like when you are trying to save a ledit session.</p>
+<ul>
+<li>Set the terminal type</li>
+</ul>
+<p>We need to tell ITS about our terminal (it may think we're a line printer terminal ATM). The command needed here is <code>:tctyp AAA</code>:</p>
+<pre><code>:tctyp AAA
+:KILL
+*
+</code></pre>
+<ul>
+<li>Create the user directory</li>
+</ul>
+<p>This is  a little tricky and a lot weird, but what we are going to do is type <code>&lt;C-r&gt;wds; ..new. (udir).&lt;CR&gt;</code> where <CR> is an actual carriage return. This will create a new directory named <code>wds</code>:</p>
+<pre><code>^R wds; ..new. (udir).
+DSK: WDS; ..NEW. (UDIR) - FILE NOT FOUND
+</code></pre>
+<p>Ignore the FILE NOT FOUND error, it created the directory. To see this, change into the directory and type <code>C-f</code> to see the files, or just type <code>:listf wds;&lt;CR&gt;</code>. I'll stop saying <code>&lt;CR&gt;</code> after : commands from this point forward, just know you need to end : commands with <code>&lt;CR&gt;</code>.</p>
+<pre><code>:cwd wds
+^F
+KA   WDS
+FREE BLOCKS #2=784 #3=1523 #0=568 #1=1541
+*
+</code></pre>
+<ul>
+<li>Create a file in the directory to keep the salvager happy</li>
+</ul>
+<p>Apparently, there is a salvager that will get rid of empty directories. Let's create a file in the directory. Let's use emacs (this is a VERY early version, but should be quite familiar to any current emacs user). This version is a set of macros running in TECO, after RMS renamed it to EMACS, but before it became a standalone editor:</p>
+<pre><code>:emacs --read-- --me--
+</code></pre>
+<p>Yup, that's exactly as typed, files have two names (somebody smarter than me knows why, just trust me for now). This file is called &quot;--read--&quot; and &quot;--me--&quot;. For me it's easier to just think of it as a name and extension separated by a space instead of a ., but ymmv.</p>
+<p>The screen should clear and emacs should fire up in all it's ancient glory:</p>
+<p><img src="/assets/img/lisp/Terminal_005.png" alt="two"></p>
+<p>Let's enter <code>This file is to prevent directory salvage.</code>, Then type <code>C-x C-s</code> to save and <code>C-x C-c</code> to exit emacs. See, familiar, and easy right (says the :wq vi guy)? Then to list the file in the directory, type <code>C-f</code>:</p>
+<pre><code>*^F
+KA   WDS
+FREE BLOCKS #2=784 #3=1523 #0=568 #1=1540
+  2   --READ --ME-- 1 ! 7/31/2023 15:57:23
+*
+</code></pre>
+<p>yay? I think so, and hopefully, you feel the same way.</p>
+<ul>
+<li>Logout and back in again</li>
+</ul>
+<p>Let's quickly logout and back in to get ITS to recognize our user directory properly:</p>
+<pre><code>:logout
+KA ITS 1651  Console 21 Free. 16:32:00
+</code></pre>
+<p>and back in with <code>C-z</code>:</p>
+<pre><code>^Z
+KA ITS.1651. DDT.1548.
+TTY 21
+You're all alone, Fair share = 99%
+Welcome to ITS!
+
+For brief information, type ?
+For a list of colon commands, type :? and press Enter.
+For the full info system, type :INFO and Enter.
+
+Happy hacking!
+:login wds
+
+To see system messages, do &quot;:MSGS&lt;CR&gt;&quot;
+</code></pre>
+<p>and set the terminal type:</p>
+<pre><code>tctyp AAA
+:KILL
+*
+</code></pre>
+<h2>Program in MACLISP</h2>
+<p>Let's create some lisp and run MACLISP. This example uses emacs initially to create a lisp source file, then we run lisp standalone, load the file we created and use it's function in our interpreter session. Then we will use ledit, a special mode of MACLISP using emacs from MACLISP on a special buffer.</p>
+<ul>
+<li>Use emacs to create the file <code>addtwo lisp</code>:</li>
+</ul>
+<pre><code>:EMACS addtwo lisp
+
+(defun addtwo (x y)
+    (+ x y))
+</code></pre>
+<p>If you've been cutting and pasting as you followed along with the note, you might find that doesn't work so great with emacs, so be careful. You may need to do it a line at a time. Anyway, enter the text, then <code>C-x C-s</code> and <code>C-x C-c</code>.</p>
+<ul>
+<li>Run MACLISP</li>
+</ul>
+<pre><code>*:LISP
+LISP 2156
+Alloc? n
+*
+</code></pre>
+<p>We're in! Let's load our lisp file:</p>
+<pre><code>(LOAD &quot;addtwo lisp&quot;)
+T
+</code></pre>
+<p>Lisp responds T if it was able to load. Let's use it in our session:</p>
+<pre><code>(addtwo 5 3)
+10
+</code></pre>
+<p>Sure 5+3 is 8, right? Ha, it's base 8 (octal). Yes, you can change it, but it is running on a dec vm, so base 8 is just, right, right?</p>
+<p>That's it for this first session, let's quit:</p>
+<pre><code>(quit)
+:KILL  EMACS0$J
+*
+</code></pre>
+<p><img src="/assets/img/lisp/Terminal_006.png" alt="one"></p>
+<p>yay again!</p>
+<ul>
+<li>Use LEDIT in MACLISP</li>
+</ul>
+<p>Let's use ledit now. Start lisp up again, and invoke (ledit) straightaway:</p>
+<pre><code>*:LISP
+LISP 2156
+Alloc? n
+*
+(ledit)
+</code></pre>
+<p>As soon as you type the closing parenthesis, emacs ledit will start up and your cursor will be top-left. The status line will display: <code>EMACS LEDIT (LISP)  Main:   *</code>:</p>
+<p><img src="/assets/img/lisp/Terminal_007.png" alt="three"></p>
+<p>In ledit, let's create the timestwo function:</p>
+<pre><code>(defun timestwo (x y)
+  (* x y))
+</code></pre>
+<p>This time, we will use some ledit magic and not treat it as a normal emacs session. To push the defined funtion to the environment, press <code>M-z</code> (<ESC> let go, then 'z'), then to exit ledit and return to lisp, type <code>C-x z</code>.</p>
+<pre><code>;Reading from LEDIT
+TIMESTWO
+;Edit Completed
+
+*
+</code></pre>
+<p>Let's try it out in our lisp environment:</p>
+<pre><code>(timestwo 5 2)
+12
+</code></pre>
+<p>Nice, and correct!</p>
+<p>We can still load the existing lisp file and use it too:</p>
+<pre><code>(load &quot;addtwo lisp&quot;)
+(addtwo (timestwo 2 3) (timestwo 3 7))
+33
+</code></pre>
+<p>Cool.</p>
+<ul>
+<li>Exit LISP</li>
+</ul>
+<p>Let's exit lisp:</p>
+<pre><code>(quit)
+:KILL  LEDIT$J
+*
+</code></pre>
+<p><img src="/assets/img/lisp/Terminal_008.png" alt="four"></p>
+<h2>Shutdown the system</h2>
+<p>To bring the system down, we will first logout out of our user account with <code>:logout</code>. Then we will <code>:login</code> with no user and proceed with a normal shutdown (if you don't logout of the user account first, the shutdown will take 5 minutes).</p>
+<ul>
+<li>Logout of the user account</li>
+</ul>
+<pre><code>* :logout
+
+KA ITS 1651  Console 21 Free. 16:42:56
+</code></pre>
+<ul>
+<li>Login as an unnamed user</li>
+</ul>
+<pre><code>^Z
+KA ITS.1651. DDT.1548.
+TTY 21
+You're all alone, Fair share = 99%
+Welcome to ITS!
+
+For brief information, type ?
+For a list of colon commands, type :? and press Enter.
+For the full info system, type :INFO and Enter.
+
+Happy hacking!
+</code></pre>
+<ul>
+<li>Initiate the shutdown</li>
+</ul>
+<p>First we initiate lock with <code>:lock</code>, then initiate the shutdown with <code>5down</code>, we will answer <code>Y</code> and <code>byeC-c</code>, to the prompts:</p>
+<pre><code>:lock
+(Please Log In)
+ LOCK.156
+_5down
+DO YOU REALLY WANT THE SYSTEM TO GO DOWN?
+Y
+___002 LOCK   SYS    DOWN   MAIL   WRITE
+
+PLEASE ENTER A BRIEF MESSAGE TO USERS, ENDED BY ^C
+bye^C
+
+KA ITS 1651 NOT IN OPERATION 16:45:23
+</code></pre>
+<p>Since we are running in a telnet session, we can just end it. To exit telnet, press <code>^]</code> and at the telnet&gt; prompt, type <code>q</code>:</p>
+<pre><code>^]
+telnet&gt; q
+Connection closed.
+$
+</code></pre>
+<p>You can close the terminal and switch to the other terminal with our console session. You will see some console messages that are new and the last few should look like:</p>
+<pre><code>SHUTDOWN COMPLETE
+PI LEVEL 7 BUGDDT.  TYPE &lt;ALTMODE&gt;P TO CONTINUE.
+YOU ARE NOW IN DDT.
+BUGPC/   CAI COFFI4+1   $Q-2/   JRST COFFI7
+</code></pre>
+<p>At this point ITS is shut down. To exit, we will type <code>^\</code> to suspend the emulator and return to the sim&gt; prompt, then type <code>q</code> to exit the sim:</p>
+<pre><code>^\
+Simulation stopped, PC: 773121 (CONSO 120,40)
+sim&gt; q
+Goodbye
+$
+</code></pre>
+<h2>Back up the working system</h2>
+<p>It is a really good idea to back up the tested working system. This way, you can always get back to what worked with minimal fuss:</p>
+<pre><code>cd ../../dist
+tar cvjf tested-working.tar.bz2 its/build/pdp10-ka its/start its/out its/tools/sims/BIN/pdp10-ka
+</code></pre>
+<p>That's it for now. In another note, I will walk through setting up networking and using LOGO in ITS with a graphical terminal and turtle.</p>
+<p>Let me know if you run into any issues.</p>
+<p>Later, Will</p>
+<p><em>post added 2023-07-31 18:07:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

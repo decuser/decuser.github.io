@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>home - decuser's blog</title>
+  <title>assembly - decuser's blog</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
@@ -25,44 +25,8 @@
       <div class="container">
         <div class="content">
           
-<h1>Welcome to decuser's blog</h1>
-<p>Topics on this blog include computing, retro-computing, operating systems, math, and whatever other technical subjects I happen to be exploring that I find interesting enough to take and share notes about.</p>
-
-<h2>Posts</h2>
-<input type="text" id="search-input" placeholder="search...">
-<ul id="results-container"></ul>
-
+<h1 class="page-heading">assembly</h1>
 <ul class="post-list">
-
-<li>
-  <span class="post-meta">Jan 25, 2026</span>
-  <a href="/tags/go/" class="tag">go</a> <a href="/tags/tools/" class="tag">tools</a> <a href="/tags/github-pages/" class="tag">github-pages</a> 
-  <h3><a class="post-link" href="/posts/ssg/">Migrating from Jekyll to a custom static site generator</a></h3>
-  <div class="summary"><p>Replaced the Jekyll-based blog with a custom static site generator written in Go.</p>
-</div>
-</li>
-
-<li>
-  <span class="post-meta">Jan 25, 2026</span>
-  <a href="/tags/tools/" class="tag">tools</a> <a href="/tags/go/" class="tag">go</a> 
-  <h3><a class="post-link" href="/posts/dex/">dex - directory comparison tool in Go</a></h3>
-  <div class="summary"><p>Released <a href="https://github.com/decuser/dex">dex</a>, a Go port of my Python dircmp utility. Clean architecture, static binaries, no dependencies.</p>
-<p>Compares two directory trees and sorts files into five buckets:</p>
-<ol>
-<li>Exact match — same path, same content</li>
-<li>Modified — same path, different content</li>
-<li>Same content, different path</li>
-<li>Only in src</li>
-<li>Only in dst</li>
-</ol>
-<p>Also finds duplicates within a single directory.</p>
-<pre><code>dex [options] &lt;dir&gt;           # find duplicates
-dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
-</code></pre>
-<p>Options: <code>-a</code> hidden files, <code>-r</code> recurse, <code>-f</code> fast digest, <code>-b</code> brief, <code>-l</code> full digests.</p>
-<p>Prebuilt binaries for Linux and macOS in the <a href="https://github.com/decuser/dex/releases">releases</a>.</p>
-</div>
-</li>
 
 <li>
   <span class="post-meta">Nov 3, 2025</span>
@@ -72,6 +36,20 @@ dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
   <img src="https://img.youtube.com/vi/mG7VGvZ0f3Q/0.jpg" alt="Video">
 </a>
 <p>In this first of two episodes on ch. 7, we're going to look at how you use different addressing modes to get data from memory.</p>
+<p>Here's a link to the playlist:</p>
+<p><a href="https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx">https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx</a></p>
+<p>Enjoy!</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Oct 20, 2025</span>
+  <a href="/tags/retro/" class="tag">retro</a> <a href="/tags/assembly/" class="tag">assembly</a> <a href="/tags/videos/" class="tag">videos</a> 
+  <h3><a class="post-link" href="/posts/bit-by-bit-e9.1/">Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard</a></h3>
+  <div class="summary"><a href="https://www.youtube.com/watch?v=w4iPfG5PdFY" target="_blank">
+  <img src="https://img.youtube.com/vi/w4iPfG5PdFY/0.jpg" alt="Video">
+</a>
+<p>This is part one of two dealing with I/O. In this episode, we'll track along with Assembly Lines ch. 6 and do some paddle reading (mouse). We'll explore the assembly instruction CMP and try to keep the lessons constrained to ~30 mins or thereabouts.</p>
 <p>Here's a link to the playlist:</p>
 <p><a href="https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx">https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx</a></p>
 <p>Enjoy!</p>
@@ -94,13 +72,13 @@ dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
 </li>
 
 <li>
-  <span class="post-meta">Oct 20, 2025</span>
+  <span class="post-meta">Oct 18, 2025</span>
   <a href="/tags/retro/" class="tag">retro</a> <a href="/tags/assembly/" class="tag">assembly</a> <a href="/tags/videos/" class="tag">videos</a> 
-  <h3><a class="post-link" href="/posts/bit-by-bit-e9.1/">Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard</a></h3>
-  <div class="summary"><a href="https://www.youtube.com/watch?v=w4iPfG5PdFY" target="_blank">
-  <img src="https://img.youtube.com/vi/w4iPfG5PdFY/0.jpg" alt="Video">
+  <h3><a class="post-link" href="/posts/bit-by-bit-e5/">Bit by Bit - E5 - Escape Mode</a></h3>
+  <div class="summary"><a href="https://www.youtube.com/watch?v=uqqv1GQFNl4" target="_blank">
+  <img src="https://img.youtube.com/vi/uqqv1GQFNl4/0.jpg" alt="Video">
 </a>
-<p>This is part one of two dealing with I/O. In this episode, we'll track along with Assembly Lines ch. 6 and do some paddle reading (mouse). We'll explore the assembly instruction CMP and try to keep the lessons constrained to ~30 mins or thereabouts.</p>
+<p>The fifth episode of bit by bit. In it, I cover BASIC's ESC Mode. A strange little mode of BASIC that allows one to move around with the cursor and make changes to a line of basic. It has some full-screen aspects, but is by no means, a true full-screen edit mode. But, it's the closest thing to it that the IIe offered back in the day out of the box.</p>
 <p>Here's a link to the playlist:</p>
 <p><a href="https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx">https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx</a></p>
 <p>Enjoy!</p>
@@ -110,15 +88,9 @@ dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
 <li>
   <span class="post-meta">Oct 18, 2025</span>
   <a href="/tags/retro/" class="tag">retro</a> <a href="/tags/assembly/" class="tag">assembly</a> <a href="/tags/videos/" class="tag">videos</a> 
-  <h3><a class="post-link" href="/posts/bit-by-bit-e8/">Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around</a></h3>
-  <div class="summary"><a href="https://www.youtube.com/watch?v=hKTpBjrYnsU" target="_blank">
-  <img src="https://img.youtube.com/vi/hKTpBjrYnsU/0.jpg" alt="Video">
-</a>
-<p>In this episode I cover nine pages of the book! But what a nine pages - lots and lots to learn here. I walk through using the mouse and numpad in place of paddles, a bit about merlin, a bit about basic, and a bit about calling into firmware.</p>
-<p>In the video, I talk a bit of nonsense, too. Workable nonsense, but naive and only partially correct. When I talk about OBJ no longer working, that isn't technically correct. It works, but it doesn't work on addresses as low as our usualy $300. Also, once it's no longer being used, we can follow the path laid out by the author, and just BLOAD instead of BRUN, then the RTS will be fine and call 768 will work as expected.</p>
-<p>A careful read of pg. 35, section A Note about BRUN and COUT is all that's required to iron this out.</p>
-<p>tldr - don't use OBJ, leave ORG $300, don't use BRUN, use BLOAD followed by CALL 768.</p>
-<p>Not a big whoop, but worth noting. In future installments I'll use the correct approach.</p>
+  <h3><a class="post-link" href="/posts/bit-by-bit-e6/">Bit by Bit - E6 - Bits in Bits Out</a></h3>
+  <div class="summary"><iframe width="560" height="315" src="https://www.youtube.com/embed/-L1-3d_-8Bg?si=_EToPq50T_b73bu3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<p>This, the 6th episode of bit by bit shows how to get information into and out of the AppleWin emulated Apple IIe. Shift-INS to paste and PR#1 to print (know where to find your printout... spoiler, it's in .PlayonLinux/AppleWin/.../applewin/printer.txt)</p>
 <p>Here's a link to the playlist:</p>
 <p><a href="https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx">https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx</a></p>
 <p>Enjoy!</p>
@@ -146,9 +118,15 @@ dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
 <li>
   <span class="post-meta">Oct 18, 2025</span>
   <a href="/tags/retro/" class="tag">retro</a> <a href="/tags/assembly/" class="tag">assembly</a> <a href="/tags/videos/" class="tag">videos</a> 
-  <h3><a class="post-link" href="/posts/bit-by-bit-e6/">Bit by Bit - E6 - Bits in Bits Out</a></h3>
-  <div class="summary"><iframe width="560" height="315" src="https://www.youtube.com/embed/-L1-3d_-8Bg?si=_EToPq50T_b73bu3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-<p>This, the 6th episode of bit by bit shows how to get information into and out of the AppleWin emulated Apple IIe. Shift-INS to paste and PR#1 to print (know where to find your printout... spoiler, it's in .PlayonLinux/AppleWin/.../applewin/printer.txt)</p>
+  <h3><a class="post-link" href="/posts/bit-by-bit-e8/">Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around</a></h3>
+  <div class="summary"><a href="https://www.youtube.com/watch?v=hKTpBjrYnsU" target="_blank">
+  <img src="https://img.youtube.com/vi/hKTpBjrYnsU/0.jpg" alt="Video">
+</a>
+<p>In this episode I cover nine pages of the book! But what a nine pages - lots and lots to learn here. I walk through using the mouse and numpad in place of paddles, a bit about merlin, a bit about basic, and a bit about calling into firmware.</p>
+<p>In the video, I talk a bit of nonsense, too. Workable nonsense, but naive and only partially correct. When I talk about OBJ no longer working, that isn't technically correct. It works, but it doesn't work on addresses as low as our usualy $300. Also, once it's no longer being used, we can follow the path laid out by the author, and just BLOAD instead of BRUN, then the RTS will be fine and call 768 will work as expected.</p>
+<p>A careful read of pg. 35, section A Note about BRUN and COUT is all that's required to iron this out.</p>
+<p>tldr - don't use OBJ, leave ORG $300, don't use BRUN, use BLOAD followed by CALL 768.</p>
+<p>Not a big whoop, but worth noting. In future installments I'll use the correct approach.</p>
 <p>Here's a link to the playlist:</p>
 <p><a href="https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx">https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx</a></p>
 <p>Enjoy!</p>
@@ -156,13 +134,29 @@ dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
 </li>
 
 <li>
-  <span class="post-meta">Oct 18, 2025</span>
+  <span class="post-meta">Oct 11, 2025</span>
   <a href="/tags/retro/" class="tag">retro</a> <a href="/tags/assembly/" class="tag">assembly</a> <a href="/tags/videos/" class="tag">videos</a> 
-  <h3><a class="post-link" href="/posts/bit-by-bit-e5/">Bit by Bit - E5 - Escape Mode</a></h3>
-  <div class="summary"><a href="https://www.youtube.com/watch?v=uqqv1GQFNl4" target="_blank">
-  <img src="https://img.youtube.com/vi/uqqv1GQFNl4/0.jpg" alt="Video">
+  <h3><a class="post-link" href="/posts/bit-by-bit-e2/">Bit by Bit - E2 - Getting Started</a></h3>
+  <div class="summary"><a href="https://www.youtube.com/watch?v=xvE0tiUPfKE" target="_blank">
+  <img src="https://img.youtube.com/vi/xvE0tiUPfKE/0.jpg" alt="Video">
 </a>
-<p>The fifth episode of bit by bit. In it, I cover BASIC's ESC Mode. A strange little mode of BASIC that allows one to move around with the cursor and make changes to a line of basic. It has some full-screen aspects, but is by no means, a true full-screen edit mode. But, it's the closest thing to it that the IIe offered back in the day out of the box.</p>
+<p>This is the second episode of Bit by Bit.</p>
+<p>In this episode I talk about what you need to know to get started. I demonstrate the use of the iie and it's various prompt environments.</p>
+<p>Here's a link to the playlist:</p>
+<p><a href="https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx">https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx</a></p>
+<p>Enjoy!</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Oct 11, 2025</span>
+  <a href="/tags/retro/" class="tag">retro</a> <a href="/tags/assembly/" class="tag">assembly</a> <a href="/tags/videos/" class="tag">videos</a> 
+  <h3><a class="post-link" href="/posts/bit-by-bit-e3/">Bit by Bit - E3 - Assemblers</a></h3>
+  <div class="summary"><a href="https://www.youtube.com/watch?v=r809Irzu9q8" target="_blank">
+  <img src="https://img.youtube.com/vi/r809Irzu9q8/0.jpg" alt="Video">
+</a>
+<p>This is the third episode of Bit by Bit.</p>
+<p>In this episode I work through the material covered in chapter 3 of Assembly Lines - Assemblers in detail.</p>
 <p>Here's a link to the playlist:</p>
 <p><a href="https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx">https://www.youtube.com/playlist?list=PL_z8XUfqFSXHvJ5E5r80ZmMN7LRcCI0Zx</a></p>
 <p>Enjoy!</p>
@@ -187,18 +181,9 @@ dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
 </ul>
 <nav class="pagination">
   
-  page 1 of 12
-  <a href="/page/2/">older →</a>
+  page 1 of 2
+  <a href="/tags/assembly/page/2/">older →</a>
 </nav>
-
-<script src="/assets/js/simple-jekyll-search.min.js"></script>
-<script>
-SimpleJekyllSearch({
-  searchInput: document.getElementById('search-input'),
-  resultsContainer: document.getElementById('results-container'),
-  json: '/search.json'
-})
-</script>
 
         </div>
         <aside>

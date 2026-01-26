@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PAL-1 Getting Started - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">PAL-1 Getting Started</h1>
+    <p class="post-meta">Jun 7, 2022
+      <a href="/tags/retro-computing/" class="tag">retro-computing</a> <a href="/tags/pal-1/" class="tag">pal-1</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This is a note on how to get and get started using a PAL-1. The PAL-1 is a replica of the KIM-1, an old-school 6502 trainer, from back in the day.</p>
+<p>Let's get started.</p>
+<h2>Preliminaries</h2>
+<p>In order to put the PAL-1 together, you should have a work area that is well lit, a magnifying glass, a soldering iron/station, and a desoldering wick/pump.</p>
+<ol>
+<li>Get a PAL-1 kit (a pcb and lots of parts to solder) <a href="https://www.tindie.com/products/tkoak/pal-1-a-mos-6502-powered-computer-kit">https://www.tindie.com/products/tkoak/pal-1-a-mos-6502-powered-computer-kit</a></li>
+</ol>
+<p>It's $80 and it goes in and out of stock pretty regularly.</p>
+<ol start="2">
+<li>
+<p>Get a 7 volt 1 or 2 amp DC power supply with 2.5mm x 5.5mm jack</p>
+</li>
+<li>
+<p>Get the user manual and read it <a href="http://pal.aibs.ws/assets/PAL_en.pdf">http://pal.aibs.ws/assets/PAL_en.pdf</a></p>
+</li>
+<li>
+<p>Open the box and take out the parts. Refer to the interactive bill of materials (BOM) <a href="http://pal.aibs.ws/assets/ibom/pal-1.html">http://pal.aibs.ws/assets/ibom/pal-1.html</a></p>
+</li>
+</ol>
+<p>Use the BOM to make sure all of the parts are present before you start soldering. It is also super useful for locating where parts are located on the PCB when you start soldering.</p>
+<ol start="5">
+<li>
+<p>Optionally, consider cleaning the flux off the board before soldering - use a fiberglass brush or other method. This makes soldering faster and reduces the chances of cold joints.</p>
+</li>
+<li>
+<p>Solder in a rational order and watch out for solder bridges</p>
+</li>
+</ol>
+<ul>
+<li>Start with resistors, capacitors and diodes (low profile components)</li>
+<li>Then do resistor network, electrolytic capacitors, led, and sockets</li>
+<li>Then do power regulator and power jack</li>
+<li>Do a smoke test (plug in and see if anything smokes)</li>
+<li>Then do pushbuttons, and sst switch</li>
+<li>Then do io pins and jumper pins</li>
+<li>Then do the 7-segments, use a black sharpie on the outside edges of the packages if you want a cleaner look (otherwise, you might see the white edges between the devices, purely cosmetic)</li>
+<li>Then do the rs232</li>
+<li>Do another smoke test</li>
+<li>Last, do the crystal</li>
+<li>Do a final smoke test</li>
+</ul>
+<p>Basically, start with the shortest components and passive and work your way progressively taller and active. Otherwise, you'll wind up needing a third hand to help you hold components in place while you solder on the backside and you'll minimize the damage by doing passive components first.</p>
+<ol start="7">
+<li>Plug in the IC's</li>
+</ol>
+<p>Watch the direction of the sockets when installing the chips (6502 and 6532 are different from the other horizontal chips).</p>
+<ol start="8">
+<li>
+<p>Leave JP-1 open and close JP-2 (keyboard operation, onboard memory)</p>
+</li>
+<li>
+<p>Power up and see if it works. If you get the lit LED and nothing is smoking, you should also see the 7-segment LEDs light up. Press RS and you are ready to go.</p>
+</li>
+</ol>
+<p>Thanks to Magnus Olsson and Jim McClanahan for their suggestions.</p>
+<p><em>post added 2022-12-02 10:54:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

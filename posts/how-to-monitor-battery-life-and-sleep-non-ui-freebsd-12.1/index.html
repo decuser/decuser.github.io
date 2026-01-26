@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to Monitor Battery Life and Sleep on FreeBSD 12.1 - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">How to Monitor Battery Life and Sleep on FreeBSD 12.1</h1>
+    <p class="post-meta">Jul 21, 2020
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/freebsd/" class="tag">freebsd</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>A non-ui method for monitoring battery life and sleep on FreeBSD. This is useful for when you just want to run the command line or a lightweight window manager like TWM, FVWM, etc. Installs as a service and will sleep the machine as the battery approaches it's lowpoint of charge.</p>
+<h2>Sources</h2>
+<ul>
+<li>Original answer to my post: <a href="https://forums.FreeBSD.org/threads/sleeping-laptop-without-a-gui.76271/post-470222">https://forums.FreeBSD.org/threads/sleeping-laptop-without-a-gui.76271/post-470222</a></li>
+<li>This work, posted as a <em>useful script</em>:
+<a href="https://forums.freebsd.org/threads/useful-scripts.737/page-14#post-470419">https://forums.freebsd.org/threads/useful-scripts.737/page-14#post-470419</a></li>
+</ul>
+<h2>Check battery status:</h2>
+<pre><code>apm
+APM version: 1.2
+APM Management: Disabled
+AC Line status: off-line
+Battery Status: low
+Remaining battery life: 7%
+Remaining battery time:  0:33:00
+Number of batteries: 1
+Battery 0:
+    Battery Status: low
+    Remaining battery life: 7%
+    Remaining battery time:  0:33:00
+</code></pre>
+<h2>Create and install a daemon to monitor battery</h2>
+<p>After several failed attempts, I have figured out how to get my laptop to sleep when it's low on reserves, even without a DE.</p>
+<p>The approach is as follows:</p>
+<ol>
+<li>create a script to monitor battery levels and put the laptop to sleep</li>
+<li>create an rc script to control the monitor script</li>
+<li>install the scripts</li>
+<li>register and start the service</li>
+</ol>
+<h3>Create the monitor script</h3>
+<pre><code>vi sbin-sleepd
+#!/bin/sh
+
+# who to warn
+email=root
+# battery level critical %
+critlevel=10
+# seconds to recheck and eventually act when battery is low
+sleeps=120
+# seconds to pause between script runs
+loop=300
+
+while true
+
+do
+
+# battery %
+battery1=$( /sbin/sysctl -n hw.acpi.battery.life )
+# AC plugged in?
+acpower1=$( /sbin/sysctl -n hw.acpi.acline )
+
+if [ ${battery1} -le ${critlevel} ] &amp;&amp; [ ${acpower1} = &quot;0&quot; ]
+ then
+  /bin/sleep ${sleeps}
+
+  battery2=$( /sbin/sysctl -n hw.acpi.battery.life  )
+  acpower2=$( /sbin/sysctl -n hw.acpi.acline )
+
+   if [ ${battery2} -lt ${battery1} ] &amp;&amp; [ ${acpower2} = &quot;0&quot; ]
+    then
+     echo &quot;Insert power plug or kill PID $$ to prevent automatic shutdown.&quot; | /usr/bin/mail -s &quot;Battery ${battery2} % - Will shutdown in ${sleeps} seconds&quot; ${email}
+     /bin/sleep ${sleeps}
+
+      acpower3=$( /sbin/sysctl -n hw.acpi.acline )
+
+      if [ ${acpower3} = &quot;0&quot; ]
+       then /usr/sbin/zzz
+      fi
+   fi
+fi
+
+/bin/sleep ${loop}
+done
+</code></pre>
+<h3>Create the rc script</h3>
+<pre><code>vi rc-sleepd
+#!/bin/sh
+#
+# PROVIDE: sleepd
+# REQUIRE:
+# KEYWORD:
+
+. /etc/rc.subr
+
+name=&quot;sleepd&quot;
+rcvar=&quot;sleepd_enable&quot;
+
+sleepd_command=&quot;/usr/sbin/sleepd&quot;
+pidfile=&quot;/var/run/${name}.pid&quot;
+command=&quot;/usr/sbin/daemon&quot;
+command_args=&quot;-P ${pidfile} -r -f ${sleepd_command}&quot;
+
+load_rc_config $name
+: ${sleepd_enable:=no}
+
+run_rc_command &quot;$1&quot;
+</code></pre>
+<h3>Install the scripts</h3>
+<pre><code>sudo install -b -g wheel -m 0555 -o root -v rc-sleepd /etc/rc.d/sleepd
+sudo install -b -g wheel -m 0555 -o root -v sbin-sleepd /usr/sbin/sleepd
+</code></pre>
+<h3>Register and start the service</h3>
+<pre><code>sysrc -f /etc/rc.conf sleepd_enable=&quot;YES&quot;
+service sleepd start
+</code></pre>
+<p><em>post added 2022-12-01 15:26:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

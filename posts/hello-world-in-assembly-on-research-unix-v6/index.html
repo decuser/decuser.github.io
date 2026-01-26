@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hello, World! in Assembly on Research Unix Version 6 - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Hello, World! in Assembly on Research Unix Version 6</h1>
+    <p class="post-meta">Jan 22, 2016
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/v6/" class="tag">v6</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>A note demonstrating the process of assembling and running a simple <strong>hello, world</strong> Unix assembly language application on Research Unix Sixth Edition. It's short and sweet, but gets the job done!</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>A working Research Unix v6 environment: [Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emplator (Nov 23, 2015)]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %})</li>
+<li>A recent version of SimH (since December 2015): <a href="https://github.com/simh/simh">https://github.com/simh/simh</a></li>
+<li>Some experience with SimH and copying and pasting between host and simulated os.</li>
+</ul>
+<h2>Version 1 - Hello, World using mesg from the system library</h2>
+<p>First, fire up your v6 environment in SimH:</p>
+<pre><code>$ pdp11 nboot.ini
+
+PDP-11 simulator V4.0-0 Beta        git commit id: 9c977e93
+Disabling XQ
+Listening on port 5555
+@rkunix
+login: root
+#
+</code></pre>
+<p>Rather than editing using ed, it is simpler to use cat and the SimH copy paste capability. To do this, redirect cat's output to hello.s:</p>
+<p><code># cat &gt; hello.s</code></p>
+<p>and paste the contents into the terminal window:</p>
+<p>---snip</p>
+<pre><code>/ hello world using external mesg routine
+
+        .globl  mesg
+
+        mov     sp,r5
+        jsr     r5,mesg; &lt;Hello, World!\n\0&gt;; .even
+        sys     exit
+</code></pre>
+<p>---snip</p>
+<p>Be careful not to mess with the tab characters. Everything between the snips is content. To signal cat that the file is complete, type <code>CTRL-d</code>. You will be returned to the prompt.</p>
+<p>To assemble the file, type as and the file to assemble:</p>
+<p><code># as hello.s</code></p>
+<p>In order for the program to actually work, it will need to be linked with the system library:</p>
+<p><code># ld -s a.out -l</code></p>
+<p>Test the program:</p>
+<pre><code># a.out
+Hello, World!
+#
+</code></pre>
+<p>Save it:</p>
+<p><code># cp a.out hello</code></p>
+<p>##Version 2 - Hello, World using mesg inline</p>
+<p>The version above is simple and works. However, it relies on an external library and requires a link step. Below is the same program, but with the mesg routine moved directly into the assembly file, just for fun.</p>
+<p>Redirect cat to a new file:</p>
+<p><code># cat &gt; hello2.s</code></p>
+<p>and paste the contents into the terminal window:</p>
+<p>---snip</p>
+<pre><code>/ hello world using internal mesg routine
+
+        mov     sp,r5
+        jsr     r5,mesg; &lt;Hello, World!\n\0&gt;; .even
+        sys     exit
+
+mesg:
+        mov     r0,-(sp)
+        mov     r5,r0
+        mov     r5,0f
+1:
+        tstb    (r5)+
+        bne     1b
+        sub     r5,r0
+        com     r0
+        mov     r0,0f+2
+        mov     $1,r0
+        sys     0; 9f
+.data
+9:
+        sys     write; 0:..; ..
+.text
+        inc     r5
+        bic     $1,r5
+        mov     (sp)+,r0
+        rts     r5
+</code></pre>
+<p>---snip</p>
+<p>To assemble the file, as before:</p>
+<p><code># as hello.s</code></p>
+<p>This version can be run directly without linking:</p>
+<pre><code># a.out
+Hello, World!
+#
+</code></pre>
+<p>Save it:</p>
+<p><code># cp a.out hello2</code></p>
+<p>The source for the mesg routine is taken directly from <code>/usr/source/s3/mesg.s</code></p>
+<h2>Next Steps</h2>
+<p>This is a quickie note and will evolve as I learn more about using assembly in Unix v6.</p>
+<p><em>post added 2022-12-01 12:15:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

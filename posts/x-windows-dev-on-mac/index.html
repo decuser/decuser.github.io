@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Setting up for X-Windows Development on MacOS - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Setting up for X-Windows Development on MacOS</h1>
+    <p class="post-meta">Jan 24, 2023
+      <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/mojave/" class="tag">mojave</a> <a href="/tags/x-windows/" class="tag">x-windows</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note describes setting up a development environment for doing X Windows Development on Mac OS from the ground up. The notes do apply to other environments... with minor tweaks (I tried the same basic setup on Debian Linux, DragonFly BSD, and FreeBSD with no major issues).</p>
+<p>This is enough setup to build applications in X Windows using Xlib - the lowest level of programming in X... other than the X Protocol :). I did this because I have developed an interest in how graphical interfaces work and X, for all its quirks, is not self-limiting, crippled, partially proprietary or any of that nonsense and it is widely used.</p>
+<p>After setting up, downloading some source, building and deploying, here's what we're looking at... on a Mac:</p>
+<p><img src="/assets/img/xwindows/01-small.jpeg" alt="one"></p>
+<h2>Resources</h2>
+<ul>
+<li>XQuartz - <a href="https://www.xquartz.org/">https://www.xquartz.org</a></li>
+<li>XQuartz Developer Information - <a href="https://www.xquartz.org/Developer-Info.html">https://www.xquartz.org/Developer-Info.html</a></li>
+<li>MacPorts - <a href="https://www.macports.org/install.php">https://www.macports.org/install.php</a></li>
+<li>X.org Foundation - <a href="https://www.x.org/wiki">https://www.x.org/wiki</a></li>
+<li>Xlib Programming Manual R5 3rd Edition Example Files - <a href="https://resources.oreilly.com/examples/9781565920026/">https://resources.oreilly.com/examples/9781565920026</a></li>
+<li>Xeyes source code - last updated a year or so ago - <a href="https://gitlab.freedesktop.org/xorg/app/xeyes">https://gitlab.freedesktop.org/xorg/app/xeyes</a></li>
+</ul>
+<h2>System Requirements</h2>
+<ul>
+<li>MacOS - I'm running this on Mojave, but  have tested it on Monterrey as well</li>
+<li>XQuartz - I'm running 2.8.4</li>
+<li>Macports - I'm running 2.8.0</li>
+<li>Some code to run in X - I'm using xeyes from X itself and basicwin from Volume One of The Definitive Guides to the X Window System: Xlib Programming Manual for Version 11 R4/R5 by Adrian Nye</li>
+</ul>
+<h2>Getting MacOS Ready</h2>
+<p>There are only a few small steps to take to prepare MacOS for doing X Windows development:</p>
+<ol>
+<li>Install XQuartz</li>
+<li>Install MacPorts (to satisfy any dependencies and fill tool gaps like imake)</li>
+<li>Install imake</li>
+<li>Configure and Test XQuartz</li>
+<li>Build xeyes and basicwin</li>
+<li>Celebrate</li>
+</ol>
+<h3>1. Install XQuartz</h3>
+<p>Head over to <a href="https://www.xquartz.org/">https://www.xquartz.org</a> and download the install package. Run it. Logout as advised when install is complete and log back in.</p>
+<h3>2. Install MacPorts</h3>
+<p>Browse to <a href="https://www.macports.org/install.php">https://www.macports.org/install.php</a> and grab an installer for your version of MacOS. Run it.</p>
+<h3>3. Install imake</h3>
+<p>Open terminal and type <code>sudo port install imake</code> to install it.</p>
+<h3>4. Configure and test XQuartz</h3>
+<p>Start XQuartz (it's in /Applications/Utilities)</p>
+<ul>
+<li>Open Preferences</li>
+<li>Click Input</li>
+<li>If you need 3 button mouse emulation (trackpad), Check the box</li>
+<li>Check Enable key equivalents under X11</li>
+<li>Click Output</li>
+<li>Check Full-screen mode and Auto-show menu bar in full-screen mode</li>
+<li>Click Pasteboard and enable any helpful settings you like</li>
+</ul>
+<p>Note: When you enable full-screen mode, your x windows will appear on a separate desktop. This is different behavior than you will be used to if you have already been using X on your Mac, but it's more in line with a typical x windows environment this way</p>
+<h4>Investigating the XQuartz startup file situation</h4>
+<p>I wanted to use twm as the window manager instead of quartz-wm. So, I made some additional changes to the startup environment.</p>
+<h5>Finding xinitrc</h5>
+<p>On Mac OS, XQuartz provides the X11 environment (the server and many of the clients). The server is configured via xinitrc. This file can be found using <code>find</code>:</p>
+<pre><code>find /opt -name xinitrc
+/opt/X11/etc/X11/xinit/xinitrc
+</code></pre>
+<h5>Looking at the delivered xinitrc</h5>
+<p>A look at this file shows that it provides a mechanism for customization using an <code>.xinitrc.d</code> directory:</p>
+<pre><code>cat /opt/X11/etc/X11/xinit/xinitrc
+#!/bin/sh
+
+userresources=$HOME/.Xresources
+usermodmap=$HOME/.Xmodmap
+sysresources=/opt/X11/etc/X11/xinit/.Xresources
+sysmodmap=/opt/X11/etc/X11/xinit/.Xmodmap
+
+# merge in defaults and keymaps
+
+if [ -f $sysresources ]; then
+
+    if [ -x /usr/bin/cpp ] ; then
+        xrdb -merge $sysresources
+    else
+        xrdb -nocpp -merge $sysresources
+    fi
+
+
+
+fi
+
+if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+fi
+
+if [ -f &quot;$userresources&quot; ]; then
+
+    if [ -x /usr/bin/cpp ] ; then
+        xrdb -merge &quot;$userresources&quot;
+    else
+        xrdb -nocpp -merge &quot;$userresources&quot;
+    fi
+
+
+
+fi
+
+if [ -f &quot;$usermodmap&quot; ]; then
+    xmodmap &quot;$usermodmap&quot;
+fi
+
+# start some nice programs
+
+if [ -d /opt/X11/etc/X11/xinit/xinitrc.d ] ; then
+	for f in /opt/X11/etc/X11/xinit/xinitrc.d/?*.sh ; do
+		[ -x &quot;$f&quot; ] &amp;&amp; . &quot;$f&quot;
+	done
+	unset f
+fi
+
+twm &amp;
+xclock -geometry 50x50-1+1 &amp;
+xterm -geometry 80x50+494+51 &amp;
+xterm -geometry 80x20+494-0 &amp;
+exec xterm -geometry 80x66+0+0 -name login
+</code></pre>
+<p>I have included the entire file because it is worth seeing, but the relevant portion is at the end of the file:</p>
+<pre><code>if [ -d /opt/X11/etc/X11/xinit/xinitrc.d ] ; then
+	for f in /opt/X11/etc/X11/xinit/xinitrc.d/?*.sh ; do
+		[ -x &quot;$f&quot; ] &amp;&amp; . &quot;$f&quot;
+	done
+	unset f
+fi
+</code></pre>
+<p>This snippet looks in <code>/opt/X11/etc/X11/xinit/xinitrc.d</code> for any <code>.sh</code> files and runs them.</p>
+<h5>Looking in the <code>/opt/X11/etc/X11/xinit/xinitrc.d</code> directory</h5>
+<p>To see what's going on, take a look at the directory:</p>
+<pre><code>ls /opt/X11/etc/X11/xinit/xinitrc.d
+10-fontdir.sh	98-user.sh	99-quartz-wm.sh
+</code></pre>
+<p>They're each interesting in their own right, but the one we're interested in is <code>98-user.sh</code>. Let's take a look at it:</p>
+<pre><code>cat /opt/X11/etc/X11/xinit/xinitrc.d/98-user.sh
+if [ -d &quot;${HOME}/.xinitrc.d&quot; ] ; then
+        for f in &quot;${HOME}&quot;/.xinitrc.d/*.sh ; do
+                [ -x &quot;$f&quot; ] &amp;&amp; . &quot;$f&quot;
+        done
+        unset f
+fi
+</code></pre>
+<p>Well, that looks familiar. It appears that it looks for a .xinitrc.d folder in the users directory and runs any <code>.sh</code> files it finds. That's our hook for running <code>twm</code>.</p>
+<h4>Setting twm as the window manager</h4>
+<p>To set twm as the window manager requires us to create a startup file and give it execute permission:</p>
+<pre><code>mkdir -p ~/.xinitrc.d
+cat &lt;&lt;EOF &gt; ~/.xinitrc.d/99-wm.sh
+#!/bin/sh
+exec twm
+EOF
+chmod +x ~/.xinitrc.d/99-wm.sh
+</code></pre>
+<h4>Test twm</h4>
+<p>Close XQuartz if it is currently running so that it will pick up the changes you have made up to this point and reopen it. To change to the desktop, ensure that XQuartz has the focus (click on it) and type the three key combination <code>Command-Option-a</code> or from the menu, select XQuartz-&gt;Toggle Full Screen:</p>
+<p><img src="/assets/img/xwindows/02.png" alt="two"></p>
+<p>Your screen should switch to twm. Position your mouse somewhere near top left to position the xterm window:</p>
+<p><img src="/assets/img/xwindows/03.png" alt="three"></p>
+<p>To switch between your x windows session and MacOS, just press <code>Command-Option-a</code> or move your mouse to the top of the screen and from the menu, select XQuartz-&gt;Toggle Full Screen.</p>
+<p>Your X Windows will continue running until you either exit twm, or close XQuartz. The proper way to do it is to close any running application and exit twm. In order to close open applications, you can type <code>CTL-d</code> to close the applications input (works for terminal and a lot of unix utilities) or use the kill command from the twm menu. To bring up the twm menu, left click on the desktop, outside of any window, while in X Windows, and the twm menu will appear:</p>
+<p><img src="/assets/img/xwindows/04.png" alt="four"></p>
+<p>To exit twm, bring its menu up and click exit.</p>
+<p>Note: Occasionally, in my experience, if you don't exit twm cleanly, it will display a phantom window frame on the screen when you start it up (no big whoop, but annoying). So, exit correctly or ignore the cruft.</p>
+<p>Read more about twm at <a href="https://www.oreilly.com/library/view/x-window-system/9780937175149/Chapter03.html">https://www.oreilly.com/library/view/x-window-system/9780937175149/Chapter03.html</a></p>
+<p>From now on, we will be running any x applications in twm. Just note that they will also work fine in xquartz-wm and appear to be more integrated with MacOS, then. We can build our apps in a regular MacOS terminal and enjoy easy cut and paste, but let's run the apps in xterm.</p>
+<h3>5. Build xeyes and basicwin</h3>
+<p>Now that we have a working X Window environment to explore let's try building a couple of apps. First, let's build my all time favorite X client, xeyes.</p>
+<h4>Get the xeyes source</h4>
+<pre><code>cd ~/sandboxes-git
+git clone https://gitlab.freedesktop.org/xorg/app/xeyes
+cd xeyes
+</code></pre>
+<h4>Build xeyes from source</h4>
+<p>I won't apologize for this next bit, suffice it to say that some sorcery is involved... and glomming the XQuartz Developer Information page at <a href="https://www.xquartz.org/Developer-Info.html">https://www.xquartz.org/Developer-Info.html</a>. The instructions there are way out of date, but they do give a hint as to how to set up your environment for building X applications from the X.Org distribution (of which xeyes is part).</p>
+<p>That said, I will apologize, in advance, if your build fails due to missing dependencies (like autoconf). I have been running this system for a while and I do a lot of development on it, so I probably have already installed some of the dependencies (how would I know, right?). Anyway, if you do hit a notice that you are missing a library or dev tool, just <code>sudo port install</code> it.</p>
+<p>Now, without further ado, let's build xeyes:</p>
+<pre><code>export ACLOCAL=&quot;aclocal -I /opt/X11/share/aclocal&quot;
+export PKG_CONFIG_PATH=&quot;/opt/X11/share/pkgconfig:/opt/X11/lib/pkgconfig&quot;
+export CFLAGS=&quot;-Wall -O0 -ggdb3 -arch x86_64 -pipe&quot;
+export OBJCFLAGS=$CFLAGS
+export LDFLAGS=$CFLAGS
+autoreconf -fvi
+./configure --prefix=/opt/X11 --disable-dependency-tracking
+make
+</code></pre>
+<p>These commands tell autoreconf, configure, and make, respectively where to find pkgconfig, aclocal, etc., and then execute the command to build the app.</p>
+<p>If all is well in the world, you should see:</p>
+<pre><code>Making all in man
+  GEN      xeyes.1
+  CC       Eyes.o
+  CC       transform.o
+  CC       xeyes.o
+  CCLD     xeyes
+</code></pre>
+<p>and, the file xeyes should now be present in the directory:</p>
+<pre><code>ls -l xeyes
+-rwxr-xr-x  1 wsenn  staff  30944 Jan 24 18:34 xeyes
+</code></pre>
+<p>Yay, let's run it. Switch over to your twm and open an xterm. In the xterm window, run xeyes:</p>
+<pre><code>cd ~/sandboxes-git/xeyes
+./xeyes
+</code></pre>
+<p><img src="/assets/img/xwindows/05.png" alt="five"></p>
+<h4>Get the basicwin source</h4>
+<p>OK. That was fun, but we need to get closer to our goal of doing Xlib development. Let's build basicwin from the Xlib Programmer's Manual.</p>
+<pre><code>mkdir -p ~/sandboxes-git
+cd ~/sandboxes-git
+git clone https://resources.oreilly.com/examples/9781565920026.git xlib-pm
+</code></pre>
+<h4>Create a temporary location for our source code</h4>
+<pre><code>mkdir -p ~/work
+cd ~/work
+tar xvf ~/sandboxes-git/xlib-pm/xlibprgs4.tar.Z
+cd xlib/basicwin/basic
+</code></pre>
+<h4>Build basicwin from source</h4>
+<p>Unlike xeyes, above, we don't need any special incantations to make this next part work. We can follow what Adrian Nye wrote nearly 30 years ago:</p>
+<pre><code>xmkmf
+make
+</code></pre>
+<p>If all went well, we will see something along the lines of:</p>
+<pre><code>19 warnings generated.
+rm -f basicwin
+/usr/bin/cc -o basicwin -Os -Wall -Wpointer-arith -no-cpp-precomp     -L/opt/local/lib   basicwin.o -lXext -lX11      
+</code></pre>
+<p>Nevermind the warnings, a lot has changed with our c environment over the years. The good news is we now have a new executable:</p>
+<pre><code>ls -l basicwin
+-rwxr-xr-x  1 wsenn  staff  14792 Jan 24 18:48 basicwin
+</code></pre>
+<p>Switch over to twm, open a new xterm, and run it:</p>
+<pre><code>cd ~/work/xlib/basicwin/basic
+./basicwin
+</code></pre>
+<p><img src="/assets/img/xwindows/06.png" alt="six"></p>
+<h3>6. Celebrate</h3>
+<p>Yeeha! That's worth celebrating. Next, tweak that basicwin source code. get a book on Xlib and really dig in, get one on XT, get one on Motif, go crazy and read up on QT and GTK+, just have fun. I'm just getting started, so it's all new to me. I'm planning = to start with Xlib and work my way up the stack.</p>
+<h2>Some extras</h2>
+<p>The more observant folks prolly wondered a few things:</p>
+<ol>
+<li>Where did that browser come from in the cool screenshot?</li>
+</ol>
+<pre><code>sudo port install midori
+</code></pre>
+<p>Midori rocks! Super fast and runs in X. I use it over ssh all of the time - firefox is great, but it sucks over the network. Not so midori!
+2. Same question for the other app?</p>
+<pre><code>sudo port install htop
+</code></pre>
+<p>htop is a pretty process monitor for terminal (and xterm).
+3. How did he capture those screenshots.
+This took quite a bit of trial and error. Folks on the web recommend using <code>xwd</code>, I couldn't get it to grab the right window (the desktop) no matter what incantation I gave it.
+What did work was Mac OS's built in <code>Screenshot.app</code> application. I just gave it a 10 second timeout, chose the select window option, clicked Capture, and then speedily opened twm and waited for the timeout to occur.</p>
+<p>Links to high res images:</p>
+<ul>
+<li><a href="/assets/img/xwindows/01-big.png">x windows running root window mac os</a></li>
+</ul>
+<p><em>post last updated 2023-02-13 21:02:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

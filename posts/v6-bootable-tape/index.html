@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>v6 Bootable Tape - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">v6 Bootable Tape</h1>
+    <p class="post-meta">Nov 11, 2017
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/v6/" class="tag">v6</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>A note describing how to boot from Dennis Rithchie's v6 disk-set. It shows two methods, one that builds a bootable tape from scratch, and another that extracts the bootblock of a running v6 system.</p>
+<h2>References</h2>
+<ul>
+<li><a href="http://gunkies.org/wiki/Installing_UNIX_Sixth_Edition#Installation_tape_contents">http://gunkies.org/wiki/Installing_UNIX_Sixth_Edition#Installation_tape_contents</a></li>
+<li><a href="http://mercury.lcs.mit.edu/~jnc/tech/V6Unix.html#Initial">http://mercury.lcs.mit.edu/~jnc/tech/V6Unix.html#Initial</a></li>
+</ul>
+<h2>Rationale</h2>
+<p>My intention was to be able to boot from Dennis Ritchies v6 disk-set from
+<a href="http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6">http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6</a></p>
+<p>I don't think this is possible without a bootstrap program being installed. So, I set out to install a bootstrap to the v6root image in the set. Here are a couple of methods, beginning with the easiest.</p>
+<h2>Method 1 - From Scratch</h2>
+<pre><code>mkdir -p ~/sandboxes/retro-workarea/bootblock
+cd ~/sandboxes/retro-workarea/bootblock
+</code></pre>
+<h3>Get tape and utilities</h3>
+<p>Get Ken Wellsch's distribution and the enblock utility for converting bits to tape image:</p>
+<pre><code>curl -O -L http://www.tuhs.org/Archive/Distributions/Research/Ken_Wellsch_v6/v6.tape.gz
+curl -O -L http://www.tuhs.org/Archive/Distributions/Research/Bug_Fixes/V6enb/v6enb.tar.gz
+openssl sha1 *gz
+
+SHA1(v6.tape.gz)= 2e9d1e030f1f27cf1da7ec22e7312148856e0883
+SHA1(v6enb.tar.gz)= b9c6898d0b9ad8aaaecf94ccccddb5ad2b22013c
+
+gunzip v6.tape.gz
+dd if=v6.tape of=boot.dd count=101 bs=512
+
+tar xvzf v6enb.tar.gz enblock
+tar xvzf v6enb.tar.gz --strip-components 1 v6enb/enblock.c
+gcc enblock.c -o enblock
+./enblock &lt; boot.dd &gt; boot.tap
+
+openssl sha1 boot.tap 
+SHA1(boot.tap)= dffa78a51f572d57d3c708878198997dd901b379
+</code></pre>
+<h3>Get Dennis's root disk</h3>
+<pre><code>curl -O -L http://www.tuhs.org/Archive/Distributions/Research/Dennis_v6/v6root.gz
+openssl sha1 v6root.gz
+SHA1(v6root.gz)= 105bb5c4f79bb1af0ed50ac63b90dca1229373c1
+
+gunzip v6root.gz
+</code></pre>
+<h3>Create a simh tape boot file</h3>
+<pre><code>cat &gt; tboot.ini &lt;&lt;EOF
+set cpu 11/40
+set tm0 locked
+attach tm0 boot.tap
+attach rk0 v6root
+d cpu 100000 012700
+d cpu 100002 172526
+d cpu 100004 010040
+d cpu 100006 012740
+d cpu 100010 060003
+d cpu 100012 000777
+g 100000
+EOF
+</code></pre>
+<h3>Boot to tape</h3>
+<pre><code>pdp11 tboot.ini
+
+^E
+g 0
+sim&gt; g 0
+=tmrk
+disk offset
+0
+tape offset
+100
+count
+1
+=
+^E
+Simulation stopped, PC: 137274 (TSTB @#177560)
+sim&gt; q
+Goodbye
+</code></pre>
+<h3>Backup work and create disk boot file</h3>
+<pre><code>tar cvzf v6root-bootable.tar.gz v6root
+
+cat &gt; dboot.ini &lt;&lt;EOF
+set cpu 11/40
+set tto 7b
+attach rk0 v6root
+dep system sr 173030
+boot rk0
+EOF
+</code></pre>
+<h3>Boot up the instance</h3>
+<pre><code>pdp11 dboot.ini
+@rkunix
+mem = 1036
+# 
+^E
+</code></pre>
+<h3>Back up the work</h3>
+<pre><code>tar cvzf wellsch-bootblock.tar.gz boot.dd boot.tap
+a boot.dd
+a boot.tap
+mv wellsch-bootblock.tar.gz ~/_workarea/_resources/retro-resources/v6/
+</code></pre>
+<h2>Method 2 - Extracting from a running v6</h2>
+<p>alternatively, using a working v6 system and having downloaded Ken's dist.tap and enblock</p>
+<p>start a v6 system that has devices RK{0-3} and where RK3 is not already used.</p>
+<h3>Boot system and extract boot block</h3>
+<pre><code>sim&gt; att rk3 v6root
+sim&gt; att tm0 dist.tap
+sim&gt; c
+dd if=/dev/rmt0 of=boot.dd count=101
+dd if=boot.dd of=/dev/rrk3
+sync
+sync
+^E
+sim&gt; q
+Goodbye
+</code></pre>
+<h1>Create boot.tap</h1>
+<pre><code>mv rk3 boot.dd
+./enblock &lt; boot.dd &gt; boot.tap
+</code></pre>
+<p>Now you have a boot.tap file that can be used with Dennis's disk-set!</p>
+<p><em>post added 2022-12-01 13:27:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

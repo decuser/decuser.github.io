@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop</h1>
+    <p class="post-meta">Dec 30, 2022
+      <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/genode/" class="tag">genode</a> <a href="/tags/sculpt/" class="tag">sculpt</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>Sheesh, live and learn. I didn't pay any attention to system requirements in the prior note [Building Sculpt 22.10 on Debian 11.6 Bullseye]({% post_url 2022-12-29-building-sculpt-22.10-on-debian-11.6 %}). I just glibly provisioned using a small portion of my available resources. In this note, I've corrected this oversight. The system requirements are much, much more modest than what I originally provisioned. There is no need for the overkill.</p>
+<p>This note is about building a bootable Sculpt OS 22.10 image using a Debian 11 &quot;Bullseye&quot; Guest OS running in VirtualBox without a desktop. If you were to include the desktop, expect that the system requirements would increase, but not by lot. I expect it would work with these same provisions, but would work better with more CPUs and RAM, as well as with a bigger allocation of hard disk space.</p>
+<p>Bottom line - The image can be built comfortably, in a reasonable amount of time (call it 15 minutes to download the toolchain, and source code, and do the build), on a system with 512 MB RAM, 1 CPU, 12 GB HDD, but it's faster with more resources provisioned, where CPU seems to be the biggest factor - more is better letting us use parallel threads in make.</p>
+<h3>Resources</h3>
+<ul>
+<li>Genode Operating System Framework Website <a href="https://genode.org/">https://genode.org/</a></li>
+<li>Genode OS Framework 22.05 Foundations Document <a href="https://genode.org/documentation/genode-foundations/22.05/index.html">html</a> <a href="https://genode.org/documentation/genode-foundations-22-05.pdf">pdf</a></li>
+<li>Sculpt OS 22.10 Documentation <a href="https://genode.org/documentation/articles/sculpt-22-10">html</a> <a href="https://genode.org/documentation/sculpt-22-10.pdf">pdf</a></li>
+<li>Mailing List <a href="https://genode.org/community/mailing-lists">https://genode.org/community/mailing-lists</a></li>
+<li>Genodians - Stories around the Genode Operating System <a href="https://genodians.org/">https://genodians.org/</a></li>
+<li>Git repository - <a href="https://github.com/genodelabs/genode">https://github.com/genodelabs/genode</a></li>
+</ul>
+<h3>Prerequisites</h3>
+<ul>
+<li>Host system - Mine is 2010 Mac Pro running Mojave</li>
+<li>VirtualBox w/extension pack - I'm running 6.1.40</li>
+</ul>
+<h3>Download the Debian 11.6 Bullseye netinst.iso</h3>
+<p><code>aria2c https://gemmei.ftp.acc.umu.se/debian-cd/current/amd64/iso-cd/debian-11.6.0-amd64-netinst.iso</code></p>
+<h3>Create a new debian virtualbox instance</h3>
+<ul>
+<li>name: debian-11.6</li>
+<li>1 GB RAM (tested with 512 MB RAM)</li>
+<li>2 CPU (tested with 1 CPU, no parallel threads with make)</li>
+<li>12 GB HDD</li>
+</ul>
+<h3>Configure instance</h3>
+<ul>
+<li>ssh port forwarding</li>
+<li>attach debian-11.6.0-amd64-netinst.iso</li>
+</ul>
+<h3>Install Debian</h3>
+<p>Start the VM and let it boot to the installer. Choose Install and not Graphical Install to use the perfectly adequate and much faster text installer.</p>
+<p>Make the following choice for packages:</p>
+<ul>
+<li>ssh</li>
+<li>standard system utilities</li>
+</ul>
+<h3>Boot the VM (even headless works fine)</h3>
+<h3>ssh into the instance</h3>
+<p><code>ssh user@localhost -p 2222</code></p>
+<h3>Check disk space</h3>
+<pre><code>df -h
+Filesystem      Size  Used Avail Use% Mounted on
+udev            471M     0  471M   0% /dev
+tmpfs            98M  500K   98M   1% /run
+/dev/sda1        11G 1010M  9.3G  10% /
+tmpfs           489M     0  489M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs            98M     0   98M   0% /run/user/1000
+
+</code></pre>
+<h3>Prepare Debian for building Sculpt</h3>
+<h3>Get rid of bracketed paste</h3>
+<ul>
+<li>as regular user</li>
+</ul>
+<p><code>echo 'set enable-bracketed-paste off' &gt;&gt; ~/.inputrc</code></p>
+<p>exit and reenter</p>
+<ul>
+<li>as root</li>
+</ul>
+<pre><code>su -
+echo 'set enable-bracketed-paste off' &gt;&gt; ~/.inputrc
+</code></pre>
+<p>exit and reenter</p>
+<h4>Install Packages</h4>
+<ul>
+<li>update apt package list and upgrade packages</li>
+</ul>
+<p><code>apt update &amp;&amp; apt full-upgrade -y</code></p>
+<ul>
+<li>install basic dev tools</li>
+</ul>
+<p>Note: build-essential and gdisk are already installed)</p>
+<ul>
+<li>basics
+<ul>
+<li>build-essential</li>
+<li>htop</li>
+<li>sudo</li>
+<li>vim</li>
+</ul>
+</li>
+<li>vbox dependencies
+<ul>
+<li>dkms</li>
+<li>linux-headers</li>
+</ul>
+</li>
+<li>build system dependencies see Genode Foundations - Getting Started
+<ul>
+<li>autoconf</li>
+<li>autogen</li>
+<li>bison</li>
+<li>byacc</li>
+<li>ccache</li>
+<li>e2tools</li>
+<li>expect</li>
+<li>flex</li>
+<li>gawk</li>
+<li>gdisk</li>
+<li>git-gui</li>
+<li>gperf</li>
+<li>libsdl2-dev</li>
+<li>libxml2-utils</li>
+<li>qemu</li>
+<li>subversion</li>
+<li>xorriso</li>
+<li>xsltproc</li>
+</ul>
+</li>
+</ul>
+<p>Note: apt will ignore already installed packages and different base selections such as Gnome vs Cinnamon may result in a different mix of already installed packages.</p>
+<pre><code>apt install build-essential htop sudo vim \
+    dkms linux-headers-$(uname -r) \
+    autoconf autogen bison byacc ccache e2tools expect flex gawk \
+    gdisk git-gui gperf libsdl2-dev libxml2-utils qemu subversion \
+    xorriso xsltproc -y
+</code></pre>
+<ul>
+<li>set vim as default editor</li>
+</ul>
+<p><code>update-alternatives --config editor # pick vim.basic</code></p>
+<ul>
+<li>turn off mouse nonsense in vim as root and regular user</li>
+</ul>
+<p><code>echo &quot;set mouse-=a&quot; &gt;&gt; ~/.vimrc</code></p>
+<ul>
+<li>Add user to sudo and enable sudo with no password</li>
+</ul>
+<pre><code>visudo
+%sudo	ALL=(ALL:ALL) NOPASSWD:ALL
+</code></pre>
+<ul>
+<li>add user to sudo group</li>
+</ul>
+<pre><code>usermod -a -G sudo wsenn
+exit
+</code></pre>
+<ul>
+<li>as regular user add sbin to path for build resize2fs requirement</li>
+</ul>
+<pre><code>echo &quot;export PATH=$PATH:/sbin&quot; &gt;&gt; ~/.bashrc
+</code></pre>
+<ul>
+<li>exit and reenter ssh</li>
+</ul>
+<p><code>ssh user@localhost -p 2222</code></p>
+<h3>Run htop to see system resources during the build</h3>
+<ul>
+<li>ssh into a second terminal instance and fire up htop</li>
+</ul>
+<pre><code>ssh user@localhost -p 2222
+htop
+</code></pre>
+<h3>Install Genode Toolchain and Source Code</h3>
+<ul>
+<li>Download the toolchain and install it in /usr/local/genode</li>
+</ul>
+<pre><code>mkdir -p ~/Downloads
+cd ~/Downloads
+wget -O genode-toolchain-21.05-x86_64.tar.xz https://sourceforge.net/projects/genode/files/genode-toolchain/21.05/genode-toolchain-21.05-x86_64.tar.xz/download
+sudo tar xvPf genode-toolchain-21.05-x86_64.tar.xz
+</code></pre>
+<ul>
+<li>Clone the source code and switch to the 22.10 release branch</li>
+</ul>
+<pre><code>cd
+git clone https://github.com/genodelabs/genode.git
+cd genode
+git checkout -b sculpt-22.10 sculpt-22.10
+</code></pre>
+<h3>Build Sculpt</h3>
+<ul>
+<li>Get the nova kernel files</li>
+</ul>
+<p><code>./tool/depot/download genodelabs/bin/x86_64/base-nova/2022-10-11</code></p>
+<ul>
+<li>Get the sculpt files</li>
+</ul>
+<p><code>./tool/depot/download genodelabs/pkg/x86_64/sculpt/2022-10-13</code></p>
+<ul>
+<li>Handle vim-minimal tarball error by just restarting</li>
+</ul>
+<p>You may see an error concerning vim-minimal (I do):</p>
+<pre><code>download genodelabs/src/vim-minimal/2022-08-30.tar.xz
+download genodelabs/src/vim-minimal/2022-08-30.tar.xz.sig
+xz: (stdin): Unexpected end of input
+tar: Unexpected EOF in archive
+tar: Unexpected EOF in archive
+tar: Error is not recoverable: exiting now
+make[1]: *** [/home/wsenn/genode/tool/depot/mk/downloader:45: /home/wsenn/genode/depot/genodelabs/src/vim-minimal/2022-08-30] Error 2
+</code></pre>
+<ul>
+<li>If so, just restart the download</li>
+</ul>
+<p><code>./tool/depot/download genodelabs/pkg/x86_64/sculpt/2022-10-13</code></p>
+<ul>
+<li>Get the drivers, wifi, and ipxe files</li>
+</ul>
+<pre><code>./tool/depot/download genodelabs/pkg/x86_64/drivers_managed-pc/2022-10-11 \
+genodelabs/pkg/x86_64/wifi/2022-10-13 \
+genodelabs/bin/x86_64/ipxe_nic_drv/2022-10-11
+</code></pre>
+<ul>
+<li>Create the build directory</li>
+</ul>
+<p><code>./tool/create_builddir x86_64</code></p>
+<ul>
+<li>Edit the build configuration (required)</li>
+</ul>
+<p><code>vi build/x86_64/etc/build.conf</code></p>
+<ul>
+<li>
+<p>Enable parallel threads in make if you have more than one CPU</p>
+<p><code>MAKE += -j4</code></p>
+</li>
+<li>
+<p>Enable ccache</p>
+<p><code>CCACHE := yes</code></p>
+</li>
+<li>
+<p>Enable depot updates</p>
+<p><code>RUN_OPT += --depot-auto-update</code></p>
+</li>
+<li>
+<p>Change from iso target to disk in QEMU_RUN_OPT</p>
+<p><code>QEMU_RUN_OPT := --include power_on/qemu  --include log/qemu --include image/disk</code></p>
+</li>
+<li>
+<p>Enable port repos by uncommenting them (all but world)</p>
+<ul>
+<li>libports</li>
+<li>ports</li>
+<li>dde_linux</li>
+<li>dde_rump</li>
+<li>gems</li>
+<li>pc</li>
+<li>dde_bsd</li>
+<li>dde_ipxe</li>
+</ul>
+</li>
+<li>
+<p>Prepare ports</p>
+</li>
+</ul>
+<pre><code>./tool/ports/prepare_port bash coreutils curl dde_ipxe dde_linux dde_rump e2fsprogs-lib gnupg grub2 jitterentropy libarchive libc libgcrypt libnl libpng libssh linux linux-firmware ncurses nova openssl stb ttf-bitstream-vera vim wpa_supplicant x86emu xz zlib
+</code></pre>
+<ul>
+<li>Build the image</li>
+</ul>
+<p><code>make -C build/x86_64 run/sculpt KERNEL=nova BOARD=pc</code></p>
+<ul>
+<li>Success is indicated by the creation of the image</li>
+</ul>
+<p><code>Created image file var/run/sculpt.img (29140kiB)</code></p>
+<h3>Test the created image on metal</h3>
+<ul>
+<li>Transfer the image to the host</li>
+</ul>
+<pre><code>mkdir -p ~/Downloads
+cd ~/Downloads
+scp -P 2222 localhost:genode/build/x86_64/var/run/sculpt.img .
+</code></pre>
+<ul>
+<li>
+<p>Burn it to USB using your preferred tool (I use balena etcher or dd)</p>
+</li>
+<li>
+<p>Test it out with your target device (mine is T430)</p>
+</li>
+<li>
+<p>Hope it works great!</p>
+</li>
+</ul>
+<p><em>post last updated 2022-12-29 11:53:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

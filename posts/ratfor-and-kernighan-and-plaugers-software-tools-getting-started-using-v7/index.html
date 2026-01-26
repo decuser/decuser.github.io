@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ratfor and Kernighan and Plaugers Software Tools - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">ratfor and Kernighan and Plaugers Software Tools</h1>
+    <p class="post-meta">Feb 3, 2022
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/v7/" class="tag">v7</a> <a href="/tags/ratfor/" class="tag">ratfor</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>A short note documenting the process of getting ratfor working on a v7 instance.</p>
+<h2>Prereqs</h2>
+<p>This note assumes you have a working v7 setup. The most current post is [here]({% post_url 2022-02-08-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-2.1 %})</p>
+<h2>Getting Started</h2>
+<p>Fire up the v7 instance</p>
+<h3>log in as a normal user</h3>
+<pre><code>cd ~/workspaces/v7-work
+pdp11 mboot.ini
+...
+login: wsenn
+
+$
+</code></pre>
+<h3>Create a working directory</h3>
+<pre><code>mkdir copy
+cd copy
+</code></pre>
+<h2>Create a simple ratfor program</h2>
+<p>This is really mostly a fortran program</p>
+<pre><code>ed hello.r
+a
+# hello world in ratfor
+		print *, 'hello, world!'
+		stop
+		end
+.
+w
+q
+</code></pre>
+<h2>Run ratfor</h2>
+<pre><code>$ ratfor -C hello.r
+c hello world in ratfor
+	  print *, 'hello, world!'
+	  stop
+	  end
+</code></pre>
+<h3>Run it again and redirect the output to a file:</h3>
+<p><code>ratfor -C hello.r &gt; hello.f</code></p>
+<h2>Run fortran to compile the code</h2>
+<pre><code>f77 -o hello hello.f 
+
+hello.f:
+   MAIN:
+</code></pre>
+<h2>Run the executable</h2>
+<pre><code>./hello
+
+hello, world!
+</code></pre>
+<h3>Celebrate, if you like. Job well done.</h3>
+<p>Then, back to work. The copy routine and its dependencies, getc and putc, outlined in the first chapter contains 7 symbolic constants that we need to know the values of and a character type that we will change to integer, for convenience. Read the book to learn more about replacing constants and macros.</p>
+<p>The stuff we need to know about is:</p>
+<pre><code>MAXLINE
+MAXCARD
+NEWLINE 
+STDIN
+STDOUT
+EOF
+SPACE
+character
+</code></pre>
+<ul>
+<li><strong>MAXLINE</strong> - the number of characters on a card, plus one, 81.</li>
+<li><strong>MAXCARD</strong> - the number of characters on a card, 80.</li>
+<li><strong>NEWLINE</strong> - the end of a line of characters, the ascii value 10 works.</li>
+<li><strong>STDIN</strong> - the LUN for the card reader, 5.</li>
+<li><strong>STDOUT</strong> - the LUN for the card punch, 6.</li>
+<li><strong>EOF</strong> - the end of file marker, -1.</li>
+<li><strong>SPACE</strong> - the blank space character, 32.</li>
+<li><strong>character</strong> - the character data type, integer works.</li>
+</ul>
+<p>The author's copy program relies on two primitive operations, getc, and putc, that are not provided by v7 (they are provided in 4.2/4.3 BSD, but that's another story for another day). The authors talk about this and provide simple implementations that we can leverage to get things rolling. The idea is to take the copy. getc, and putc routines provided by K&amp;P, replace the symbolic constants, replace character with integer and run the result.</p>
+<h2>Create a more realistic combined ratfor source</h2>
+<pre><code>$ ed copy.r
+?copy.r
+a
+# $ ratfor -C copynew.r &gt; copynew.f
+# $ f77 -o copynew copynew.f
+
+# getc (simple version) - get characters from standard input
+		integer function getc(c)
+		integer buf(81), c
+		integer i, lastc
+		data lastc /81/,buf(81) /10/
+		# note MAXLINE = MAXCARD + 1
+
+		lastc = lastc + 1
+		if(lastc &gt; 81) {
+				read(5, 100, end=10) (buf(i), i = 1, 80)
+						100 format(80 a 1)
+				lastc = 1
+				}
+		c = buf(lastc)
+		getc = c
+		return
+		
+10      c = -1
+		getc = -1
+		return
+		end
+
+# putc (simple version) - put characters on the standard output
+		subroutine putc(c)
+		integer buf(80), c
+		integer i, lastc
+		data lastc /0/
+
+		if (lastc &gt; 80 | c == 10) {
+				for (i = lastc + 1; i &lt;= 80; i = i + 1)
+						buf(i) = 32
+				write(6, 100) (buf(i), i = 1, 80)
+						100 format(80 a 1)
+				lastc = 0
+				}
+		if (c != 10) {
+				lastc = lastc + 1
+				buf(lastc) = c
+				}
+		return
+		end
+
+# copy - copy input characters to output
+		integer getc
+		integer c
+
+		while(getc(c) != -1)
+				call putc(c)
+		stop
+		end
+.
+w
+1337
+q
+</code></pre>
+<h2>Run ratfor (see rafor(1) for incantations):</h2>
+<p><code>$ ratfor -C copy.r &gt; copy.f</code></p>
+<h2>Compile the fortran (see f77(1) for incantations):</h2>
+<pre><code>$ f77 -o copy copy.f
+copy.f:
+   getc:
+   putc:
+   MAIN:
+</code></pre>
+<h2>Run the result:</h2>
+<pre><code>$ ./copy
+This is a test.
+This is a test.                                                                
+^d
+$
+</code></pre>
+<h3>Now, you can really celebrate :)!</h3>
+<p><em>post added 2022-12-02 13:03:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

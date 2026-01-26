@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enabling Mermaid in Jekyll without a Plugin - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Enabling Mermaid in Jekyll without a Plugin</h1>
+    <p class="post-meta">Jan 23, 2023
+      <a href="/tags/github/" class="tag">github</a> <a href="/tags/jekyll/" class="tag">jekyll</a> <a href="/tags/mermaid/" class="tag">mermaid</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>Mermaid is a javascript tool to generate graphics - diagrams and charts and such using markdown-like syntax. This note describes adding it into a jekyll site such as mine <a href="https://decuser.github.io">https://decuser.github.io</a></p>
+<div class="mermaid">
+flowchart LR
+     id1((a)) --> id2((b)) & c--> d
+</div>
+<p>Flowchart Example</p>
+<h2>Resources</h2>
+<ul>
+<li>mermaid-js github repo - <a href="https://github.com/mermaid-js/mermaid">https://github.com/mermaid-js/mermaid</a></li>
+<li>jekyll home - <a href="https://jekyllrb.com/">https://jekyllrb.com</a></li>
+<li>mermaid flowchart basics - <a href="https://mermaid.js.org/syntax/flowchart.html">https://mermaid.js.org/syntax/flowchart.html</a></li>
+</ul>
+<h2>Installation</h2>
+<p>The installation of mermaid is straightforward and does not require a plugin. Just add the .js and .map file of your chosen distribution to your assets folder, add a script tag to the _layouts/_post.html file, and then use the appropriate incantation in your posts.</p>
+<h3>Install the mermaid-js dist files</h3>
+<p>The current version of Mermaid, at the time of this post, is 9.3.0. It is available at:</p>
+<p><a href="https://unpkg.com/browse/mermaid@9.3.0/dist">https://unpkg.com/browse/mermaid@9.3.0/dist</a></p>
+<p>The files I chose to install were:</p>
+<ul>
+<li>mermaid.js</li>
+<li>mermaid.js.map</li>
+<li>mermaid.min.js</li>
+<li>mermaid.min.js.map</li>
+</ul>
+<p>Downloading these specific files was a little tricky. So, for future reference, here's what I did (may change over time):</p>
+<ol>
+<li>Browse to the dist directory</li>
+<li>Locate the file of interest - say, <code>mermaid.js</code></li>
+<li>Click on its link to open it's page</li>
+<li>Right-click on View Raw and Save Link As...</li>
+<li>Put the file where you like</li>
+</ol>
+<p>Using aria2, I just downloaded them directly:</p>
+<pre><code>mkdir ~/Downloads/mermaid
+cd ~/Downloads/mermaid
+aria2c https://unpkg.com/mermaid@9.3.0/dist/mermaid.js
+aria2c https://unpkg.com/mermaid@9.3.0/dist/mermaid.js.map
+aria2c https://unpkg.com/mermaid@9.3.0/dist/mermaid.min.js
+aria2c https://unpkg.com/mermaid@9.3.0/dist/mermaid.min.js.map
+</code></pre>
+<p>Then in the repo, I created a folder for them and copied them in:</p>
+<pre><code>cd ~/sandboxes-git/decuser.github.io
+mkdir -p assets/mermaid-9.3.0
+cp ~/Downloads/mermaid/* assets/mermaid-9.3.0
+</code></pre>
+<h3>Modify <code>_layouts/post.html</code> and <code>index.html</code></h3>
+<p>Add a script tag for mermaid into post.html and index.html just after the jekyll header:</p>
+<p><code>&lt;script src=&quot;{{ &quot;/assets/mermaid-9.3.0/mermaid.js&quot; | relative_url }}&quot;&gt;&lt;/script&gt;</code></p>
+<h3>Edit a post with mermaid markup</h3>
+<p>In a post, just add some mermaid markup. This creates a digraph:</p>
+<pre><code>
+&lt;div class=&quot;mermaid&quot;&gt;
+graph TD;
+    A--&gt;B;
+    A--&gt;C;
+    B--&gt;D;
+    C--&gt;D;
+&lt;/div&gt;
+
+</code></pre>
+<div class="mermaid">
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+</div>
+<p>Digraph Example</p>
+<p>This creates a gitgraph:</p>
+<pre><code>
+&lt;div class=&quot;mermaid&quot;&gt;
+gitGraph
+    commit id: &quot;First&quot;
+    commit id: &quot;Second&quot;
+    branch develop
+    commit id: &quot;Third&quot;
+    checkout main
+&lt;/div&gt;
+
+</code></pre>
+<div class="mermaid">
+gitGraph
+    commit id: "First"
+    commit id: "Second"
+    branch develop
+    commit id: "Third"
+    checkout main
+</div>
+<p>Gitgraph Example</p>
+<p>This creates a flow chart:</p>
+<pre><code>
+&lt;div class=&quot;mermaid&quot;&gt;
+flowchart LR
+     id1((a)) --&gt; id2((b)) &amp; c--&gt; d
+&lt;/div&gt;
+
+</code></pre>
+<div class="mermaid">
+flowchart LR
+     id1((a)) --> id2((b)) & c--> d
+</div>
+<p>Flowchart Example</p>
+<h3>Test the changes</h3>
+<p><code>bundle exec jekyll s</code></p>
+<p>browse to <a href="http://localhost:4000">http://localhost:4000</a></p>
+<h3>Deploy the changes</h3>
+<pre><code>git add .
+git commit -m &quot;added mermaid to site and posted&quot;
+git push
+</code></pre>
+<p>Navigate to <a href="https://github.com/decuser/decuser.github.io/actions">https://github.com/decuser/decuser.github.io/actions</a> and watch it deploy.</p>
+<h3>Test the deployment</h3>
+<ul>
+<li>Browse to <a href="https://decuser.github.io">https://decuser.github.io</a> and see it live.</li>
+</ul>
+<p><em>post last updated 2023-01-23 12:13:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

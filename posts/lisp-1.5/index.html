@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LISP 1.5 running on an emulated IBM 7094 - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">LISP 1.5 running on an emulated IBM 7094</h1>
+    <p class="post-meta">Jul 24, 2023
+      <a href="/tags/lisp/" class="tag">lisp</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note describes how to set up and run the oldest available ancestor of all extant LISPS and Schemes.</p>
+<p>LISP 1.5 was the first LISP that was made generally available. It is available to run on the OpenSIMH IBM 7094 emulator.</p>
+<p><img src="/assets/img/lisp/Terminal_001.png" alt="one"></p>
+<h2>Resources</h2>
+<ul>
+<li>
+<p><strong>LISP 1.5 Programmer's Manual</strong> <a href="https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf">https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf</a> or grab a <a href="/assets/files/lisp/LISP%201.5%20Programmers%20Manual.pdf">local copy</a></p>
+</li>
+<li>
+<p><strong>LISP 1.5 Primer</strong> <a href="https://www.softwarepreservation.org/projects/LISP/book/Weismann_LISP1.5_Primer_1967.pdf">https://www.softwarepreservation.org/projects/LISP/book/Weismann_LISP1.5_Primer_1967.pdf</a> or grab a <a href="/assets/files/lisp/Weismann_LISP1.5_Primer_1967.pdf">local copy</a></p>
+</li>
+<li>
+<p><strong>OpenSIMH</strong> <a href="https://opensimh.org/">https://opensimh.org/</a></p>
+</li>
+<li>
+<p><strong>LISP 1.5 2023 tarball</strong> <a href="/assets/files/lisp/lisp15.2023.tar.gz">lisp15.2023.tar.gz</a> - note, this is a slightly modified version of Andre Luvisi's tarball.</p>
+</li>
+</ul>
+<h2>Prerequisites</h2>
+<ul>
+<li>Linux - I'm running Debian 12 (bookworm)</li>
+<li>A build environement (make, cc, and ld) - build-essential package on debian systems</li>
+<li>OpenSIMH - any reasonably recent version should work</li>
+</ul>
+<h2>Getting Started</h2>
+<ul>
+<li>Create a workarea</li>
+</ul>
+<pre><code>mkdir -p ~/workarea/retro/lisp-1.5/{dist,work}
+cd ~/workarea/retro/lisp-1.5/dist
+</code></pre>
+<ul>
+<li>Download the tarball</li>
+</ul>
+<pre><code>wget https://decuser.github.io/assets/files/lisp/lisp15.2023.tar.gz
+</code></pre>
+<h2>Build the System</h2>
+<ul>
+<li>Unpack the tarball and the utils tarball inside it</li>
+</ul>
+<pre><code>cd ../work
+tar xvzf ../dist/lisp15.2023.tar.gz
+cd lisp15
+tar xvf utils-1.1.8.tar.gz
+</code></pre>
+<ul>
+<li>Build the utils and copy txt2bcd to a directory on the path (critically important)</li>
+</ul>
+<pre><code>cd utils
+make
+cp ./txt2bcd ~/bin
+</code></pre>
+<ul>
+<li>Test txt2bcd</li>
+</ul>
+<pre><code>txt2bcd
+Usage: txt2bcd infile [outfile] [reclen, default 80 [blklen, default 84]]
+</code></pre>
+<ul>
+<li>Clean up from utilts build</li>
+</ul>
+<pre><code>cd ..
+rm -fr utils
+</code></pre>
+<ul>
+<li>Actually build the system</li>
+</ul>
+<pre><code>make realclean; make
+</code></pre>
+<p>A successful build will result in a sysboot.tp in the current directory and a transcript similar to this:</p>
+<pre><code>rm -f sys.log scratch/*
+(cd build; make clean)
+make[1]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+(cd boottape; make clean)
+make[2]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+rm -f syscore.tp sys.log scratch/*
+make[2]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+make[1]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+rm -f sysboot.tp
+(cd build; make realclean)
+make[1]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+(cd boottape; make clean)
+make[2]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+rm -f syscore.tp sys.log scratch/*
+make[2]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+rm -f sysboot.tp boottape/lisp.obj
+make[1]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+(cd build; make sysboot.tp)
+make[1]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+asm7090/asm7090 -o boottape/lisp.obj chist/lisp.job
+(cd boottape; make)
+make[2]: Entering directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+i7094 lispimg.ini library.txt
+
+IBM 7094 simulator Open SIMH V4.1-0 Current        simh git commit id: cf47a20f
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-13&gt; at mta1 -r scratch/lisp.job.mt
+%SIM-INFO: MTA1: unit is read only
+%SIM-INFO: MTA1: Tape Image 'scratch/lisp.job.mt' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-14&gt; at mta2 scratch/systap.tp
+%SIM-INFO: MTA2: creating new file
+%SIM-INFO: MTA2: Tape Image 'scratch/systap.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-15&gt; at mta3 syscore.tp
+%SIM-INFO: MTA3: creating new file
+%SIM-INFO: MTA3: Tape Image 'syscore.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-16&gt; at mta4 scratch/syspot.tp
+%SIM-INFO: MTA4: creating new file
+%SIM-INFO: MTA4: Tape Image 'scratch/syspot.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-17&gt; at mta5 scratch/sysppt.tp
+%SIM-INFO: MTA5: creating new file
+%SIM-INFO: MTA5: Tape Image 'scratch/sysppt.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-19&gt; at cdr scratch/corrcards
+%SIM-INFO: CDR: creating new file
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-20&gt; at cdp scratch/lispout.whatever
+%SIM-INFO: CDP: creating new file
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape/lispimg.ini-21&gt; at lpt sys.log
+%SIM-INFO: LPT: creating new file
+
+HALT instruction, PC: 10524 (TRA 10523)
+Goodbye
+make[2]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build/boottape'
+cp boottape/syscore.tp sysboot.tp
+make[1]: Leaving directory '/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/build'
+cp build/sysboot.tp sysboot.tp
+</code></pre>
+<h2>Run the system</h2>
+<p>If you successfully built the system, you should be ready to run LISP 1.5. A few words are in order... Running LISP 1.5, so far as I can tell, consists of running the simulator against a tape image of a lisp source file. So, you type LISP 1.5 compatible code into a file and then invoke the emulator against that file. It processes your source and outputs the result.</p>
+<p>The tarball includes three source files that are in the correct format to be run in LISP 1.5:</p>
+<ul>
+<li>
+<p>factorial.txt - test code that will calculate the factorial of a number, in this case 10, which should result in 3,628,800.</p>
+</li>
+<li>
+<p>funarg.txt - a function argument test</p>
+</li>
+<li>
+<p>propcal.txt - test the Wang algorithm for propositional calculus</p>
+</li>
+</ul>
+<p>To run them, invoke the emulator and provide the ini file to initialize the emulator and the text file with the source, for example, to run the factorial program type:</p>
+<pre><code>i7094 lisptape.ini factorial.txt
+</code></pre>
+<p>A successful run will generate a sys.log file and the output will resemble:</p>
+<pre><code>IBM 7094 simulator Open SIMH V4.1-0 Current        simh git commit id: cf47a20f
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-12&gt; at mta1 -r scratch/lisp.job.mt
+%SIM-INFO: MTA1: unit is read only
+%SIM-INFO: MTA1: Tape Image 'scratch/lisp.job.mt' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-13&gt; at mta2 -r sysboot.tp
+%SIM-INFO: MTA2: unit is read only
+%SIM-INFO: MTA2: Tape Image 'sysboot.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-14&gt; at mta3 scratch/syscore.tp
+%SIM-INFO: MTA3: Tape Image 'scratch/syscore.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-15&gt; at mta4 scratch/syspot.tp
+%SIM-INFO: MTA4: Tape Image 'scratch/syspot.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-16&gt; at mta5 scratch/sysppt.tp
+%SIM-INFO: MTA5: Tape Image 'scratch/sysppt.tp' scanned as SIMH format
+/home/wsenn/workarea/retro/lisp-1.5/work/lisp15/lisptape.ini-20&gt; at lpt sys.log
+%SIM-INFO: LPT: creating new file
+
+HALT instruction, PC: 10524 (TRA 10523)
+Goodbye
+</code></pre>
+<p>The results will be in the file sys.log:</p>
+<pre><code>cat sys.log
+             TEST  FACTORIAL
+
+
+
+  THE TIME ( 0/ 0  000.0) HAS COME, THE WALRUS SAID, TO TALK OF MANY THI
+NGS .....   -LEWIS CARROLL-
+ EVALQUOTE OPERATOR AS OF 1 MARCH 1961.    INPUT LISTS NOW BEING READ.
+
+
+  THE TIME ( 0/ 0  000.0) HAS COME, THE WALRUS SAID, TO TALK OF MANY THI
+NGS .....   -LEWIS CARROLL-
+  FUNCTION   EVALQUOTE   HAS BEEN ENTERED, ARGUMENTS..
+ DEFINE
+
+ (((FACTORIAL (LAMBDA (X) (COND ((EQUAL X 0) 1) (T (TIMES X (FACTORIAL (
+SUB1 X)))))))))
+
+ END OF EVALQUOTE, VALUE IS ..
+ *TRUE*
+
+  FUNCTION   EVALQUOTE   HAS BEEN ENTERED, ARGUMENTS..
+ FACTORIAL
+
+ (10)
+
+
+ END OF EVALQUOTE, VALUE IS ..
+ 3628800
+
+
+
+  THE TIME ( 0/ 0  000.0) HAS COME, THE WALRUS SAID, TO TALK OF MANY THI
+NGS .....   -LEWIS CARROLL-
+ END OF EVALQUOTE OPERATOR
+             FIN      END OF LISP RUN
+</code></pre>
+<h2>Conclusions</h2>
+<p>This was an interesting exploration. I enjoyed getting it up and running with a minimum of fuss. I didn't appreciate the fact that it was effectively a job submission environment and not an interactive system.</p>
+<p>Something to note is the use of evaluquote as the top-level, not eval...</p>
+<p>In the next exploration, I will investigate a system that is much more modern, yet directly descended from LISP 1.5. Rob Pike's LISP 1.5 interpreter in Go. A minimal implementation of 1.5's evalquote from pg. 13 of the Programming LISP 1.5 text.</p>
+<h3>Afterthoughts</h3>
+<p>Andre Luvisi's original work exists (for now) in Archive.org's repository of crawled pages:</p>
+<ul>
+<li><strong>Luvisi's LISP 1.5 tarball</strong> <a href="https://web.archive.org/web/20211202101850/http://web.sonoma.edu/users/l/luvisi/lisp/lisp15.tar.gz">https://web.archive.org/web/20211202101850/http://web.sonoma.edu/users/l/luvisi/lisp/lisp15.tar.gz</a></li>
+</ul>
+<p>It won't build because of duplicate names (fin and fon are defined in multiple files), but the fix is easy, just change line 19 of prsf2.c to read:</p>
+<pre><code>static char fin[300], fon[300];
+</code></pre>
+<p>and it should work the same way as described above.</p>
+<p>Later - Will</p>
+<p><em>post added 2023-07-24 19:28:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

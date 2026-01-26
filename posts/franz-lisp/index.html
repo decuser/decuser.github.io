@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Franz LISP Opus 32 in 3BSD running on an emulated VAX 780 - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Franz LISP Opus 32 in 3BSD running on an emulated VAX 780</h1>
+    <p class="post-meta">Jul 31, 2023
+      <a href="/tags/lisp/" class="tag">lisp</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note describes how to set up and run Franz LISP Opus 32 running on 3BSD running on an emulated VAX 780. This version of Franz LISP is Opus 32 and it is a LISP 1.5 derived LISP from 1979.</p>
+<p><img src="/assets/img/lisp/Terminal_004.png" alt="one"></p>
+<p>Wikipedia notes:</p>
+<blockquote>
+<p>In computer programming, Franz Lisp is a discontinued Lisp programming language system written at the University of California, Berkeley (UC Berkeley, UCB) by Professor Richard Fateman and several students, based largely on Maclisp and distributed with the Berkeley Software Distribution (BSD) for the Digital Equipment Corporation (DEC) VAX minicomputer. Piggybacking on the popularity of the BSD package, Franz Lisp was probably the most widely distributed and used Lisp system of the 1970s and 1980s.</p>
+</blockquote>
+<blockquote>
+<p>The name is a pun on the composer and pianist Franz Liszt.</p>
+</blockquote>
+<h2>Resources</h2>
+<ul>
+<li>
+<p><strong>3BSD Tape File</strong> <a href="https://sourceforge.net/projects/bsd42/files/Install%20tapes/3%20BSD/">https://sourceforge.net/projects/bsd42/files/Install%20tapes/3%20BSD/</a></p>
+</li>
+<li>
+<p><strong>Franz Lisp Manual - Opus 38.69 from 1982</strong> <a href="https://www.softwarepreservation.org/projects/LISP/franz/Franz_Lisp_July_1983.pdf">https://www.softwarepreservation.org/projects/LISP/franz/Franz_Lisp_July_1983.pdf</a></p>
+</li>
+</ul>
+<p>This is the earliest manual I could find. When you're online in 3BSD, there is documentation for the Franz LISP Opus 32, in <code>/usr/doc/lisp</code>.</p>
+<ul>
+<li><strong>Gunkies 3BSD Page</strong> <a href="https://gunkies.org/wiki/3BSD">https://gunkies.org/wiki/3BSD</a></li>
+</ul>
+<p>An invaluable resource for getting things up an running with a minimum of fuss.</p>
+<ul>
+<li><strong>OpenSIMH</strong> <a href="https://opensimh.org/">https://opensimh.org/</a></li>
+</ul>
+<p>The simulator I'm using.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Linux - I'm running Debian 12 (bookworm)</li>
+<li>A build environement (make, cc, and ld) - build-essential package on debian systems</li>
+<li>OpenSIMH - any reasonably recent version should work</li>
+</ul>
+<h2>Overview</h2>
+<p>Much of this note is based on the Gunkies 3BSD page. Specifically, tboot.ini, dboot.ini, uudecode, and the 3BSD boot block are from that page <a href="https://gunkies.org/wiki/3BSD">https://gunkies.org/wiki/3BSD</a>. This note is just organized differently and getting 3BSD running here, is specifically for running Franz LISP.</p>
+<h2>Getting Started</h2>
+<ul>
+<li>Create a workarea</li>
+</ul>
+<pre><code>mkdir -p ~/workarea/retro/franz/{dist,work}
+cd ~/workarea/retro/franz/dist
+</code></pre>
+<ul>
+<li>Download 3BSD and a bootblock</li>
+</ul>
+<pre><code>wget https://decuser.github.io/assets/files/lisp/3bsd.tap.bz2
+wget https://decuser.github.io/assets/files/lisp/boot3bsd
+</code></pre>
+<ul>
+<li>Verify you have the right files</li>
+</ul>
+<pre><code>shasum *
+f8b59d933896678f04e9a0b0284466563d650c24  3bsd.tap.bz2
+482464bbd3ceb8ec9f02036ad06dbe5a181572e2  boot3bsd
+</code></pre>
+<ul>
+<li>Unpack the tape file and copy the bootblock into work</li>
+</ul>
+<pre><code>cd ../work
+bzcat ../dist/3bsd.tap.bz2 &gt; 3bsd.tap
+cp ../dist/boot3bsd .
+</code></pre>
+<ul>
+<li>Create an ini file for booting from tape</li>
+</ul>
+<pre><code>cat &lt;&lt;EOF &gt;tboot.ini
+set tto 7b
+set rq dis
+set lpt dis
+set rl dis
+set hk dis
+set rq dis
+set rqb dis
+set rqc dis
+set rqd dis
+set ry dis
+set ts dis
+set tq dis
+set dz lines=8
+set rp0 rp06
+at rp0 rp06.disk
+set tu0 te16
+at tu0 3bsd.tap
+D 50000 20009FDE
+D 50004 D0512001
+D 50008 3204A101
+D 5000C C113C08F
+D 50010 A1D40424
+D 50014 008FD00C
+D 50018 C1800000
+D 5001C 8F320800
+D 50020 10A1FE00
+D 50024 00C139D0
+D 50028 04c1d004
+D 5002C 07e15004
+D 50030 0000f750
+go 50000
+go 0
+EOF
+</code></pre>
+<h2>Build the system</h2>
+<ul>
+<li>Boot to tape</li>
+</ul>
+<pre><code>vax780 tboot.ini
+/home/wsenn/workarea/retro/franz/work/tboot.ini-15&gt; at rp0 rp06.disk
+%SIM-INFO: RP0: Creating new file: rp06.disk
+/home/wsenn/workarea/retro/franz/work/tboot.ini-17&gt; at tu0 3bsd.tap
+%SIM-INFO: TU0: Tape Image '3bsd.tap' scanned as SIMH format
+
+HALT instruction, PC: 00050033 (HALT)
+=
+</code></pre>
+<ul>
+<li>Restore Unix</li>
+</ul>
+<p><code>=</code> is the tape's minimal OS prompt. From here we will make a new filesystem on the rp06 and restor unix from the tape to the disk.</p>
+<pre><code>=mkfs
+file sys size: 7942
+file system: hp(0,0)
+isize = 5072
+m/n = 3 500
+=restor
+Tape? ht(1,1)
+Disk? hp(0,0)
+Last chance before scribbling on disk. 
+End of tape
+=
+</code></pre>
+<p>Press enter after <code>Last chance before scribbling on disk.</code> to continue.</p>
+<ul>
+<li>Restore <code>/usr</code></li>
+</ul>
+<p>Boot Unix, make a new fileystem for /usr, and restore it from tape.</p>
+<pre><code>=boot
+
+Boot
+: hp(0,0)vmunix
+61856+61008+70120 start 0x4B4
+VM/UNIX (Berkeley Version 2.7) 2/10/80 
+real mem  = 8323072
+avail mem = 8062976
+ERASE IS CONTROL-H!!!
+# /etc/mkfs /dev/rrp0g 145673
+isize = 65488
+m/n = 3 500
+# /etc/mount /dev/rp0g /usr
+# cd /usr
+# cp /dev/rmt5 /dev/null
+# cp /dev/rmt5 /dev/null
+# tar xbf 20 /dev/rmt1
+# 
+</code></pre>
+<p>The restore can take a couple of minutes, be patient. The two lines:</p>
+<pre><code># cp /dev/rmt5 /dev/null
+# cp /dev/rmt5 /dev/null
+</code></pre>
+<p>Are just a way to get the tape device to fast forward to the tape file we want.</p>
+<ul>
+<li>Cleanly shut unix down</li>
+</ul>
+<p>First we will sync and unmount any mounted devices, then we will sync our system. This is the &quot;normal&quot; way to shut down the unix environment in simh</p>
+<pre><code># sync
+# sync
+# sync
+# cd /
+# /etc/umount /dev/rp0g
+# sync
+# sync
+# sync
+# ^E
+Simulation stopped, PC: 8000085F (BLBC 80010FA0,8000085F)
+sim&gt; q
+Goodbye
+$
+</code></pre>
+<ul>
+<li>Backup the baseline system</li>
+</ul>
+<p><code>tar cvzf rp06-baseline.tar.gz rp06.disk</code></p>
+<h2>Boot the system and run Franz LISP</h2>
+<ul>
+<li>Create a disk boot ini</li>
+</ul>
+<pre><code>cat &lt;&lt;EOF &gt;dboot.ini
+set tto 7b
+set rq dis
+set lpt dis
+set rl dis
+set hk dis
+set rq dis
+set rqb dis
+set rqc dis
+set rqd dis
+set ry dis
+set ts dis
+set tq dis
+set dz lines=8
+set rp0 rp06
+at rp0 rp06.disk
+set tu0 te16
+load -o boot3bsd 0
+go 2
+EOF
+</code></pre>
+<ul>
+<li>Boot to disk</li>
+</ul>
+<pre><code>$ vax780 dboot.ini
+
+VAX 11/780 simulator Open SIMH V4.1-0 Current        simh git commit id: cf47a20f
+
+Boot
+: 
+</code></pre>
+<p>At the <code>:</code> prompt, provide the location of the kernel, <code>hp(0,0)vmunix</code></p>
+<pre><code>: hp(0,0)vmunix
+61856+61008+70120 start 0x4B4
+VM/UNIX (Berkeley Version 2.7) 2/10/80 
+real mem  = 8323072
+avail mem = 8062976
+ERASE IS CONTROL-H!!!
+# 
+</code></pre>
+<p>Change the root password. It needs to be at least 6 characters long.</p>
+<pre><code># passwd root
+New password:
+Retype new password:
+# 
+</code></pre>
+<p>To go into multi-user mode, press <code>^d</code>. this will allow you to login. Login as root with the new password.</p>
+<pre><code>#^D
+Sat Aug 30 06:40:18 PDT 1980
+entering rc
+clearing mtab
+mounting /usr on /dev/rp0g
+preserving Ex temps and clearing /tmp
+starting update
+starting cron
+leaving rc
+
+
+Virtual VAX/UNIX (Ernie Co-vax)
+
+login: root
+Password:
+
+Welcome to Virtual Vax/UNIX.
+ERASE IS CONTROL-H!!!
+#
+</code></pre>
+<ul>
+<li>Run Franz LISP Opus 32</li>
+</ul>
+<p>Run Franz in all of its 1979 glory! Type <code>(exit)</code> at the <code>-&gt;</code> prompt when you are ready to leave the lisp environment.</p>
+<pre><code># lisp
+Franz Lisp, Opus 32
+-&gt; (+ 4 4)
+8
+-&gt; (car (cdr '(Hi there)))
+there
+-&gt;(exit)
+#
+</code></pre>
+<ul>
+<li>Celebrate by backing up the working instance</li>
+</ul>
+<pre><code># sync
+# sync
+# sync
+# ^E
+Simulation stopped, PC: 8000085F (BLBC 80010FA0,8000085F)
+sim&gt; q
+Goodbye
+$ tar cvzf rp06-working.tar.gz rp06.disk
+rp06.disk
+$ 
+</code></pre>
+<p>Now, anytime you want to run franz lisp, just reenter the directory with your dboot.ini and rp06.disk and type <code>vax780 dboot.ini</code>, boot the unix kernel, hit ^d at the prompt, and login as root with your new password!</p>
+<p>Here's a typical session:</p>
+<p><img src="/assets/img/lisp/Terminal_004.png" alt="one"></p>
+<h2>Creating the bootblock from uuencoded sources</h2>
+<p>boot3bsd, the bootblock was created from Gunkies uuencoded source <a href="http://gunkies.org/wiki/3BSD_bootsector">http://gunkies.org/wiki/3BSD_bootsector</a>, using Gunkies uudecode program <a href="http://gunkies.org/wiki/Uudecode">http://gunkies.org/wiki/Uudecode</a>. Here is the process I followed to create the bootblock:</p>
+<ul>
+<li>
+<p>Download uudecode source from above and save it as `uudecode.c``.</p>
+</li>
+<li>
+<p>Download uuencoded bootblock from above and save it as <code>boot3bsd.uu</code></p>
+</li>
+<li>
+<p>Compile uudecode and use it to unencode the bootblock.</p>
+</li>
+</ul>
+<pre><code>cc -o uudecode uudecode.c
+./uudecode boot3bsd.uu
+</code></pre>
+<p>Ignore the warnings, they're irrevant to this process.</p>
+<ul>
+<li>Confirm the result</li>
+</ul>
+<pre><code>shasum boot3bsd
+482464bbd3ceb8ec9f02036ad06dbe5a181572e2  boot3bsd
+</code></pre>
+<p>That's it.</p>
+<p>Later - Will</p>
+<p><em>post added 2023-07-31 11:55:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

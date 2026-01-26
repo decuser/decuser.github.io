@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Creating a github pages jekyll minima themed site with pagination - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Creating a github pages jekyll minima themed site with pagination</h1>
+    <p class="post-meta">Dec 5, 2022
+      <a href="/tags/github-pages/" class="tag">github-pages</a> <a href="/tags/jekyll/" class="tag">jekyll</a> <a href="/tags/minima/" class="tag">minima</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>A note about creating a github pages jekyll minima themed blog site and about adding pagination after the fact. This note captures what I learned when I created this blog.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>ruby - I use rbenv <a href="https://github.com/rbenv">https://github.com/rbenv</a> with the ruby-build plugin <a href="https://github.com/rbenv/ruby-build">https://github.com/rbenv/ruby-build</a></li>
+<li>github account - <a href="https://github.com/">https://github.com</a></li>
+<li>git - It is available for download <a href="https://git-scm.com/downloads">https://git-scm.com/downloads</a> but, I use macports to install <a href="https://www.macports.org/install.php">https://www.macports.org/install.php</a></li>
+<li>markdown editor - I use macdown <a href="https://macdown.uranusjr.com/">https://macdown.uranusjr.com</a></li>
+<li>text editor - bbedit on mac <a href="https://www.barebones.com/products/bbedit/download.html">https://www.barebones.com/products/bbedit/download.html</a></li>
+</ul>
+<h2>First Steps</h2>
+<p>First things first. To get started we will:</p>
+<ol>
+<li>Create a github repository</li>
+<li>Clone the repo</li>
+<li>Create a branch to track with our blog</li>
+<li>Commit the repo</li>
+<li>Turn on github-pages for the repo</li>
+<li>Create a jekyll site</li>
+<li>Make some changes</li>
+<li>Check in the changes and push to github</li>
+<li>Test the live blog</li>
+</ol>
+<h3>1. Create a github repository</h3>
+<p>Log into your github account and click the New button to create new repository. Name it whatever works and click Create Repository. Clone the repo as you usually do.</p>
+<p>I named my repo &quot;nifty&quot;.</p>
+<h3>2. Clone the repo</h3>
+<pre><code>cd sandboxes-git
+git clone git@github.com:decuser/nifty.git
+</code></pre>
+<p>The first issue was that I hadn't added my ssh key, so I dutifully uploaded my public key id_rsa.pub and tried again.</p>
+<p>The second issue was <code>warning: You appear to have cloned an empty repository.</code>, but that's not really an issue. I plowed on.</p>
+<h3>3. Create a branch to track with our blog</h3>
+<pre><code>cd nifty
+git checkout --orphan gh-pages
+cat &lt;&lt;EOF &gt;readme.txt
+A repo to test jekyll and pagination.
+EOF
+</code></pre>
+<h3>4. Commit the repo</h3>
+<pre><code>git add .
+git commit -m &quot;first commit&quot;
+git push
+</code></pre>
+<p>Git complains:</p>
+<pre><code>fatal: The current branch gh-pages has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin gh-pages
+</code></pre>
+<p>The solution is:</p>
+<p><code>git push --set-upstream origin gh-pages</code></p>
+<h3>5. Confirm github-pages is enabled for the repo</h3>
+<p>Pull up the repo in github and click on Settings. Select Pages from the left-nav. Your pages should be deployed and a <code>Your site is live at https://decuser.github.io/nifty/</code> message should be showing.</p>
+<p>Although it's published, if you navigate to the site, you will be greeted with a 404 error. This is to be expected, we don't have any content yet.</p>
+<h3>6. Create a jekyll site</h3>
+<h4>Install bundler</h4>
+<pre><code>gem install bundler
+Fetching bundler-2.3.26.gem
+Successfully installed bundler-2.3.26
+Parsing documentation for bundler-2.3.26
+Installing ri documentation for bundler-2.3.26
+Done installing documentation for bundler after 0 seconds
+1 gem installed
+</code></pre>
+<h4>Initialize bundler</h4>
+<pre><code>bundle init
+Writing new Gemfile to /Volumes/Tiempo/_workarea/syms/sandboxes-git/nifty/Gemfile
+</code></pre>
+<h4>Add jekyll and webrick</h4>
+<pre><code>bundle add jekyll webrick
+Fetching gem metadata from https://rubygems.org/............
+Resolving dependencies...
+Fetching gem metadata from https://rubygems.org/...........
+Resolving dependencies...
+Using public_suffix 5.0.0
+...
+</code></pre>
+<h4>Add jekyll scaffolding</h4>
+<pre><code>bundle exec jekyll new --force --skip-bundle .
+New jekyll site installed in /Volumes/Tiempo/_workarea/syms/sandboxes-git/nifty. 
+Bundle install skipped. 
+tree
+.
+├── 404.html
+├── Gemfile
+├── Gemfile.lock
+├── _config.yml
+├── _posts
+│   └── 2022-12-05-welcome-to-jekyll.markdown
+├── about.markdown
+├── index.markdown
+└── readme.txt
+
+1 directory, 8 files
+</code></pre>
+<p>Yay, we have some content, boiler plate, though it is.</p>
+<h4>Serve the site locally</h4>
+<p><code>bundle exec jekyll serve</code></p>
+<p>Sheesh...</p>
+<pre><code>Could not find gem 'minima (~&gt; 2.5)' in locally installed gems.
+Run `bundle install` to install missing gems.
+</code></pre>
+<pre><code>bundle install
+Fetching gem metadata from https://rubygems.org/...........
+Resolving dependencies...
+Using public_suffix 5.0.0
+...
+Bundle complete! 7 Gemfile dependencies, 32 gems now installed.
+Use `bundle info [gemname]` to see where a bundled gem is installed.
+
+bundle exec jekyll serve
+</code></pre>
+<p>Another sheesh - apparently jekyll uses the same port as NoMachine.</p>
+<pre><code>------------------------------------------------
+Jekyll 4.3.1   Please append `--trace` to the `serve` command 
+for any additional information or backtrace. 
+------------------------------------------------
+/Users/wsenn/.rbenv/versions/3.1.2/lib/ruby/3.1.0/socket.rb:201:in `bind': Address already in use - bind(2) for 127.0.0.1:4000 (Errno::EADDRINUSE)
+</code></pre>
+<p>Either shutdown the conflict or...</p>
+<p><code>bundle exec jekyll serve -P anotherport</code></p>
+<p>I just shutdown my conflict (tried both, and both worked).</p>
+<p>browse to <code>http://localhost:4000</code></p>
+<h3>7. Make some changes</h3>
+<p>Let's create a couple of handfuls of posts so we can see what that looks like.</p>
+<pre><code>cd _posts
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-11-25-01.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-11-26-02.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-11-27-03.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-11-28-04.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-11-29-05.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-11-30-06.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-12-01-07.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-12-02-08.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-12-03-09.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-12-04-10.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-12-05-11.markdown
+cp 2022-12-05-welcome-to-jekyll.markdown 2022-12-05-12.markdown
+cd ..
+</code></pre>
+<h4>Test locally</h4>
+<p>browse to <code>http://localhost:4000</code></p>
+<p>Hmmm... not much to see here. Just a list of posts...</p>
+<h4>Turn on excerpts</h4>
+<pre><code>vi _config.yml
+add
+show_excerpts: true
+excerpt_separator: 
+</code></pre>
+<p>The more separator will come in handy down the road, but basically anything appearing before the more separator will be included in the excerpt.</p>
+<p>Restart jekyll <code>CTRL-C</code> to stop it and <code>bundle exec jekyll serve</code> to get it going again.</p>
+<p>Much better... a lot of repetition, but that's what fixing pagination is for... and judicious use of the more tag.</p>
+<h3>8. Check in the changes and push to github</h3>
+<pre><code>git add .
+git commit -m &quot;created some fake posts and turned on excerpts&quot;
+git push
+</code></pre>
+<h3>9. Test the live blog</h3>
+<p>browse to the url that was given in the Pages settings of the repo. In my case:</p>
+<p><code>https://decuser.github.io/nifty/</code></p>
+<p>It will take a moment for your changes to get published. To see the publishing happening, head over to the actions tab of your repo. When it goes green the site should be ready and available and match what you have been seeing locally.</p>
+<p>Next up is adding pagination - who needs a never ending stream of posts anyway?</p>
+<h2>Adding pagination</h2>
+<p>After the blog is up and running, add pagination (sure, we should have though of it sooner, but this is real life :). In order to add pagination, after the fact, we will:</p>
+<ol>
+<li>Clone the minima repo</li>
+<li>Copy needed folders and files from the minima clone into our repo</li>
+<li>Edit the Gemfile</li>
+<li>Edit _config.yml</li>
+<li>Covert our index.markdown file to index.html</li>
+<li>Test locally</li>
+<li>Commit local changes</li>
+<li>Push changes to github</li>
+<li>Test live</li>
+</ol>
+<h3>1. Clone the minima repo</h3>
+<pre><code>cd sandboxes-git
+git clone https://github.com/jekyll/minima.git
+Cloning into 'minima'...
+remote: Enumerating objects
+...
+</code></pre>
+<h3>2. Copy needed folders and files from the minima clone into our repo</h3>
+<p>The folders and files we will grab from the minima repo are:</p>
+<ul>
+<li>_includes - new to our repo</li>
+<li>_layouts - new to our repo</li>
+<li>_sass - new to our repo</li>
+<li>assets - new to our repo</li>
+<li>_config.yml - we'll back ours up</li>
+</ul>
+<pre><code>cd ~/sandboxes-git/nifty
+cp -R ../minima/_includes .
+cp -R ../minima/_layouts .
+cp -R ../minima/_sass .
+cp -R ../minima/assets .
+cp _config.yml _config.yml-prev
+cp ../minima/_config.yml .
+</code></pre>
+<p>Comparing the old and new _config.yml yields very little meaningful differences. The new file has some social media and seo support, but we will just redo our changes to the previous version and move on.</p>
+<h3>3. Edit Gemfile</h3>
+<p>add jekyll-paginate to jekyll plugins section</p>
+<pre><code>group :jekyll_plugins do
+  gem &quot;jekyll-feed&quot;, &quot;~&gt; 0.12&quot;
+  gem &quot;jekyll-paginate&quot;
+end
+</code></pre>
+<h3>4. Edit _config.yml</h3>
+<p>add jekyll-paginate to the plugins section:
+add excerpts properties
+add paginate property</p>
+<pre><code>vi _config.yml
+...
+plugins:
+ - jekyll-feed
+ - jekyll-seo-tag
+ - jekyll-paginate
+...
+show_excerpts: true
+excerpt_separator: 
+paginate: 3
+...
+</code></pre>
+<p>restart the jekyll server and see where we are at...</p>
+<pre><code>bundle exec jekyll serve
+
+The following destination is shared by multiple files.
+The written file may end up with unexpected contents.
+/Volumes/Tiempo/_workarea/syms/sandboxes-git/nifty/_site/assets/minima-social-icons.svg
+- assets/minima-social-icons.html
+- /Users/wsenn/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/minima-2.5.1/assets/minima-social-icons.svg
+</code></pre>
+<p>This issue isn't a problem in the current context, so just ignore it.</p>
+<pre><code>Pagination: Pagination is enabled, but I couldn't find an index.html page to use as the pagination template. Skipping pagination.
+Conflict: The following destination is shared by multiple files.
+The written file may end up with unexpected contents.
+</code></pre>
+<p>This, on the other hand, is a problem, but let's take a look anyway.</p>
+<p>browse to <code>http://localhost:4000</code></p>
+<p>Sure enough, it's wonky.</p>
+<h3>5. Covert our index.markdown file to index.html</h3>
+<p>In order for pagination to work, the index.markdown file has to be converted into an index.html file.</p>
+<p><code>mv index.markdown index.html</code></p>
+<h3>6. Test locally</h3>
+<p>fire up the server again and ignore the shared files issue.</p>
+<p><code>bundle exec jekyll serve</code></p>
+<p>browse to <code>http://localhost:4000</code></p>
+<p>3 to a page, right on!</p>
+<h3>7. Commit local changes</h3>
+<pre><code>git add .
+git commit -m &quot;added pagination&quot;
+</code></pre>
+<h3>8. Push changes to github</h3>
+<p><code>git push</code></p>
+<p>watch progress over in Actions</p>
+<h3>9. Test live</h3>
+<p>browse to <code>https://decuser.github.io/nifty</code></p>
+<p>3 to a page? Success.</p>
+<h2>Wrapping up</h2>
+<p>Celebrate or troubleshoot!</p>
+<p><em>post added 2022-12-05 17:38:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

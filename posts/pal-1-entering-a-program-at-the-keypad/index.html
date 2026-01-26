@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PAL-1 Entering a Program at the Keypad - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">PAL-1 Entering a Program at the Keypad</h1>
+    <p class="post-meta">Jun 8, 2022
+      <a href="/tags/retro-computing/" class="tag">retro-computing</a> <a href="/tags/pal-1/" class="tag">pal-1</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>Note describing a minimalist example of how to input and run a program on the PAL-1.</p>
+<h2>Planning</h2>
+<p>To program the PAL-1, there is some planning required.</p>
+<p>First, we have to decide where our program will reside in memory. According to Appendix A of the PAL-1 manual, there are 5k memory addresses available, but looking at the KIM-1 user manual, pg 38, we see that the first 512 ($0200 hex) bytes are used for page 0: $0000-$00EE, reserved: $00EF-$00FF, and the stack: $00FF-$01FF, and anything above $03FF is expansion (labeled optional for PAL-1). So, for our example, we will stay out of the optional RAM area and for simplicity, begin our program at the first user friendly location of $200. So long as we don't go past $03FF, we will be KIM-1 compatible. This gives us 512 bytes to play with.</p>
+<p>Start your program at $200.</p>
+<p>Next, we need to decide what our program will do. In this case, we will do a pretty minimal thing, we will change the contents of the A register to the value $FF and break. A more minimal program is possible, but this program has an effect that we will be able to detect.</p>
+<p>By looking at the 6502 Programming Manual, we learn that LDA is the instruction that moves a value into the A register, and that there is an immediate mode that will let us specify the value directly. We also learn that BRK is the instruction to interrupt a program.</p>
+<p>In assembly language mnemonics:</p>
+<pre><code>LDA $FF
+BRK
+</code></pre>
+<p>Assembly language is great as a high level language :), but we can't type in assembly language on our PAL-1, we need something more low level. In this case machine code is called for... So, back in the programming manual, we see that LDA has 8 different machine code representations, one for each addressing mode, the addressing mode we are interested in here, is immediate mode and sure enough, there is only one code for that mode, $A9, and that it is a 2 byte instruction, where the first byte is the code, and the second is the data to be loaded, in our case $FF. Similarly, looking up BRK, finds only one code, $00 for the implied mode, and that it is a 1 byte instruction.</p>
+<p>In machine code:
+<code>A9 FF 00</code></p>
+<p>That's our program. It requires 3 bytes of machine code and we have it!</p>
+<p>Next, we need to decide on what should happen when an interrupt (like our BRK) occurs. To keep things simple, we will leverage an existing functionality that the PAL-1 (or KIM-1) ROMs provide, which is the keyboard monitor, itself. We will load the interrupt vector with the location of the start of the keyboard monitor. This will cause the program interrupt to run the monitor (wait for commands from the user) - super handy!</p>
+<p>The interrupt vector, IRQ, is located at $17FE-$17FF, the location of the start of the monitor is $1C00. We store the location LO-BYTE then HI-BYTE, this is known as little-endian order. So, in memory, this will look like:</p>
+<pre><code>17FE 00
+17FF 1C
+</code></pre>
+<p>That's it for preliminaries and planning. In the discussion below, keep in mind that the labels of the keys are below the keys themselves.</p>
+<h2>Keying it in</h2>
+<ol>
+<li>Open JP-1 (Keypad Entry)</li>
+<li>Close JP-2 (Onboard memory)</li>
+<li>Attach Power to PAL-1 (LEDs should light up with memory location and contents)</li>
+<li>Press RS to initialize the PAL-1 (pushbutton at the top right)</li>
+<li>Enter your program</li>
+</ol>
+<ul>
+<li>
+<p>Press AD to enter address mode
+Enter the starting address of the program, in hex, using the keypad</p>
+<p><code>0200</code></p>
+</li>
+<li>
+<p>Press DA to enter data mode
+Enter each byte (pair of hex digits) followed by + to move to the next byte</p>
+<pre><code>A9 +
+FF +
+00 +
+</code></pre>
+</li>
+</ul>
+<ol start="6">
+<li>Confirm that the bytes are entered correctly</li>
+</ol>
+<ul>
+<li>
+<p>Press AD to reenter address mode and enter the start address of the program</p>
+<p><code>0200</code></p>
+<p>Observe that the data byte displayed is <code>A9</code></p>
+</li>
+<li>
+<p>Press <code>+</code> twice and note that the data bytes displayed are <code>FF</code> and <code>00</code> respectively</p>
+</li>
+</ul>
+<p>This means that memory now looks like:</p>
+<pre><code>0200 A9
+0201 FF
+0202 00
+...
+</code></pre>
+<p>and our program is in RAM, ready to run.</p>
+<ol start="7">
+<li>Set up the interrupt vector to start the monitor</li>
+</ol>
+<p>We do this so that our program will run, and will return to the monitor</p>
+<ul>
+<li>
+<p>Press AD to enter address mode and enter the Interrupt vector, <code>17FE</code> (this is IRQL, low byte of IRQ)</p>
+</li>
+<li>
+<p>Enter the low byte of the start of the monitor and press <code>+</code></p>
+<p><code>00 +</code></p>
+<p>The address displayed is now <code>17FF</code> (this is IRQH, high byte of IRQ)</p>
+</li>
+<li>
+<p>Enter the high byte of the start of the monitor and press <code>+</code></p>
+<p><code>1C +</code></p>
+</li>
+</ul>
+<ol start="8">
+<li>
+<p>Confirm that the IRQ is properly configured (left as an exercise for the reader, see 6, above)</p>
+</li>
+<li>
+<p>Initialize the contents of the A register before we run our program</p>
+</li>
+</ol>
+<p>The KIM-1 User manual tells us that the A register is mapped to memory location $00F3.</p>
+<ul>
+<li>Press AD and enter 00F3</li>
+<li>Press DA and enter 00 +</li>
+</ul>
+<ol start="10">
+<li>Run our program</li>
+</ol>
+<p>To run a program entails entering the address where we want to start and pressing GO.</p>
+<ul>
+<li>Press AD and enter 0200</li>
+<li>Press GO</li>
+</ul>
+<p>If all went well, the LEDs should display:</p>
+<p><code>0204 XX</code></p>
+<p>The program ran, was interrupted and has restarted the monitor - it is displaying the location of the Program Counter and the contents of that location. XX will be whatever was previously stored at <code>$0204</code>.</p>
+<ol start="11">
+<li>Celebrate!</li>
+</ol>
+<h2>Troubleshooting</h2>
+<p>If the LEDs go blank when you press GO and do not relight, this means your PAL-1 is busy doing something other than driving the LEDs. The most likely cause is that you forgot to set the IRQ to the monitor start.</p>
+<p>To regain control of the PAL-1, press <code>RS</code>.</p>
+<p>Then confirm memory looks like you would expect:</p>
+<ul>
+<li>
+<p>Press AD and enter 0200</p>
+</li>
+<li>
+<p>Press + a few times</p>
+</li>
+<li>
+<p>Press AD and enter 17FE</p>
+</li>
+<li>
+<p>Press + a couple of times</p>
+</li>
+<li>
+<p>Press AD and enter 00F3</p>
+</li>
+</ul>
+<p>If all of that looks right, then be sure that you actually started your program at <code>0200</code>:</p>
+<ul>
+<li>Press AD 0200</li>
+<li>Press G</li>
+</ul>
+<p>If it's still not working, get on the PAL-1 google group and ask for help - the folks there are friendly and helpful.</p>
+<p><em>post added 2022-12-02 16:11:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

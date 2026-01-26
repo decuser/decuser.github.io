@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDP-11 BASIC, booting the hard way - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">PDP-11 BASIC, booting the hard way</h1>
+    <p class="post-meta">Dec 24, 2015
+      <a href="/tags/pdp-11/" class="tag">pdp-11</a> <a href="/tags/analysis/" class="tag">analysis</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note describes the process of running PDP-11 Basic from the PDP-11 Basic Paper Tape System. It is informed and inspired by Malcolm Macleod's webpage entitled, &quot;PDP-11 Paper Tape BASIC&quot; located at http://www.avitech.com.au/ptb/ptb.html. It describes the process, step by step, of keying in the bootstrap loader, running it to load the absolute loader from paper tape stored in bootstrap loader format, and then running the absolute loader to load the PDP-11 BASIC program from paper tape stored in absolute loader format.</p>
+<p>To learn more about how the bootstrap loader works, see my [prior note ]({% post_url 2015-12-21-analysis-of-the-pdp-11-bootstrap-loader-code %})</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Mac OS X or other unix-like environment</li>
+<li>SimH PDP-11 Simulator <a href="https://github.com/simh/simh">https://github.com/simh/simh</a></li>
+<li>Absolute Loader paper tape image DEC-11-L2PC-PO.ptap <a href="http://www.vaxhaven.com/images/b/bf/DEC-11-L2PC-PO.ptap">http://www.vaxhaven.com/images/b/bf/DEC-11-L2PC-PO.ptap</a></li>
+</ul>
+<p>A Paper tape image with PDP-11 BASIC Single User DEC-11-AJPB-PB.ptap
+<a href="http://www.vaxhaven.com/images/c/c2/DEC-11-AJPB-PB.ptap">http://www.vaxhaven.com/images/c/c2/DEC-11-AJPB-PB.ptap</a></p>
+<h3>Nice to have</h3>
+<ul>
+<li>PDP11-05 Handbook PDP11-05-10-35-40-processor handbook-1973.pdf <a href="http://bitsavers.org/pdf/dec/pdp11/handbooks/PDP1145_Handbook_1973.pdf">http://bitsavers.org/pdf/dec/pdp11/handbooks/PDP1145_Handbook_1973.pdf</a></li>
+<li>BASIC Programming Manual DEC-11-AJPB-D_PDP-11_BASIC_Programming_Manual_Dec70.pdf <a href="https://archive.org/details/bitsavers_decpdp11baASICProgrammingManualDec70_5936477">https://archive.org/details/bitsavers_decpdp11baASICProgrammingManualDec70_5936477</a></li>
+</ul>
+<h2>The &quot;hard&quot; way</h2>
+<p>The hard way means typing a bit and not relying on SimH for much help. I will conclude with a script that can be run that automates the process that can be considered the easy way :).</p>
+<p>In order to boot the PDP-11, we will start the simulator and tell it what kind of PDP-11, we want to run. In this case, we don't need anything more powerful than a PDP-11/05 with 8K words of memory. In SimH, memory is specified in bytes, not words, so the correct amount to specify an 8K word machine is 16K bytes.</p>
+<pre><code>pdp11
+sim&gt;
+
+set cpu 11/05
+set cpu 16k
+set cpu idle
+</code></pre>
+<p>In order to load the basic program from its tape, a loader program is needed. That loader is the &quot;absolute loader.&quot; The absolute loader is capable of loading programs from tape and potentially relocating them as well. The absolute loader is on its own paper tape, so it needs to be loaded first. The program that loads the absolute loader is the bootstrap loader.</p>
+<p>At the very back of the handbook, or on the PDP-11 Programming Card, the bootstrap loader is provided in text form. The text is slightly cryptic, so I will explain the book entry and then describe how it works. Here is how it appears on page E-7 (line numbers added for discussion):</p>
+<pre><code>1                            ABSOLUTE LOADER
+2
+3                Starting Address: ___ 500
+4                                  ^^^
+5              Memory Size:             4K 017
+6                                       8K 037
+7                                      12K 057
+8                                      16K 077
+9                                      20K 117
+10                                     24K 137
+11                                     28K 157
+12                                   (or larger)
+13
+14
+15                           BOOTSTRAP LOADER
+16     Address       Contents            Address       Contents
+17     ___ 744        016 701            ___ 764        000 002
+18     ___ 746        000 026            ___ 766        ___ 400
+19     ___ 750        012 702            ___ 770        005 267
+20     ___ 752        000 352            ___ 772        177 756
+21     ___ 754        005 211            ___ 774        000 765
+22     ___ 756        105 711            ___ 776        177 560 (KB)
+23     ___ 760        100 376                     or    177 550 (PR)
+24     ___ 762        116 162
+</code></pre>
+<p>Line 3 refers to the starting address of the absolute loader. It is comprised of 3 leading octal digits that depend on how much memory the system has (lines 5-12). In the simulated system, we specified 8K words of memory, so line 6 applies and the starting address for the absolute loader will be 037 500.</p>
+<p>Line 6 also supplies the prefix for lines 17-24. Wherever ___ appears, 037 will be used. This ensures that the bootstrap is loaded into the highest physical memory location.</p>
+<p>Lines 22-23 on the right hand side refers to KB or PR. KB is an LT 33 Teletype Keyboard, whereas PR is a PC11 Paper Tape Reader. The Reader is a faster device in the real world and will be the simulated device we will use (I don't know if the simulated KB or PR is faster).</p>
+<p>Using the above information, the addresses and contents of the bootstrap loader program is represented as follows:</p>
+<pre><code>037744 016701
+037746 000026
+037750 012702
+037752 000352
+037754 005211
+037756 105711
+037760 100376
+037762 116162
+037764 000002
+037766 037400
+037770 005267
+037772 177756
+037774 000765
+037776 177550
+</code></pre>
+<p>In order to put this program in memory, we need to toggle in each instruction. Since this is a simulator, we will do it virtually using the SimH deposit instruction:</p>
+<pre><code>dep 037744 016701
+dep 037746 000026
+dep 037750 012702
+dep 037752 000352
+dep 037754 005211
+dep 037756 105711
+dep 037760 100376
+dep 037762 116162
+dep 037764 000002
+dep 037766 037400
+dep 037770 005267
+dep 037772 177756
+dep 037774 000765
+dep 037776 177550
+</code></pre>
+<p>We can verify the program by examining it with the SimH examine command:</p>
+<pre><code>ex 037744-037776
+37744:    016701
+37746:    000026
+37750:    012702
+37752:    000352
+37754:    005211
+37756:    105711
+37760:    100376
+37762:    116162
+37764:    000002
+37766:    037400
+37770:    005267
+37772:    177756
+37774:    000765
+37776:    177550
+</code></pre>
+<p>This program requires that the absolute loader paper tape be loaded into the paper tape reader and that it be ready to read. So, we will virtually load the tape and get it ready to read. At the sim&gt; prompt:</p>
+<p><code>attach ptr DEC-11-L2PC-PO.ptap</code></p>
+<p>To execute the bootstrap loader from memory and load the absolute loader from tape, we tell the CPU (SimH) to begin executing the program loaded at 037744, the start of the bootstrap loader.</p>
+<pre><code>go 037744
+
+The CPU will HALT
+HALT instruction, PC: 037500 (MOV PC,SP)
+</code></pre>
+<p>The program counter (PC) is not pointing at 037500, the first instruction of the absolute loader. To enable us to use SimH while executing the BASIC program, we will enable telnet to the simulated environment:</p>
+<p><code>set console telnet=5000</code></p>
+<p>Open another terminal window and start a telnet session:</p>
+<p><code>telnet localhost 5000</code></p>
+<p>Next we virtually load the BASIC paper tape: And execute the absolute loader program to load the tape into memory and run it:</p>
+<pre><code>attach ptr DEC-11-AJPB-PB.ptap
+dep sr 0
+go
+</code></pre>
+<p>At this point BASIC is operational. To access it, open another terminal window and telnet to localhost on port 5000:</p>
+<pre><code>telnet localhost 5000
+
+Trying ::1...
+Connected to localhost.
+Escape character is '^]'.
+
+
+Connected to the PDP-11 simulator CON-TEL device
+
+
+PDP-11 BASIC, VERSION 007A
+*O
+</code></pre>
+<p>The <code>*O</code> is a prompt, just press enter and READY will appear</p>
+<pre><code>READY
+</code></pre>
+<p>NOTE: Only use upper case with the BASIC program or you will get unexplained errors.</p>
+<p>Test it out by writing a little program</p>
+<pre><code>10 PRINT &quot;HELLO, WORLD!&quot;
+List the program contents:
+
+LIST
+
+10 PRINT &quot;HELLO, WORLD!&quot;
+READY
+Run the program:
+
+RUN
+HELLO, WORLD!
+
+STOP AT LINE   10
+READY
+</code></pre>
+<p>Celebrate.</p>
+<h2>The &quot;easy&quot; way</h2>
+<p>The easy way is to create a SimH ini file:</p>
+<pre><code>cat &gt; basic.ini &lt;&lt;&quot;EOF&quot;
+set cpu 11/05
+set cpu 16k
+set cpu idle
+
+dep 037744 016701
+dep 037746 000026
+dep 037750 012702
+dep 037752 000352
+dep 037754 005211
+dep 037756 105711
+dep 037760 100376
+dep 037762 116162
+dep 037764 000002
+dep 037766 037400
+dep 037770 005267
+dep 037772 177756
+dep 037774 000765
+dep 037776 177550
+
+attach ptr DEC-11-L2PC-PO.ptap
+
+go 037744
+
+set console telnet=5000
+
+attach ptr DEC-11-AJPB-PB.ptap
+dep sr 0
+go
+EOF
+</code></pre>
+<p>Now to start the simulator pass it the ini file:</p>
+<p><code>pdp11 basic.ini</code></p>
+<p>And fire up another terminal window to telnet into the instance:</p>
+<p><code>telnet localhost 5000</code></p>
+<p>and you are up and running with PDP-11 BASIC in all of its glory, revel.</p>
+<p>Mattis Lind on January 10, 2016 at 2:45 AM pointed out:</p>
+<p>If you are interested more in the Absolute Loader the source code is provided here : <a href="https://groups.google.com/forum/#!topic/alt.sys.pdp11/vTOG9_tEVMI">https://groups.google.com/forum/#!topic/alt.sys.pdp11/vTOG9_tEVMI</a></p>
+<p>In my post on my PDP-11/04 <a href="https://web.archive.org/web/20160129154952/http://www.datormuseum.se/computers/digital-equipment-corporation/pdp-11-04">https://web.archive.org/web/20160129154952/http://www.datormuseum.se/computers/digital-equipment-corporation/pdp-11-04</a> restoration I did a quick hack to decode a file in absolute binary format into a binary image. Jörg Hoppe later included this feature in the PDP11GUI.</p>
+<p>AlecV on August 15, 2017 at 8:30 AM pointed out:</p>
+<p>LINK-11 may produce Absolute Loader format with /L CSI option or /LDA</p>
+<p>xref: <a href="http://bitsavers.trailing-edge.com/pdf/dec/pdp11/rt11/v5.6_Aug91/AA-PDU0A-TC_RT-11_Commands_Manual_Aug91.pdf">http://bitsavers.trailing-edge.com/pdf/dec/pdp11/rt11/v5.6_Aug91/AA-PDU0A-TC_RT-11_Commands_Manual_Aug91.pdf</a></p>
+<p>Page 171</p>
+<p>xref: <a href="http://bitsavers.trailing-edge.com/pdf/dec/pdp11/rt11/v5.6_Aug91/AA-M239D-TC_RT-11_System_Utilities_Manual_Part_I_Aug91.pdf">http://bitsavers.trailing-edge.com/pdf/dec/pdp11/rt11/v5.6_Aug91/AA-M239D-TC_RT-11_System_Utilities_Manual_Part_I_Aug91.pdf</a></p>
+<p>Section 15-28</p>
+<p><em>post added 2022-11-30 12:29:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

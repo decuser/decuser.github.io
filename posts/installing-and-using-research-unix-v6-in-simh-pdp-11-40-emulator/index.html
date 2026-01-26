@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emulator - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emulator</h1>
+    <p class="post-meta">Nov 23, 2015
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/v6/" class="tag">v6</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note is intended to document the process of running v6 in a PDP-11/40 emulated environment. A subsequent note covers [v7]({% post_url 2015-12-07-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.0 %})</p>
+<p>Minor updates on November 30, 2022.</p>
+<p>Helpful Reference Sites:</p>
+<ul>
+<li>Setting up Unix - Sixth Edition: <a href="https://minnie.tuhs.org/PUPS/Setup/v6_setup.html">https://minnie.tuhs.org/PUPS/Setup/v6_setup.html</a></li>
+<li>The Unix Heritage Society: <a href="http://www.tuhs.org">http://www.tuhs.org</a></li>
+<li>The PDP Unix Preservation Society: <a href="http://minnie.tuhs.org/PUPS">http://minnie.tuhs.org/PUPS</a></li>
+<li>The Computer History Simulation Project: <a href="http://simh.trailing-edge.com">http://simh.trailing-edge.com</a></li>
+<li>Wolfgang Helbig's notes, tape image, scripts, etc: <a href="http://doc.cat-v.org/unix/v6/operating-systems-lecture-notes/v6">http://doc.cat-v.org/unix/v6/operating-systems-lecture-notes/v6</a></li>
+<li>Lion's Commentary on Unix 6th Edition: <a href="http://www.lemis.com/grog/Documentation/Lions/book.pdf">http://www.lemis.com/grog/Documentation/Lions/book.pdf</a></li>
+<li>Warren Toomey's work on restoration and archiving: <a href="http://minnie.tuhs.org/">http://minnie.tuhs.org/</a></li>
+</ul>
+<p>This note details the process of building a working v6 instance from a copy of the original tape distribution. It is worth noting that calling them original bits, as would be obtained from the original tape could be misleading. There are a number of different versions extant, but the Unix Heritage Society, hereafter referred to as tuhs, has provided the public access to all of the versions they believe to most closely match what was on the original tape.</p>
+<p>Prerequisites:</p>
+<ul>
+<li>The license - I am using the Caldera Unix Enthusiasts license available at <a href="http://www.tuhs.org/Archive/Caldera-license.pdf">http://www.tuhs.org/Archive/Caldera-license.pdf</a></li>
+<li>A working Host - I have used Mac OS X Mavericks, Yosemite, and El Capitan, 10.9-10.11, as well as FreeBSD 10.2. I feel confident that it would work with Linux as well, but I haven't tested it. Basically, any host capable of running SimH should work.</li>
+<li>SimH PDP-11 Emulator - I have used versions 3+, this note is based on using the latest code as of 20151123 available at <a href="https://github.com/simh/simh">https://github.com/simh/simh</a></li>
+<li>A distribution tape image - I am using the Ken Wellsch tape because it boots and is stated to be identical to Dennis Ritchie's tape other than being bootable and having a different timestamp on root. Available at <a href="http://www.tuhs.org/Archive/Distributions/Research/Ken_Wellsch_v6/v6.tape.gz">http://www.tuhs.org/Archive/Distributions/Research/Ken_Wellsch_v6/v6.tape.gz</a></li>
+<li>The man command and sundry from Wolfgang's work - I will be using enblock and deblock from Wolfgang's work and if you want the man command to work, and you do, you will want to apply Wolfgang's fix for man. The en/deblock utilities and man and other fixes are available in the tarball available at <a href="http://www.tuhs.org/Archive/Distributions/Research/Bug_Fixes/V6enb/v6enb.tar.gz">http://www.tuhs.org/Archive/Distributions/Research/Bug_Fixes/V6enb/v6enb.tar.gz</a></li>
+</ul>
+<h2>Getting Started</h2>
+<p>This section describes creating a workspace, downloading the images, and building the enblock and deblock utilities.</p>
+<p>Create a working directory (I use retro-workarea in my sandboxes folder):</p>
+<pre><code>mkdir ~/sandboxes/retro-workarea
+cd ~/sandboxes/retro-workarea
+</code></pre>
+<p>Get a copy of the distribution tape image:
+<code>curl -O http://www.tuhs.org/Archive/PDP-11/Distributions/research/Ken_Wellsch_v6/v6.tape.gz</code></p>
+<p>Get a copy of Wolfgang's fixes and the enblock and deblock program source code:
+<code>curl -O http://www.tuhs.org/Archive/PDP-11/Bug_Fixes/V6enb/v6enb.tar.gz</code></p>
+<p>Unpack the two archives:</p>
+<pre><code>gunzip v6.tape.gz
+tar xvf v6enb.tar.gz
+</code></pre>
+<p>Build the enblock and deblock utilities, warnings are non-fatal and are related to the dialect of C that Wolfgang is using:</p>
+<pre><code>cd v6enb
+cc enblock.c -o enblock
+cc deblock.c -o deblock
+</code></pre>
+<p>Copy the utilities into the working directory and change into that directory:</p>
+<pre><code>cp enblock ..
+cp deblock ..
+cd ..
+</code></pre>
+<h2>Tape Preparation</h2>
+<p>This section describes preparing the raw v6 tape image for use with the SimH emulator using the enblock utility program. enblock converts a raw tape image into a format that SimH expects (512 byte blocks, file size markers, and eof marker):</p>
+<p>Use enblock to read v6.tape and convert it into dist.tap:
+<code>./enblock &lt; v6.tape &gt; dist.tap</code></p>
+<h2>Boot from the converted distribution tape - The ini method</h2>
+<p>Create a tape boot ini file for SimH that will initialize the tape and give us access to the tmrk utility for copying from tape directly to disk without the need for much of an os:</p>
+<pre><code>cat &gt; tboot.ini &lt;&lt; &quot;EOF&quot;
+set cpu 11/40
+set tm0 locked
+attach tm0 dist.tap
+attach rk0 rk0
+attach rk1 rk1
+attach rk2 rk2
+attach rk3 rk3
+d cpu 100000 012700
+d cpu 100002 172526
+d cpu 100004 010040
+d cpu 100006 012740
+d cpu 100010 060003
+d cpu 100012 000777
+g 100000
+EOF
+</code></pre>
+<p>I will explain the contents of the ini file in the next section on the manual method.</p>
+<p>Start the SimH PDP-11 emulator using the tboot.ini file to control it:
+<code>pdp11 tboot.ini</code></p>
+<p>What you will see is:</p>
+<pre><code>PDP-11 simulator V4.0-0 Beta        git commit id: 4a1cf358
+Disabling XQ
+RK: creating new file
+RK: creating new file
+RK: creating new file
+</code></pre>
+<p>Halt the CPU by typing <strong>CTRL+E</strong> - the machine will break at 100012 and will display:
+<code>Simulation stopped, PC: 100012 (BR 100012)</code></p>
+<h2>Boot from distribution tape - the manual method</h2>
+<p>Start the simulator without specifying an ini file:
+<code>pdp11</code></p>
+<p>Tell SimH that the model we want is PDP-11/40:</p>
+<pre><code>simh&gt; set cpu 11/40
+Disabling XQ
+</code></pre>
+<p>Create a magnetic tape device on drive 0, set it locked for write:
+<code>sim&gt; set tm0 locked</code></p>
+<p>Attach the converted distribution tape to the magnetic tape device:
+<code>sim&gt; attach tm0 dist.tap</code></p>
+<p>Create three empty formatted disk packs on drives 0, 1, and 2 and attach them as RK05 devices:</p>
+<pre><code>sim&gt; attach rk0 rk0
+RK: creating new file
+sim&gt; attach rk1 rk1
+RK: creating new file
+sim&gt; attach rk2 rk2
+RK: creating new file
+</code></pre>
+<p>Key in and execute a program at memory location 100000 that loads the tape at address 0. After telling SimH that we intend to insert data into memory, the emulator will display successive word locations. We are providing octal bytes 2, at a time, to match the word size of the PDP-11:</p>
+<pre><code>sim&gt; id 100000-100012
+100000: 012700
+100002: 172526
+100004: 010040
+100006: 012740
+100010: 060003
+100012: 000777
+
+</code></pre>
+<p>Execute the loaded program:
+<code>simh&gt; g 100000</code></p>
+<p>Halt the CPU by typing <strong>CTRL+E</strong> - the machine will break at 100012 and will display:
+<code>Simulation stopped, PC: 100012 (BR 100012)</code></p>
+<h2>Notes up to this point</h2>
+<p>The tape has virtually moved and the CPU looped (according to Setting up Unix). Halting and restarting the CPU will cause the tape to rewind. The next step will start the program now residing at CPU 0. At this point, I believe that we have loaded the minimal OS from the tape. The tape is composed of 512-byte blocks:</p>
+<ul>
+<li>Blocks 0 - 100 are the tape bootstrap stuff</li>
+<li>Blocks 101 - 4100 are the RK05 root image</li>
+<li>Blocks 4101 - 8100 are the /usr RK05 image</li>
+<li>Blocks 8101 - 12100 are the /doc RK05 image.</li>
+</ul>
+<p>Boot blocks for various types of device are stored at different locations:</p>
+<ul>
+<li>Block 100 is the RK05 boot block</li>
+<li>Block 99 is the RP03 boot block</li>
+<li>Block 98 is the RP04 boot block</li>
+</ul>
+<p>If you want to use a different source device than the default TU10 (which is what we configured as tm0 attached to dist.tap), or target than RK05 (which is what we configured as rk0), you will need to modify the commands below to use the correct utility and offset for the correct boot block. Here are the rules from Setting Up Unix - Sixth Edition:</p>
+<p>If you have TU16 tape say <strong>htrk</strong> instead of <strong>tmrk</strong> in the above example. If you have an RP03 disk, say <strong>tmrp</strong> or <strong>htrp</strong>, and use a <strong>99</strong> instead of <strong>100</strong> tape offset. If you have an RP04 disk, use <strong>tmhp</strong> or <strong>hthp</strong> instead or <em>tmrk</em>, and use a <strong>98</strong> instead of <strong>100</strong> tape offset. The different offsets load bootstrap programs appropriate to the disk they will live on.</p>
+<p>At this point, all we are interested in are getting the bootstrap program and the root image in order to be able to boot from disk.</p>
+<h2>Copy tape objects to disk</h2>
+<p>Assumes TU10 and RK05 devices, which we selected in tboot.ini)</p>
+<p>Run the minimal os loaded at address 0:</p>
+<pre><code>g 0
+=
+</code></pre>
+<p>Use the tmrk utility to copy the disk bootstrap program from tape to the disk block 0:</p>
+<pre><code>=tmrk
+disk offset
+0
+tape offset
+100
+count
+1
+
+</code></pre>
+<p>Use tmrk to copy the root filesystem (tape position 101-4100) to disk</p>
+<pre><code>=tmrk
+disk offset
+1
+tape offset
+101
+count 3999
+=
+</code></pre>
+<p><strong>CTRL+E</strong> to break the emulation
+<code>Simulation stopped, PC: 137300 (BGE 137274)</code></p>
+<pre><code>sim&gt; q
+Goodbye
+</code></pre>
+<h2>Boot from disk</h2>
+<p>simh has a built in boot rom for bootstrapping the disk and loading it's bootblock</p>
+<pre><code>cat &gt; dboot.ini &lt;&lt; &quot;EOF&quot;
+set cpu 11/40
+set tto 7b
+set tm0 locked
+attach tm0 dist.tap
+attach rk0 rk0
+attach rk1 rk1
+attach rk2 rk2
+attach rk3 rk3
+attach ptr ptr.txt
+attach ptp ptp.txt
+attach lpt lpt.txt
+dep system sr 173030
+boot rk0
+EOF
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li><code>set tto 7b</code> - set the terminal output to 7 bits, which is compatible with Unix v6.</li>
+<li><code>attach rk3 rk3</code> - added an extra disk that we can use later... or not...</li>
+<li><code>attach ptr ptr.txt</code> - added a paper tape reader virtual device which will come in handy to transfer files from the host to v6.</li>
+<li><code>attach ptp ptp.txt</code> - added a paper tape punch virtual device which will be useful for transferring files from v6 to the host.</li>
+<li><code>attach lpt lpt.txt</code> - added a virtual line printer that will allow us to print things to the host from v6</li>
+<li><code>dep system sr 173030</code> - Unix will boot the system in single user mode (xref, man 8 boot procedures in v6)</li>
+<li><code>boot rk0</code> - boot using the disk that we installed a boot loader and root filesystem to</li>
+</ul>
+<p>Start the Simulator:</p>
+<pre><code>pdp11 dboot.ini
+PDP-11 simulator V4.0-0 Beta        git commit id: 9b7c614b
+Disabling XQ
+@
+</code></pre>
+<p>The <strong>@</strong> symbol is the boot loader prompt. We tell it where the kernel is in relation to our filesystem:</p>
+<pre><code>@rkunix
+mem = 1035
+RESTRICTED RIGHTS
+Use, duplication or disclosure is subject to
+restrictions stated in Contract with Western
+Electric Company, Inc.
+#
+</code></pre>
+<p>If you stop here an look around there will be a number of really interesting, but annoying things happening. Feel free to stop at this point and just get a feel for how alien, but familiar the OS is...</p>
+<p>The first annoyance is that uppercase nonsense. To fix:</p>
+<p><code>#STTY -LCASE</code></p>
+<p>The second annoyance is the complete lack of a cd command. To fix, you will need to read on.</p>
+<h2>Configuration and Installation of a new kernel</h2>
+<p>Note that even in 1975, a rebuild of the kernel only took 50 seconds.</p>
+<p>Build mkconf:
+mkconf is what configures the system to support various device types</p>
+<pre><code>chdir /usr/sys/conf
+cc mkconf.c
+mv a.out mkconf
+</code></pre>
+<p>Run <code>mkconf</code> and tell it about our attached devices - rk05's, tape reader and tape punch, magtape, DECtape, serial terminals, and line printer:</p>
+<pre><code>./mkconf
+rk
+pc
+tm
+tc
+8dc
+lp
+done
+</code></pre>
+<p>Compile and install the kernel which we will call unix:</p>
+<ul>
+<li><code>m40.s</code> is the machine language assist file</li>
+<li><code>c.c</code> is the configuration table containing the major device switches for each device class, block or character</li>
+<li><code>l.s</code> is the trap vectors for the devices</li>
+</ul>
+<pre><code>as m40.s
+mv a.out m40.o
+cc -c c.c
+as l.s
+ld -x a.out m40.o c.o ../lib1 ../lib2
+mv a.out /unix
+</code></pre>
+<p>Confirm that the resulting kernel is 30k:</p>
+<pre><code>ls -l /
+-rwxrwxrwx  1 root    30942 Oct 10 13:04 unix
+</code></pre>
+<p>Prior to making dev mods, the directory contains:</p>
+<pre><code>ls /dev
+kmem
+mem
+null
+tty8
+</code></pre>
+<p>Each of these files is described in section IV of the manual on v6.</p>
+<p>Take a look at c.c to understand the device numbers:</p>
+<pre><code>cat c.c
+/*
+*/
+int     (*bdevsw[])()
+{
+&amp;nulldev,       &amp;nulldev,       &amp;rkstrategy,    &amp;rktab, /* rk */
+&amp;nodev,         &amp;nodev,         &amp;nodev,         0,      /* rp */
+&amp;nodev,         &amp;nodev,         &amp;nodev,         0,      /* rf */
+&amp;tmopen,        &amp;tmclose,       &amp;tmstrategy,    &amp;tmtab, /* tm */
+&amp;nulldev,       &amp;tcclose,       &amp;tcstrategy,    &amp;tctab, /* tc */
+&amp;nodev,         &amp;nodev,         &amp;nodev,         0,      /* hs */
+&amp;nodev,         &amp;nodev,         &amp;nodev,         0,      /* hp */
+&amp;nodev,         &amp;nodev,         &amp;nodev,         0,      /* ht */
+0
+};
+int     (*cdevsw[])()
+{
+&amp;klopen,   &amp;klclose,  &amp;klread,   &amp;klwrite,  &amp;klsgtty,   /* console */
+&amp;pcopen,   &amp;pcclose,  &amp;pcread,   &amp;pcwrite,  &amp;nodev,     /* pc */
+&amp;lpopen,   &amp;lpclose,  &amp;nodev,    &amp;lpwrite,  &amp;nodev,     /* lp */
+&amp;dcopen,   &amp;dcclose,  &amp;dcread,   &amp;dcwrite,  &amp;dcsgtty,   /* dc */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* dh */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* dp */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* dj */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* dn */
+&amp;nulldev,  &amp;nulldev,  &amp;mmread,   &amp;mmwrite,  &amp;nodev,     /* mem */
+&amp;nulldev,  &amp;nulldev,  &amp;rkread,   &amp;rkwrite,  &amp;nodev,     /* rk */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* rf */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* rp */
+&amp;tmopen,   &amp;tmclose,  &amp;tmread,   &amp;tmwrite,  &amp;nodev,     /* tm */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* hs */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* hp */
+&amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,    &amp;nodev,     /* ht */
+0
+};
+int     rootdev {(0&lt;&lt;8)|0};
+int     swapdev {(0&lt;&lt;8)|0};
+int     swplo   4000;   /* cannot be zero */
+int     nswap   872;
+</code></pre>
+<p>Note that rk is block device major 0 (the first entry in the array) and that rrk is character device major 9, and so on.</p>
+<p>Create special files for each installed device that isn't already there:</p>
+<pre><code>/etc/mknod /dev/rk0 b 0 0
+/etc/mknod /dev/rk1 b 0 1
+/etc/mknod /dev/rk2 b 0 2
+/etc/mknod /dev/rk3 b 0 3
+/etc/mknod /dev/mt0 b 3 0
+/etc/mknod /dev/tap0 b 4 0
+/etc/mknod /dev/rrk0 c 9 0
+/etc/mknod /dev/rrk1 c 9 1
+/etc/mknod /dev/rrk2 c 9 2
+/etc/mknod /dev/rrk3 c 9 3
+/etc/mknod /dev/rmt0 c 12 0
+/etc/mknod /dev/ppt c 1 0
+/etc/mknod /dev/lp0 c 2 0
+/etc/mknod /dev/tty0 c 3 0
+/etc/mknod /dev/tty1 c 3 1
+/etc/mknod /dev/tty2 c 3 2
+/etc/mknod /dev/tty3 c 3 3
+/etc/mknod /dev/tty4 c 3 4
+/etc/mknod /dev/tty5 c 3 5
+/etc/mknod /dev/tty6 c 3 6
+/etc/mknod /dev/tty7 c 3 7
+</code></pre>
+<p>Secure the special files:</p>
+<pre><code>chmod 640 /dev/*rk*
+chmod 640 /dev/*pp*
+chmod 640 /dev/*lp*
+chmod 640 /dev/*mt*
+chmod 640 /dev/*tap*
+chmod 640 /dev/*tty*
+</code></pre>
+<p>In order to have a usable system, we will still need to install the sources, the docs, mount them, and edit the rc, and ttys file, and modify and rebuild the df command (I may revisit this note later as Ritchie's notes refer to some other files that need to change).</p>
+<p>Restore doc and source from rk05s:</p>
+<pre><code>dd if=/dev/rmt0 of=/dev/rrk1 count=4000 skip=4100
+dd if=/dev/rmt0 of=/dev/rrk2 count=4000 skip=8100
+</code></pre>
+<p>Update the superblock (ensures that all output gets written to disk):</p>
+<pre><code>sync
+sync
+</code></pre>
+<p>Create mount point for doc and mount both doc and source (source mountpoint already exists):</p>
+<pre><code>mkdir /usr/doc
+/etc/mount /dev/rk1 /usr/source
+/etc/mount /dev/rk2 /usr/doc
+</code></pre>
+<p>Test that both now have files:</p>
+<pre><code>ls /usr/source
+...
+
+ls /usr/doc
+...
+</code></pre>
+<p>Add mounts to rc using cat CTRL+D will tell cat that it has hit EOF:</p>
+<pre><code>cat &gt;&gt; /etc/rc
+/etc/mount /dev/rk1 /usr/source
+/etc/mount /dev/rk2 /usr/doc
+CTRL+D
+</code></pre>
+<p>Modify df to show disk free on all devices using ed, the only delivered editor, see below for an ed cheatsheet. I have added rk3, even though, technically it doesn't have a filesystem to check... yet:</p>
+<pre><code>chdir /usr/source/s1
+ed df.c
+5p
+5d
+4
+i
+&quot;/dev/rk0&quot;,
+&quot;/dev/rk1&quot;,
+.
+7
+i
+&quot;/dev/rk3&quot;,
+.
+w
+q
+</code></pre>
+<p>Compile df and install it if no errors occurred</p>
+<pre><code>cc df.c
+cp a.out /bin/df
+</code></pre>
+<p>Test the new df:</p>
+<pre><code>df
+/dev/rk0 989
+/dev/rk1 935
+/dev/rk2 1691
+/dev/rk3 bad free count
+</code></pre>
+<p>rk3 doesn't have a file system on it... yet.</p>
+<p>Check the drives that have filesystems:</p>
+<pre><code>icheck /dev/rrk0
+dcheck /dev/rrk0
+icheck /dev/rrk1
+dcheck /dev/rrk1
+icheck /dev/rrk2
+dcheck /dev/rrk2
+</code></pre>
+<p>Modify <code>/etc/ttys</code> to enable devices 1-8, these are serial consoles, which we will enable in the final version of our SimH ini file:</p>
+<pre><code>ed /etc/ttys
+1,8s/^0/1/p
+w
+q
+</code></pre>
+<p>Update the superblock and power off:</p>
+<pre><code>sync
+sync
+CTRL-E
+sim&gt; q
+</code></pre>
+<p>The system is functional at this point, but some post installation configuration is helpful/advisable.</p>
+<h2>Post Install Notes</h2>
+<p>The system is ready for a normal multiuser boot with all of the devices attached</p>
+<h3>create the normal boot ini file</h3>
+<pre><code>cat &gt; nboot.ini &lt;&lt; &quot;EOF&quot;
+set cpu 11/40
+set cpu idle
+set tto 7b
+set tm0 locked
+attach rk0 rk0
+attach rk1 rk1
+attach rk2 rk2
+attach rk3 rk3
+attach ptr ptr.txt
+attach ptp ptp.txt
+attach lpt lpt.txt
+set dci en
+set dci lines=8
+set dco 7b
+att dci 5555
+boot rk0
+EOF
+</code></pre>
+<h3>boot for the first time</h3>
+<p><code>pdp11 nboot.ini</code></p>
+<p>The PDP-11 running Unix is now available via telnet:
+<code>telnet localhost 5555</code></p>
+<p>login as root, with no password</p>
+<p>See command notes at bottom for command help</p>
+<h3>speed up the terminal cr and lf</h3>
+<p>set the stty to be a bit faster
+<code>stty cr0 nl0</code></p>
+<h3>test &quot;printing&quot; from the simulation</h3>
+<p>if you set up the lp device correctly, lp0 is a character device where text can be redirected, and picked up by simh.
+<code>cat /etc/rc &gt; /dev/lp0</code></p>
+<p>then on the host, open the lpt.txt file</p>
+<h3>add man command</h3>
+<p>suspend the simulation and mount wolfgang's man.enb tape in the simulator</p>
+<pre><code>CTRL-E
+simh&gt; attach tm0 v6enb/man.enb
+co
+</code></pre>
+<h3>list the files on the tape</h3>
+<pre><code>tp tm
+
+sav
+res
+man0/naa.df
+man0/tocrc.df
+man3/pow.3.df
+man3/printf.3.df
+man3/rand.3.df
+man5/fs.5.df
+man5/a.out.5.df
+man6/factor.6.df
+man6/primes.6.df
+/usr/bin/man
+/usr/source/s7/nroff1.s
+
+13 entries
+45 used
+107 last
+</code></pre>
+<p>the tape contains a save and restore script, a number fo diff files, the man script, and an nroff1.s assembly file</p>
+<h3>restore the files from the tape into /usr/doc/man</h3>
+<pre><code>chdir /usr/doc/man
+tp xm res
+cat res
+</code></pre>
+<h3>restore the files (modify some files)</h3>
+<p><code>sh res</code></p>
+<p>The error '/usr/source/s7/nroff1.s.df: cannot open` is not fatal and the man command will work fine.</p>
+<h3>test man</h3>
+<p><code>man man</code></p>
+<h3>test that a telnet session from the host works</h3>
+<p>open a terminal
+<code>telnet localhost 5555</code>
+note the escape character is ^]
+press enter if the word login doesn't immediately appear</p>
+<pre><code>login
+stty nl0 cr0
+ls
+</code></pre>
+<p>Press <code>CTRL-D</code> to log out of unix. Press <code>CTRL-]</code> to close the telnet session and <code>q</code> to quit telnet altogether. Press <code>CTRL-D</code> again to close the terminal</p>
+<h3>test copying text files to and from the simulator</h3>
+<p>Because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt</p>
+<p>This test is for the paper tape device, see the longer note on Copying Files for more information</p>
+<h4>on the host, put some text in the ptr.txt file</h4>
+<p>--snip</p>
+<pre><code>Hello, v6 from
+the HOST!!!
+
+</code></pre>
+<p>--snip</p>
+<h4>in v6, read the file from the ppt device</h4>
+<pre><code>cat &gt; myfile &lt; /dev/ppt
+cat myfile
+Hello, v6 from
+the HOST!!!#
+</code></pre>
+<hr>
+<h2>in v6, write the file to the ppt device</h2>
+<p>cat myfile &gt; /dev/ppt
+sync</p>
+<p>Press <code>CTRL-E</code> to suspend the simulation and type <code>co</code> to resume v6</p>
+<p>on the host, read the ptp file</p>
+<p>Note: as of 20151120.0642pm, it appears to be necessary to suspend the simulator to get anything written to the device. This can be done multiple times, as needed.</p>
+<h3>Set up users in v6</h3>
+<p>Fire up pdp-11</p>
+<pre><code>@unix
+cat &gt;&gt; /etc/passwd
+wsenn::10:1::/usr/wsenn:
+CTRL+D
+
+mkdir /usr/wsenn
+chown wsenn /usr/wsenn
+login wsenn
+pwd
+/usr/wsenn
+
+sync
+sync
+sync
+
+CTRL+E
+sim&gt; q
+</code></pre>
+<h3>Back up the working instance (baseline)</h3>
+<p>On the host:</p>
+<pre><code>mkdir baseline-v6
+cp nboot.ini baseline-v6/
+cp rk? baseline-v6/
+tar cvzf baseline-v6.tar.gz baseline-v6
+cp baseline-v6.tar.gz ../
+rm -fr baseline-v6*
+</code></pre>
+<h3>test the backup</h3>
+<p>On the host:</p>
+<pre><code>cd ..
+tar xvf baseline-v6.tar.gz
+cd baseline-v6
+pdp11 nboot.ini
+
+PDP-11 simulator V4.0-0 Beta        git commit id: 0f43551d
+Disabling XQ
+PTR: creating new file
+PTP: creating new file
+LPT: creating new file
+Listening on port 5555
+
+@unix
+
+login: wsenn
+%
+
+CTRL-E
+simh&gt;q
+
+cd ..
+rm -fr ./baseline-v6
+cd v6-20151121
+</code></pre>
+<h3>add cd command using host editor and reading and writing from ppt</h3>
+<p>Note: <code>sh</code> is critically important, <strong>don't muck it up</strong> :).  The issue is that if you do, there really isn't an easy way to recover. Just be careful and don't replace the original shell until you have tested the build. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.</p>
+<pre><code>pdp11 nboot.ini
+
+@unix
+root
+stty cr0 nl0
+</code></pre>
+<h4>cat to the paper tape punch</h4>
+<p><code>cat /usr/source/s2/sh.c &gt; /dev/ppt</code></p>
+<p>Press <code>CTRL-E</code> to suspend the sim (ensure that the device complete's its write)
+and type <code>co</code> to continue</p>
+<p>open ptp.txt in your favorite editor that doesn't muck with the invisible characters</p>
+<p>copy it's contents except for the header and footer lines, but be sure to get every non-header or footer character</p>
+<p>edit it
+by changing:</p>
+<pre><code>if(equal(cp1, &quot;chdir&quot;)) {
+if(t[DCOM+1] != 0) {
+if(chdir(t[DCOM+1]) &lt; 0)
+err(&quot;chdir: bad directory&quot;);
+} else
+err(&quot;chdir: arg count&quot;);
+return;
+}
+</code></pre>
+<p>to:</p>
+<pre><code>if(equal(cp1, &quot;chdir&quot;)) {
+if(t[DCOM+1] != 0) {
+if(chdir(t[DCOM+1]) &lt; 0)
+err(&quot;chdir: bad directory&quot;);
+} else
+err(&quot;chdir: arg count&quot;);
+return;
+}
+if(equal(cp1, &quot;cd&quot;)) {
+if(t[DCOM+1] != 0) {
+if(chdir(t[DCOM+1]) &lt; 0)
+err(&quot;cd: bad directory&quot;);
+} else
+err(&quot;cd: arg count&quot;);
+return;
+}
+</code></pre>
+<p>paste it into <code>ptr.txt</code>, be sure to end with an empty line</p>
+<h4>in v6, read from ppt into a new file</h4>
+<p><code>CTRL-E</code> to suspend</p>
+<pre><code>detach ptr
+attach ptr ptr.txt
+co
+
+cat &gt; sh.c.new &lt; /dev/ppt
+</code></pre>
+<h4>compare the new file to the old file</h4>
+<pre><code>diff sh.c.new /usr/source/s2/sh.c
+569,576d568
+*               if(equal(cp1, &quot;cd&quot;)) {
+*                       if(t[DCOM+1] != 0) {
+*                               if(chdir(t[DCOM+1]) &lt; 0)
+*                                       err(&quot;cd: bad directory&quot;);
+*                       } else
+*                               err(&quot;cd: arg count&quot;);
+*                       return;
+*               }
+</code></pre>
+<h4>figure out how to build and install sh</h4>
+<pre><code>chdir /usr/source/s2
+cp sh.c sh.c.original
+cp /sh.c.new sh.c
+
+grep sh run
+cc -s -n -O sh.c
+cmp a.out /bin/sh
+cp a.out /bin/sh
+</code></pre>
+<h4>build and install sh</h4>
+<pre><code>cc -s -n -O sh.c
+cmp a.out /bin/sh
+a.out /bin/sh differ: char 4, line 1
+./a.out
+</code></pre>
+<p>test that it works - should display a shell prompt and act in every way identically to the previous shell, with the exception that cd  should now work. If it doesn't you will likely need to halt the simulation and reboot. Only if it works, copy it over the original after backing the original up.</p>
+<pre><code>mv /bin/sh /bin/sh.original
+cp a.out /bin/sh
+chown bin /bin/sh
+
+CTRL-D
+</code></pre>
+<p>relogin</p>
+<p><code>cd /usr</code></p>
+<p>Woohoo!</p>
+<h4>backup baseline-v6-withcd</h4>
+<pre><code>mkdir baseline-v6-withcd
+cp nboot.ini baseline-v6-withcd/
+cp rk? baseline-v6-withcd/
+tar cvzf baseline-v6-withcd.tar.gz baseline-v6-withcd
+cp baseline-v6-withcd.tar.gz ../
+rm -fr baseline-v6-withcd*
+</code></pre>
+<h3>Copying Files</h3>
+<p>From Unix v6 on PDP-11/40 SimH to Host:</p>
+<h4>create and attach an additional rk device</h4>
+<pre><code>simh&gt; attach rk3 rk3
+co
+</code></pre>
+<h4>get a file of interest and note it's size in bytes</h4>
+<pre><code>ls -l /etc/rc
+-rw-rw-r--  1 bin        90 Oct 10 12:32 /etc/rc
+</code></pre>
+<h4>look at the od dump of the file for comparison later</h4>
+<pre><code>od -c /etc/rc
+0000000  r  m     -  f     /  e  t  c  /  m  t  a  b \n
+0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
+0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
+0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
+0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
+0000120  /  u  s  r  /  d  o  c \n \n
+0000132
+</code></pre>
+<h4>write the file to the rk device</h4>
+<p>(the sync may not be needed, but the result looks cleaner, also it doesn't apper that you can specify bs=1, device errors out)</p>
+<pre><code>dd if=/etc/rc of=/dev/rrk03 conv=sync
+0+1 records in
+1+0 records out
+</code></pre>
+<h4>read it on the host</h4>
+<p>exit the sim and then on the host, read from the rk image using bs=1 and count from the ls output</p>
+<pre><code>$ dd if=rk3 of=rc bs=1 count=90
+90+0 records in
+90+0 records out
+</code></pre>
+<h4>look at the od dump</h4>
+<pre><code>$ od -c rc
+0000000    r   m       -   f       /   e   t   c   /   m   t   a b  \n
+0000020    /   e   t   c   /   u   p   d   a   t   e  \n   /   e t   c
+0000040    /   m   o   u   n   t       /   d   e   v   /   r   k 1
+0000060    /   u   s   r   /   s   o   u   r   c   e  \n   /   e t   c
+0000100    /   m   o   u   n   t       /   d   e   v   /   r   k 2
+0000120    /   u   s   r   /   d   o   c  \n \n
+0000132
+</code></pre>
+<p>A match!</p>
+<p>From Host to Unix v6 on PDP11/40 SimH Host:</p>
+<h4>edit the rc file</h4>
+<p>make a minor edit to the rc file (change m to n in the word mtab) and note it's size in bytes</p>
+<pre><code>$ ls -l rc
+-rw-r--r--  1 wsenn  staff  90 Nov 20 16:15 rc
+</code></pre>
+<p>it better be 90, unless I did something other than changing a letter</p>
+<h4>write rc to a new rk3 file</h4>
+<pre><code>dd if=rc of=rk3 conv=sync
+0+1 records in
+1+0 records out
+512 bytes transferred in 0.000037 secs (13854733 bytes/sec)
+</code></pre>
+<p>note the count of blocks</p>
+<h4>read from rk</h4>
+<p>with the number of blocks on hand, fire up the simulation and read from the rk to disk</p>
+<p><code>dd if=/dev/rrk3 of=rc.dd count=1</code></p>
+<p>because of the fact that I can't specify bs=1, the result is padded</p>
+<pre><code>od -c rc.dd
+0000000  r  m     -  f     /  e  t  c  /  n  t  a  b \n
+0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
+0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
+0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
+0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
+0000120  /  u  s  r  /  d  o  c \n \n \0 \0 \0 \0 \0 \0
+0001000
+</code></pre>
+<h4>read the dd file</h4>
+<p>read from the dd file with the number of bytes still in hand</p>
+<pre><code>dd if=rc.dd of=rc bs=1 count=90
+90+0 records in
+90+0 records out
+</code></pre>
+<h4>then diff the file against the original</h4>
+<pre><code>diff rc /etc/rc
+1c1
+* rm -f /etc/ntab
+</code></pre>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

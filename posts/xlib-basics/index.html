@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xlib basics - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Xlib basics</h1>
+    <p class="post-meta">Jan 31, 2023
+      <a href="/tags/development/" class="tag">development</a> <a href="/tags/x-windows/" class="tag">x-windows</a> <a href="/tags/xlib/" class="tag">xlib</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note explores the basics of Xlib. It covers enough to open a window, configure it, display a message, respond to some events, and close it gracefully - see figure 1 for a hint at what this will look like.</p>
+<p>Why xlib? Well, because we can, because it is the lowest level above the X protocol (sending bits around), and because, contrary to many espoused beliefs these days, knowing how to do something the 'hard way' helps you understand what's going on with the 'easy way'... and when things inevitably go wrong, you want to have a clue.</p>
+<p>Figure 1. A Basic Xlib Application</p>
+<p><img src="/assets/img/xlib/01.png" alt="one"></p>
+<p>Disclosure - I am not an expert in X. These notes represent my stumbling around trying to figure things out. If you know better, drop me a line and I'll probably make an adjustment.</p>
+<p>First things first, old books and old notes are fantastic, but don't expect things to work as they describe all of the time. This note is written in 2023 and the exploration it unveils is specific to the times and environment of the author. Sure, a lot of it should translate to other times and environments, but at least keep it mind.</p>
+<h2>Systems tested</h2>
+<ul>
+<li>MacPro and Macbook Pro running MacOS Mojave 10.14.6 (tested with XQuartz and macports X11)</li>
+<li>Dell Optiplex 755 running FreeBSD 13.1</li>
+<li>IBM ThinkCentre M92p running FreeBSD 13.1</li>
+<li>Lenovo Thinkpad T430 running Debian Bullseye 11.6</li>
+</ul>
+<h2>Some Resources</h2>
+<ul>
+<li>XQuartz - <a href="https://www.xquartz.org/">https://www.xquartz.org</a></li>
+<li>XQuartz Developer Information - <a href="https://www.xquartz.org/Developer-Info.html">https://www.xquartz.org/Developer-Info.html</a></li>
+<li>MacPorts - <a href="https://www.macports.org/install.php">https://www.macports.org/install.php</a></li>
+<li>X.org Foundation - <a href="https://www.x.org/wiki">https://www.x.org/wiki</a></li>
+<li>Xlib - C Language X Interface <a href="https://www.x.org/docs/X11/xlib.pdf">https://www.x.org/docs/X11/xlib.pdf</a></li>
+<li>The source code for the program developed in this note is <a href="/assets/files/xlib/xlib-article-files.tar.gz">available here</a></li>
+</ul>
+<h2>A bibliography</h2>
+<ul>
+<li>Foster-Johnson, E. &amp; Reichard, K. (1992). <em>X Window Applications Programming</em>, 2nd ed. New York: MIS Press.</li>
+<li>Nye, A. (1995). <em>Xlib Programming Manual for Version 11 R4/R5</em>, 3rd ed. Vol. 1 in series The Definitive Guides to the X Window System. O'Reilly &amp; Associates.</li>
+<li>Nye, A. (1993). <em>Xlib Reference Manual for Version 11 R4/R5</em>, 3rd ed.. Vol. 2 in series The Definitive Guides to the X Window System. O'Reilly &amp; Associates.</li>
+<li>Quercia, V., &amp; O'Reilly, T. (1993). <em>X Window System Users's Guide for X11 Release 5</em>. Vol. 3 in series The Definitive Guides to the X Window System. O'Reilly &amp; Associates.</li>
+</ul>
+<h2>Acknowledgements</h2>
+<p>This note wouldn't be possible without the great work of the folks who created X and those who maintain it to this day. I am appreciative of those efforts and you should be too :). The O'Reilly series of books, <em>The Definitive Guides to the X Window System</em> are the basis of much of my learned knowledge about X and how it works. Eric F. Johnson's book, <em>X Window Applications Programming</em>, inspired the approach that I have taken to developing applications for X.</p>
+<p>Without further ado, let's get into it.</p>
+<h2>Outline of what we are about to do</h2>
+<p>In this note, I will walk you through writing some code that will:</p>
+<ol>
+<li>Declare some variables</li>
+<li>Open a connection to the X Window Server</li>
+<li>Open a window</li>
+<li>Set some hints</li>
+<li>Display the window</li>
+<li>Handle events</li>
+<li>Close the Display</li>
+</ol>
+<p>There are some terms we need to get out of the way before proceeding. Specifically, what is a server, display, screen, window manager, window, and client?</p>
+<p>Unfortunately, techies write reams about these things and make lots of distinctions that cloud the issue for beginners. Here's what the modern, beginning reader needs to know about their world:</p>
+<ul>
+<li>
+<p>Server, display, and screen - the X window server is a process that is most likely running on your local machine. It manages communication with the hardware that is attached to your machine, specifically the monitor(s), mice, and keyboard(s). X considers each monitor to be a screen and all of them together as a display.</p>
+</li>
+<li>
+<p>Window manager - the window manager is a process that controls the look and feel of your UI - window borders, title bars, buttons that decorate windows, etc.</p>
+</li>
+<li>
+<p>Window - this is just a rectangular (usually) area of the screen.</p>
+</li>
+<li>
+<p>Client - the applications we write and the window manager are considered clients of the X window server.</p>
+</li>
+</ul>
+<p>Whew! With those prelimaries out of the way, we can start designing our client.</p>
+<h2>Designing an X client (x windows application)</h2>
+<p>The trick here is to decide what the app's going to do and then come up with a plan of writing it, building it, testing it, and deploying it.</p>
+<h3>What is the client going to do?</h3>
+<p>This application is going to display the string &quot;hello, world - click the mouse or press any key to exit.&quot; in a window and wait for the user to press a mouse button or a key before exiting.</p>
+<h3>What's the plan to writing it?</h3>
+<p>In this project, we will just need two files, a hello.c file and a makefile.</p>
+<ul>
+<li>hello.c will contain our working code</li>
+<li>makefile will contain instructions related to building, running, and cleaning up our project.</li>
+</ul>
+<p>The plan is to write the makefile first and then to write the code incrementally, adding some working code, running it, and writing some more code, until it works the way we want it to. Each time we add something it will follow the outline of steps given above.</p>
+<p>But first, we will explore the environment so that we know where our libraries and include files live that are needed for the development.</p>
+<h4>Explore the environment</h4>
+<p>Open up a terminal in your x windows environment.</p>
+<p>Find out where X lives. X is the X window server and if you are running X, you have one. But where is it? The easiest way to find it is to use <code>which</code>:</p>
+<pre><code>which X
+/opt/X11/bin/X
+</code></pre>
+<p>This is on a Mac, FreeBSD says it's in <code>/usr/local/bin</code> and Debian says it's in <code>/usr/bin</code>. Knowing where X lives gives us an indication of where the libraries and include files are. Withouth them we won't be able to compile or link the binary of the program we are creating and it just won't run.</p>
+<p>To find the libraries, we can use the information we obtained to find X. In this case, we will use <code>/opt</code> as the starting point for searches on MacOS. On FreeBSD, <code>/usr/local</code>, and on Debian, <code>/usr</code>.</p>
+<pre><code>find /opt -iname &quot;*libx11*&quot;
+/opt/local/lib/libX11.dylib
+/opt/local/lib/libX11-xcb.a
+/opt/local/lib/libX11.6.dylib
+/opt/local/lib/libX11-xcb.1.dylib
+/opt/local/lib/libX11.a
+/opt/local/lib/libX11-xcb.dylib
+...
+</code></pre>
+<p>Similarly, to find the include files, search using the same root:</p>
+<pre><code>find /opt/local | grep &quot;Xlib.h&quot;
+/opt/local/include/X11/Xlib.h
+</code></pre>
+<p>With the library directory and include directory known, we almost have enough information to start building X programs. The only missing piece at this point is knowing which libraries to link to. For this, we will use a package called <code>pkgconf</code> or somesuch and a program called <code>pkg-config</code>. To get the package, just use your pkg manager to install it:</p>
+<p>On MacOS - <code>port install pkgconf</code> or <code>brew install pkgconf</code>, on FreeBSD - <code>pkg install config</code>, on Debian <code>apt install pkgconf</code>, etc.</p>
+<p>Once you have <code>pkgconf</code> installed, you can use <code>pkg-config</code>  to tell you what cflags and ldflags you need to build programs:</p>
+<p>On MacOS</p>
+<pre><code>pkg-config --cflags --libs x11
+-I/opt/local/include -L/opt/local/lib -lX11
+</code></pre>
+<p>On FreeBSD</p>
+<pre><code>pkg-config --cflags --libs x11
+-I/usr/local/include -D_THREAD_SAFE -pthread -L/usr/local/lib -lX11 
+</code></pre>
+<p>On Debian</p>
+<pre><code>pkg-config --cflags --libs x11
+-lX11
+</code></pre>
+<p>With the location of the libraries and include files, the c flags, and linker flags handy, we have enough information to compile and link our own X programs.</p>
+<p>Let's put that information to good use.</p>
+<h4>Write a makefile</h4>
+<p>After you build and run a bunch of programs over and over, you will come to appreciate having a makefile. I suggest that you type it in until you have some muscle memory. Once you're comfortable with making makefiles, your programming life will be much simpler.</p>
+<p>Based on what we know from the previous section combined with some <code>make</code> magic, we can build a great makefile.</p>
+<p>Stuff we need to know:</p>
+<ul>
+<li>cc is the standard command to invoke a c compiler on all of these systems (on MacOS and FreeBSD, it symlinks to clang, on Debian, it symlinks to gcc).</li>
+<li>CFLAGS - these are options to the c compiler</li>
+<li>LDFLAGS - these are options to the linker</li>
+</ul>
+<p>This is our makefile built from what we have learned about the environment (for MacOS, your environment may need the flags variables to be tweaked appropriately):</p>
+<pre><code>CC = cc
+CFLAGS = -I/opt/local/include
+LDFLAGS = -L/opt/local/lib -lX11
+OBJFILES = hello.o
+TARGET = hello
+
+all: $(TARGET)
+
+$(TARGET): $(OBJFILES)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
+
+run: $(TARGET)
+	./$(TARGET)
+
+clean:
+	rm -f $(OBJFILES) $(TARGET) *~
+</code></pre>
+<ul>
+<li>
+<p>The OBJFILES variable holds a list of .o files that need to be created by the makefile from .c source files.</p>
+</li>
+<li>
+<p>The TARGET variable specifies the name of the executable to build.</p>
+</li>
+<li>
+<p>all builds the target</p>
+</li>
+<li>
+<p>$(TARGET): $(OBJFILES) specifies how the target depends on the object files and how to build the target.</p>
+</li>
+<li>
+<p>run depends on target and runs the target (the client)</p>
+</li>
+<li>
+<p>clean removes the files make creates</p>
+</li>
+</ul>
+<p>We will test the makefile down the road. Leave it for now and move on to the fun stuff - writing code.</p>
+<h4>Write the Code</h4>
+<p>It's time to write <code>hello.c</code>. As a reminder, here is what we said the code needed to do:</p>
+<ol>
+<li>Declare some variables</li>
+<li>Open a connection to the X Window Server</li>
+<li>Open a window</li>
+<li>Set some hints</li>
+<li>Display the window</li>
+<li>Handle events</li>
+<li>Close the Display</li>
+</ol>
+<p>Let's use this as an outline for our hello.c file</p>
+<pre><code>/*
+ * hello.c - a simple x window client built on xlib
+ *   modified 20230131 wds
+ */
+
+#include &lt;stdio.h&gt;      // for fprintf
+#include &lt;stdlib.h&gt;     // for exit
+#include &lt;X11/Xlib.h&gt;   // for xlib stuff
+
+int main(int argc, char** argv)
+{
+	/*
+	 * 1. Declare variables
+	*/
+
+    /*
+	 * 2. Connect to the X window server
+	*/
+
+	/*
+	 * 3. Open a window
+	*/
+	
+    /*
+	 * 4. Set some hints
+	*/
+
+    /*
+	 * 5. Display the window
+	*/
+
+    /*
+	 * 6. Handle events
+	*/
+
+
+    /*
+	 * 7. Close the Display
+	*/
+
+	return 0;
+}
+</code></pre>
+<p>Save the file as <code>hello.c</code></p>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>Xlib.h - a header file that brings in X.h and defines a bunch of things we will need for doing xlib programming - definitions and such.</li>
+</ul>
+<p>Now that we have written the basic outline of our code, let's build it and run it to check on the steps completed so far:</p>
+<pre><code>make run
+makefile:13: *** missing separator.  Stop.
+</code></pre>
+<p>Yikes! If you see something like this, <code>don't panic</code>. It is probably just a case of tabs getting converted to spaces during cut and paste. <code>make</code> is picky, it only respects tab indent. So, delete any spaces and use a tab for indentation.</p>
+<p>Lesson learned, don't use spaces to indent makefiles... ever. Let's use tabs and try it again.</p>
+<pre><code>make
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+</code></pre>
+<p>Ok. No errors this time, let's go ahead and run it:</p>
+<pre><code>make run
+./hello
+</code></pre>
+<p>Hopefully we didn't get any more errors! Moving forward we will combine the build and run steps using <code>make run</code>:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+./hello
+</code></pre>
+<p>If you like, you can save copies of the makefile and hello.c along the way for comparison.</p>
+<p>This code doesn't really do anything useful yet... other than proving that the makefile 'works' and that the code doesn't have any show stopping bugs, and that we're able to run it, and, and... Ha! What we have accomplished so far isn't insignificant, but read on for more interesting development.</p>
+<p>X programming can be pretty complicated, so one convention we are going to adopt and love starting now, is commenting the code and organizing it rationally. In this example, we are going to stretch things just a little bit in that we will keep our code contained in a single file. It won't be long before you will want to split things up, but not this time, and this is where the use of comments will start to prove super helpful.</p>
+<h5>First revision - add variable declarations</h5>
+<p>In this first revision, we are going to go ahead and declare some variables and put those declarations at the top of our main function. As will become usual, we will build and run the result, before going on to the next revision. It used to be the norm to put declarations at the top of a scope so that things would be easy to find. These days it's a mix of folks putting them at the top and putting them closer to where they are used. We're going to use the old-school approach for now.</p>
+<p>Add this code into the <em>Declare variables</em> section just below main:</p>
+<pre><code>	/*
+	 * 1. Declare variables
+	*/    
+
+    // display vars
+	Display* display;
+	int screen;
+	Window root;
+	GC gc;
+
+	// window vars
+	Window window;
+	Visual* visual = CopyFromParent;
+	int x, y, width, height;
+    char *message = &quot;hello, world - click the mouse or press any key to exit.&quot;;
+		
+	// event loop - done and event variables
+	int done = 0;
+	XEvent event;
+</code></pre>
+<p>Let's talk about the variable declarations and definitions that were added and what they are used for since they seem to be important (appearing first).</p>
+<p>The first four variables, <code>display</code>, <code>screen</code>, <code>root</code>, and <code>gc</code>, refer respectively to the logical display (remember this is the coalescence of all of your monitors), the screen (think of this as one of your monitors), the root window, and the graphic context. The root window and graphic context are new, we haven't discussed them before. But, basically, the root window is the blank window taking up your whole screen where everything that appears, appears. All windows have a parent, and the parent window of your applications is the root window. The graphic context is related to our drawing text to the window. <code>display</code> is a pointer to a Display structure containing all sorts of information about the display. We will pass the pointer around a lot and if we need some of that information, we will pass it to information returning macros, but otherwise, it just is. <code>screen</code> is an integer that tells us which screen to use in a multi-screen environment. <code>root</code> is a Window structure that contains information about a window. We pass it around and provide it when asked for it. <code>gc</code> is a GC, it is needed to draw stuff. We need access to these variables to instantiate windows, work with windows, and the like.</p>
+<p>The next set of variables, <code>window</code>, <code>visual</code>, <code>x</code>, <code>y</code>, <code>width</code>, <code>height</code>, and <code>message</code> refer to our window, it's visual style (GrayScale, TrueColor, etc). it's location and size, and the message we intend to display. <code>window</code> is a Window, <code>visual</code> is set to CopyFromParent so that the style is inherited from the root window, x, y, width, and height are integers, and message is a string.</p>
+<p>The last two, <code>done</code> and <code>event</code> refer to a control variable for our loop and a structure to hold inbound events that is used for handling events in the event loop. <code>event</code> is an XEvent, a structure containing information about an event.</p>
+<p>We will expand the variables section along the way as we need to by adding additional declarations and definitions.</p>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>Display - A giant struct containing information about our display</li>
+<li>Window - The ID of our window</li>
+<li>GC - A giant structure containing information about a graphics context</li>
+<li>Visual - a structure containing information about the color environment</li>
+<li>XEvent - a structure (a union of all the event types) containing information about events</li>
+<li>CopyFromParent - a macro</li>
+</ul>
+<p>Now that we have added a section of code, let's build and run our program to test what we have done so far.</p>
+<p>Build and run:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+./hello
+</code></pre>
+<p>It didn't break, but it doesn't do much either. Let's revise it.</p>
+<h5>Second revision - Open a connection ot the X Window Server</h5>
+<p>The code we add in this revision will open the display, give us the index of our screen, give us a handle to the root window, and give us a graphic context.</p>
+<pre><code>	/*
+	 * 2. Connect to the X window server
+	*/
+
+	display = XOpenDisplay((char*) NULL);
+	if(display == (Display *) NULL) {
+		fprintf(stderr, &quot;Unable to connect to X server [%s]\n&quot;,
+			XDisplayName((char*) NULL));
+		exit(1);
+	}
+
+	screen = DefaultScreen(display);
+	root = RootWindow(display, screen);
+	gc = DefaultGC(display, screen);
+</code></pre>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>XOpenDisplay - a function that opens the display</li>
+<li>XDisplayName - a macro that returns the display name</li>
+<li>Default Screen - a macro that returns the index of the default screen</li>
+<li>RootWindow - a macro that returns the id of the root window</li>
+<li>DefaultGC - a macro that returns the default graphic context of the screen</li>
+</ul>
+<p>Let's build it and check in on our progress towards a working client.</p>
+<p>Build and run:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+
+make run
+./hello
+</code></pre>
+<p>Well, that's all well and good. It looks like we were able to build it and run it, so... in theory we sucessfully connected to the X server... but, we will just make sure by displaying some information about the display we got back.</p>
+<p>To do this, we will create a function to print information about the display to the terminal window where we run the client.</p>
+<p>We will first add in a prototype for our function above main:</p>
+<pre><code>void PrintDisplayInformation(Display* display, int screen);
+
+int main(int argc, char** argv)
+</code></pre>
+<p>Like most xlib calls ours will take a display and screen as arguments. Then we will add the body of our function after main returns:</p>
+<pre><code>    return 0;
+}
+
+void PrintDisplayInformation(Display* display, int screen) {
+	int screen_num, display_width, display_height, width, height;
+	
+	/* get screen size from display structure macro */
+	screen_num = DefaultScreen(display);
+	display_width = DisplayWidth(display, screen_num);
+	display_height = DisplayHeight(display, screen_num);
+
+	fprintf(stderr, &quot;DisplayString: %s\n&quot;, DisplayString(display));
+	fprintf(stderr, &quot;default screen index: %d\n&quot;, screen_num);
+	fprintf(stderr, &quot;display width: %d\n&quot;, display_width);
+	fprintf(stderr, &quot;display height: %d\n&quot;, display_height);
+}
+</code></pre>
+<p>The function just uses some macros from xlib to get information about the display and prints out the results.</p>
+<p>Next, we will make the call to our function after our previous revision's change to open a connection:</p>
+<pre><code>    gc = DefaultGC(display, screen); // prior stuff, don't re-add
+    PrintDisplayInformation(display, screen);
+</code></pre>
+<p>What all of this does is pretty self evident, but we have introduced some new xlib calls. With an open display, we can see what connect string was used to connect to the X server, the screen number of the default screen, and the width and height of the display.</p>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>DisplayWidth - a macro that returns the width of the screen</li>
+<li>DisplayHeight - a macro that returns the height of the screen</li>
+<li>DisplayString - the display string that was used to connect to the X server</li>
+</ul>
+<p>The code now actually does something useful, let's test.</p>
+<p>Build and run:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+./hello
+DisplayString: /private/tmp/com.apple.launchd.HJrIk6bvEG/org.xquartz:0
+default screen index: 0
+display width: 2560
+display height: 1440
+</code></pre>
+<p>Woohoo! Some real work.</p>
+<p>You should notice that the display string was not specified programmatically. This is because when you don't it defaults to whatever $DISPLAY is set to by the environment. Use <code>echo $DISPLAY</code> to see its value (make sure you are either in a Terminal locally, in an xterm remotely, ssh -Y'd into an environment, etc. If you aren't the $DISPLAY variable is likely unset).</p>
+<h5>Third Revision - Open a window</h5>
+<p>Now let's get a window set up to display. The first part of setting up a window is to open it on the display (this doesn't mean that it will actually show up, but it's getting close).</p>
+<p>Let's create a variable to hold the width of our window's border. Add it to the <code>window vars</code> section of the code:</p>
+<pre><code>	int border_width = 2;
+</code></pre>
+<p>Let's add some code between the <code>window vars</code> and <code>event loop</code> sections that relate to our window's background and border pixels and to the events we are interested in receiving:</p>
+<pre><code>	// window attributes
+	//   subscribe to events (Exposure, ButtonPress, and KeyPress), set bg and fg pixels
+	XSetWindowAttributes attributes;
+	unsigned long attribute_mask = CWEventMask | CWBackPixel | CWBorderPixel;
+	unsigned long event_mask = ExposureMask | ButtonPressMask | KeyPressMask;
+</code></pre>
+<p>Then, let's add code in section 3, that uses those properties and a few others to properly create a window:</p>
+<pre><code>	/*
+	 * 3. Open a window
+	*/
+
+	// open a window in the top left corner that is 150 pixels from either edge
+	// that is 500x100 pixels in size
+	// subscribe the window to events, and set the border and background pixels
+	x = y = 150;
+	width = 500;
+	height = 100;
+	attributes.event_mask = event_mask;
+	attributes.border_pixel = BlackPixel(display, screen),
+	attributes.background_pixel = WhitePixel(display, screen);
+	
+	window = XCreateWindow( display, root, x, y, width, height,
+		border_width, CopyFromParent, InputOutput,
+		visual, attribute_mask, &amp;attributes);
+</code></pre>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>XSetWindowAttributes - a function to modify a set of window attributes</li>
+<li>CWEventMask - a bit mask that indicates we have set event attributes</li>
+<li>CWBackPixel - a bit mask that indicates we have set a background pixel</li>
+<li>CWBorderPixel - a bit mask that indicates we have set a border pixel</li>
+<li>ExposureMask - a bit mask that indicates we want to receive Exposure events</li>
+<li>ButtonPressMask - a bit mask that indicates we want to receive ButtonPress events</li>
+<li>KeyPressMask - a bit mask that indicates we want to receive KeyPress events</li>
+</ul>
+<p>It's a good time to test the build again.</p>
+<p>Build and run:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+./hello
+DisplayString: /private/tmp/com.apple.launchd.HJrIk6bvEG/org.xquartz:0
+default screen index: 0
+display width: 2560
+display height: 1440
+</code></pre>
+<p>With the window created, we just need to pass some hints to the window manager and we'll be able to display the window... on the screen!</p>
+<h5>Fourth Revision - Set some hints</h5>
+<p>In this revision, we will set window manager hints so that the window manager properly sizes and displays our window. As the name suggests, these are hint and may be ignored, but we want to provide them anyway, just in case!</p>
+<p>To give our code access to size hint structures and such, we will need to include the xlib utilities header file <code>Xutil.h</code>. Add this to the end of the includes section.</p>
+<p><code>#include &lt;X11/Xutil.h&gt;  // for  XSizeHints etc.</code></p>
+<p>Classes in X Windows parlance are used to differentiate between different kinds of applications for the purpose of allowing similar applications to share properties. There may be other uses, but I don't know what they are. In our case, we will just put our client into an <code>example_class</code>, where it won't disturb other clients. If you actually were to build a suite of related clients, you would probably want to give it a descriptive and unique name that could be shared by your clients but that wouldn't clash with others.</p>
+<p>Put this declaration and definition into the <code>window vars</code> section:</p>
+<p><code>	char *application_class = &quot;example_class&quot;;	</code></p>
+<p>We will also add some variable related to hints, put these after the <code>window vars</code> section and before the <code>event loop vars</code>:</p>
+<pre><code>	// window hints - size, name, class, and window manager hints
+	XSizeHints size_hints;
+	char *window_name;
+	XClassHint class_hints;
+	XWMHints window_manager_hints;
+</code></pre>
+<p>Let's set hints for the size and position of our window, the name of our window, and some window manager specif information. Put this code in the fourth section:</p>
+<pre><code>	/*
+	 * 4. Set some hints
+	*/
+
+	size_hints.x = x;
+	size_hints.y = y;
+	size_hints.width = width;
+	size_hints.height = height;
+	size_hints.min_width = width;
+	size_hints.min_height = height;
+	size_hints.base_width = width;
+	size_hints.base_height = height;
+	size_hints.flags = USPosition | USSize | PMinSize | PBaseSize;	
+	window_name = argv[0];
+	class_hints.res_class = application_class;
+	class_hints.res_name = window_name;
+	window_manager_hints.flags = InputHint | StateHint;
+	window_manager_hints.initial_state = NormalState;
+	window_manager_hints.input = True;
+
+	XSetWMNormalHints(display, window, &amp;size_hints);
+	XStoreName(display, window, window_name);
+	XSetClassHint(display, window, &amp;class_hints);
+	XSetWMHints(display, window, &amp;window_manager_hints);
+</code></pre>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>Xutil.h - a header file that adds some xlib utilities and defines</li>
+<li>XSizeHints - a struct containing size hint information for the window manager</li>
+<li>XClassHint - a struct containing class information for the window manager</li>
+<li>XWMHints - a struct containing window manager hints</li>
+<li>USPosition - a flag indicating that the user provided the position value</li>
+<li>USSize - a flag indicating that the user provided the size value</li>
+<li>PMinSize - a flag indicating that the program provided the minimum size value</li>
+<li>PBaseSize - a flag indicating that the program provided the base size value</li>
+<li>InputHint - a flag indicating the style of input preferred (pointer follows focus, etc)</li>
+<li>StateHint - a flag indicating the preferred starting style of the window (iconified, normal)</li>
+<li>NormalState - a flag indicating the normal window state (open not maximized)</li>
+<li>XSetWMNormalHints - a function to set the window manager normal hints</li>
+<li>XStoreName - a function to store (set) the window name</li>
+<li>XSetClassHint - a function to set the class hint</li>
+<li>XSetWMHints - a function to set the wm hints</li>
+</ul>
+<p>This gets us closer to actually seeing somethign in a window - we have one and its properties are set. It's ready to display. In the meantime, another test.</p>
+<p>Build and run:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+./hello
+DisplayString: /private/tmp/com.apple.launchd.HJrIk6bvEG/org.xquartz:0
+default screen index: 0
+display width: 2560
+display height: 1440
+</code></pre>
+<h5>Fifth revision - Display the window</h5>
+<p>Now that the window has been opened and its hints set, it's a breeze to actually get it to appear. Add some code to section 5:</p>
+<pre><code>	/* 
+	 * 5. Display the window (Raise it and flush the output queue)
+	*/
+	
+	XMapRaised(display, window);
+	XFlush(display);
+</code></pre>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>XMapRaised - a function that maps our window to the screen and allows it to be drawn</li>
+<li>XFlush - a function to flush the output queue and cause our window to receive events</li>
+</ul>
+<p>This will display the window and flush the output queue so that the window gets drawn. Unfortunately it appears so quickly and disappears so quickly you likely won't see much. Let's try it anyway.</p>
+<p>Build and run:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+./hello
+DisplayString: /private/tmp/com.apple.launchd.HJrIk6bvEG/org.xquartz:0
+default screen index: 0
+display width: 2560
+display height: 1440
+</code></pre>
+<p>To get it to stay longer, we will need to do some more work - the event handler, up next is just what is needed here.</p>
+<h5>Sixth revision - Handle Events</h5>
+<p>We are nearly there. Just a this revison and the next and our client will be complete. In this revision we will actually get to see our handiwork and it will seem to be complete, but the last revision will be needed so hang in there.</p>
+<p>We are going to be calling <code>strlen</code>, so another include is needed. Add it after the last includde:</p>
+<p><code>#include &lt;string.h&gt;</code></p>
+<p>The event loop is where all of the program action takes place. In our world, it's where the window gets populated and drawn and where we respond to events. Let's add the event handler code in section 6.</p>
+<pre><code>    /*
+	 * 6. Handle events
+	*/
+
+	while(! done) {
+		XNextEvent(display, &amp;event);
+		if(event.type == Expose) {
+            XDrawString(display, window, gc, 50, 50, message, strlen(message));
+			printf(&quot;For Expose event the area is:\n&quot;);
+			printf(&quot;\tAt %d, %d,&quot;, event.xexpose.x, event.xexpose.y);
+			printf(&quot; %d pixels wide, %d high\n&quot;, event.xexpose.width,
+				event.xexpose.height);
+		}
+		else if(event.type == ButtonPress) {
+			printf(&quot;Button pressed\n&quot;);
+			done = 1;
+		}
+		else if(event.type == KeyPress) {
+			printf(&quot;Key pressed\n&quot;);
+			done = 1;
+		}
+	}
+</code></pre>
+<p>This code just loops until we say it's done - basically when we get a ButtonPress event, or a Keypress event. With compositing (a fancy, modern invention), we won't get a lot of Expose events, contrary to practically every book ever written on X, but will get one when we startup and resize the window, so all we do is draw our string into the window and print some information to the standard error that we can see.</p>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>XNextEvent - a function that waits for an event to occur (yes it blocks, deal with it)</li>
+<li>Expose -  - a flag indicating that an Expose event has been received</li>
+<li>XDrawString - a function that draws a string into a window</li>
+<li>ButtonPress - a flag indicating that a ButtonPress event has been received</li>
+<li>KeyPress - a flag indicating that a KeyPress event has been received</li>
+</ul>
+<p>When you run it this time, you will see the glorious window appear. You can click inside the window, or press a key when the window has the focus to exit.</p>
+<p>Run it and see.</p>
+<p>Build and run:</p>
+<pre><code>make run
+cc -I/opt/local/include   -c -o hello.o hello.c
+cc -I/opt/local/include -o hello hello.o -L/opt/local/lib -lX11
+./hello
+DisplayString: /private/tmp/com.apple.launchd.HJrIk6bvEG/org.xquartz:0
+default screen index: 0
+display width: 2560
+display height: 1440
+For Expose event the area is:
+	At 0, 0, 500 pixels wide, 100 high
+ For Expose event the area is:
+	At 0, 0, 500 pixels wide, 100 high
+Button pressed
+</code></pre>
+<p>Here's what you should see:</p>
+<p><img src="/assets/img/xlib/01.png" alt="one"></p>
+<p>Do what it says :).</p>
+<h5>Seventh and final revision - Close the Display</h5>
+<p>Even though the client is pretty much finished and works as advertised, the polite way of ending the life of a client is to free up any dynamic structures and close the display. In our case, we just need to close the display</p>
+<p>Add the code to section 7:</p>
+<pre><code>    /*
+	 * 7. Close the Display
+	*/
+
+	XCloseDisplay(display);
+</code></pre>
+<p><strong>Xlib related additions</strong></p>
+<ul>
+<li>XCloseDisplay - a function that closes the display</li>
+</ul>
+<p>Let's run it again and admire our work.</p>
+<p>Build and run:</p>
+<pre><code>make run
+./hello
+DisplayString: /private/tmp/com.apple.launchd.HJrIk6bvEG/org.xquartz:0
+default screen index: 0
+display width: 2560
+display height: 1440
+For Expose event the area is:
+	At 0, 0, 500 pixels wide, 100 high
+For Expose event the area is:
+	At 0, 0, 500 pixels wide, 100 high
+Key pressed
+</code></pre>
+<p>It should still look good:</p>
+<p><img src="/assets/img/xlib/01.png" alt="one"></p>
+<p>Here is the result of all of our labor - 2 files, makefile and hello.c:</p>
+<p><strong>makefile</strong></p>
+<pre><code>CC = cc
+CFLAGS = -I/opt/local/include
+LDFLAGS = -L/opt/local/lib -lX11
+OBJFILES = hello.o
+TARGET = hello
+
+all: $(TARGET)
+
+$(TARGET): $(OBJFILES)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
+
+run: $(TARGET)
+	./$(TARGET)
+
+clean:
+	rm -f $(OBJFILES) $(TARGET) *~
+</code></pre>
+<p><strong>hello.c</strong></p>
+<pre><code>/*
+ * hello.c - a simple x window client built on xlib
+ *   modified 20230131 wds
+ */
+
+#include &lt;stdio.h&gt;      // for fprintf
+#include &lt;stdlib.h&gt;     // for exit
+#include &lt;X11/Xlib.h&gt;   // for xlib stuff
+#include &lt;X11/Xutil.h&gt;  // for XSizeHints etc.
+#include &lt;string.h&gt;
+
+void PrintDisplayInformation(Display* display, int screen);
+
+int main(int argc, char** argv)
+{
+	/*
+	 * 1. Declare variables
+	*/
+
+    // display vars
+	Display* display;
+	int screen;
+	Window root;
+	GC gc;
+
+	// window vars
+	Window window;
+	Visual* visual = CopyFromParent;
+	int x, y, width, height;
+    char *message = &quot;hello, world - click the mouse or press any key to exit.&quot;;
+	int border_width = 2;
+	char *application_class = &quot;example_class&quot;;	
+	// window attributes
+	//   subscribe to events (Exposure, ButtonPress, and KeyPress), set bg and fg pixels
+	XSetWindowAttributes attributes;
+	unsigned long attribute_mask = CWEventMask | CWBackPixel | CWBorderPixel;
+	unsigned long event_mask = ExposureMask | ButtonPressMask | KeyPressMask;
+
+	// window hints - size, name, class, and window manager hints
+	XSizeHints size_hints;
+	char *window_name;
+	XClassHint class_hints;
+	XWMHints window_manager_hints;
+		
+	// event loop - done and event variables
+	int done = 0;
+	XEvent event;
+
+    /*
+	 * 2. Connect to the X window server
+	*/
+
+	display = XOpenDisplay((char*) NULL);
+	if(display == (Display *) NULL) {
+		fprintf(stderr, &quot;Unable to connect to X server [%s]\n&quot;,
+			XDisplayName((char*) NULL));
+		exit(1);
+	}
+
+	screen = DefaultScreen(display);
+	root = RootWindow(display, screen);
+	gc = DefaultGC(display, screen);
+
+	PrintDisplayInformation(display, screen);
+
+	/*
+	 * 3. Open a window
+	*/
+
+	// open a window in the top left corner that is 150 pixels from either edge
+	// that is 500x100 pixels in size
+	// subscribe the window to events, and set the border and background pixels
+	x = y = 150;
+	width = 500;
+	height = 100;
+	attributes.event_mask = event_mask;
+	attributes.border_pixel = BlackPixel(display, screen),
+	attributes.background_pixel = WhitePixel(display, screen);
+	
+	window = XCreateWindow( display, root, x, y, width, height,
+		border_width, CopyFromParent, InputOutput,
+		visual, attribute_mask, &amp;attributes);
+			
+    /*
+	 * 4. Set some hints
+	*/
+
+	size_hints.x = x;
+	size_hints.y = y;
+	size_hints.width = width;
+	size_hints.height = height;
+	size_hints.min_width = width;
+	size_hints.min_height = height;
+	size_hints.base_width = width;
+	size_hints.base_height = height;
+	size_hints.flags = USPosition | USSize | PMinSize | PBaseSize;	
+	window_name = argv[0];
+	class_hints.res_class = application_class;
+	class_hints.res_name = window_name;
+	window_manager_hints.flags = InputHint | StateHint;
+	window_manager_hints.initial_state = NormalState;
+	window_manager_hints.input = True;
+
+	XSetWMNormalHints(display, window, &amp;size_hints);
+	XStoreName(display, window, window_name);
+	XSetClassHint(display, window, &amp;class_hints);
+	XSetWMHints(display, window, &amp;window_manager_hints);
+
+    /*
+	 * 5. Display the window
+	*/
+
+	XMapRaised(display, window);
+	XFlush(display);
+
+    /*
+	 * 6. Handle events
+	*/
+
+	while(! done) {
+		XNextEvent(display, &amp;event);
+		if(event.type == Expose) {
+            XDrawString(display, window, gc, 50, 50, message, strlen(message));
+			printf(&quot;For Expose event the area is:\n&quot;);
+			printf(&quot;\tAt %d, %d,&quot;, event.xexpose.x, event.xexpose.y);
+			printf(&quot; %d pixels wide, %d high\n&quot;, event.xexpose.width,
+				event.xexpose.height);
+		}
+		else if(event.type == ButtonPress) {
+			printf(&quot;Button pressed\n&quot;);
+			done = 1;
+		}
+		else if(event.type == KeyPress) {
+			printf(&quot;Key pressed\n&quot;);
+			done = 1;
+		}
+	}
+
+    /*
+	 * 7. Close the Display
+	*/
+
+	XCloseDisplay(display);
+ 
+	return 0;
+}
+
+void PrintDisplayInformation(Display* display, int screen) {
+	int screen_num, display_width, display_height, width, height;
+	
+	
+
+	/* get screen size from display structure macro */
+	screen_num = DefaultScreen(display);
+	display_width = DisplayWidth(display, screen_num);
+	display_height = DisplayHeight(display, screen_num);
+
+	fprintf(stderr, &quot;DisplayString: %s\n&quot;, DisplayString(display));
+	fprintf(stderr, &quot;default screen index: %d\n&quot;, screen_num);
+	fprintf(stderr, &quot;display width: %d\n&quot;, display_width);
+	fprintf(stderr, &quot;display height: %d\n&quot;, display_height);
+}
+</code></pre>
+<h4>Clean up the mess</h4>
+<p>The makefile proves to be useful in this area. Just run <code>make clean</code> to get rid of the object files an executables and temp files that may have been generated:</p>
+<pre><code>make clean
+rm -f hello.o hello *~
+
+ls
+hello.c		makefile
+</code></pre>
+<p>Of course, you may want to deploy your masterpiece before you go cleaning, right? If so, just copy it off into <code>~/bin</code> or something so that it will always be available to you.</p>
+<h2>Wrapping up</h2>
+<p>Whew! We finished it and hopefully, you learned a lot along the way...</p>
+<ul>
+<li>How to find X</li>
+<li>How to find Xlib's include files</li>
+<li>How to find Xlib's libraries</li>
+<li>How to find the right compiler flags to build an xlib client</li>
+<li>How to find the right linker flags to build an xlib client</li>
+<li>How to find out which libraries are needed to build an xlib client</li>
+<li>How to write a decent makefile for building, running and cleaning up afterward</li>
+<li>How to write a client for X that displays a message and reacts to key presses and mouse clicks</li>
+<li>And various other things, I'm sure :)</li>
+</ul>
+<p>Here are the Xlib things (macros, defines, functions, etc) that we used:</p>
+<p><strong>In order of presentation</strong></p>
+<ul>
+<li>Xlib.h - a header file that brings in X.h and defines a bunch of things we will need for doing xlib programming - definitions and such.</li>
+<li>XOpenDisplay - a function that opens the display</li>
+<li>XDisplayName - a macro that returns the display name</li>
+<li>Default Screen - a macro that returns the index of the default screen</li>
+<li>RootWindow - a macro that returns the id of the root window</li>
+<li>DefaultGC - a macro that returns the default graphic context of the screen</li>
+<li>DisplayWidth - a macro that returns the width of the screen</li>
+<li>DisplayHeight - a macro that returns the height of the screen</li>
+<li>DisplayString - the display string that was used to connect to the X server</li>
+<li>XSetWindowAttributes - a function to modify a set of window attributes</li>
+<li>CWEventMask - a bit mask that indicates we have set event attributes</li>
+<li>CWBackPixel - a bit mask that indicates we have set a background pixel</li>
+<li>CWBorderPixel - a bit mask that indicates we have set a border pixel</li>
+<li>ExposureMask - a bit mask that indicates we want to receive Exposure events</li>
+<li>ButtonPressMask - a bit mask that indicates we want to receive ButtonPress events</li>
+<li>KeyPressMask - a bit mask that indicates we want to receive KeyPress events</li>
+<li>Xutil.h - a header file that adds some xlib utilities and defines</li>
+<li>XSizeHints - a struct containing size hint information for the window manager</li>
+<li>XClassHint - a struct containing class information for the window manager</li>
+<li>XWMHints - a struct containing window manager hints</li>
+<li>USPosition - a flag indicating that the user provided the position value</li>
+<li>USSize - a flag indicating that the user provided the size value</li>
+<li>PMinSize - a flag indicating that the program provided the minimum size value</li>
+<li>PBaseSize - a flag indicating that the program provided the base size value</li>
+<li>InputHint - a flag indicating the style of input preferred (pointer follows focus, etc)</li>
+<li>StateHint - a flag indicating the preferred starting style of the window (iconified, normal)</li>
+<li>NormalState - a flag indicating the normal window state (open not maximized)</li>
+<li>XSetWMNormalHints - a function to set the window manager normal hints</li>
+<li>XStoreName - a function to store (set) the window name</li>
+<li>XSetClassHint - a function to set the class hint</li>
+<li>XSetWMHints - a function to set the wm hints</li>
+<li>XMapRaised - a function that maps our window to the screen and allows it to be drawn</li>
+<li>XFlush - a function to flush the output queue and cause our window to receive events</li>
+<li>XNextEvent - a function that waits for an event to occur (yes it blocks, deal with it)</li>
+<li>Expose -  - a flag indicating that an Expose event has been received</li>
+<li>XDrawString - a function that draws a string into a window</li>
+<li>ButtonPress - a flag indicating that a ButtonPress event has been received</li>
+<li>KeyPress - a flag indicating that a KeyPress event has been received</li>
+<li>XCloseDisplay - a function that closes the display</li>
+</ul>
+<p><strong>In alphabetical order</strong></p>
+<ul>
+<li>ButtonPress - a flag indicating that a ButtonPress event has been received</li>
+<li>ButtonPressMask - a bit mask that indicates we want to receive ButtonPress events</li>
+<li>CWBackPixel - a bit mask that indicates we have set a background pixel</li>
+<li>CWBorderPixel - a bit mask that indicates we have set a border pixel</li>
+<li>CWEventMask - a bit mask that indicates we have set event attributes</li>
+<li>Default Screen - a macro that returns the index of the default screen</li>
+<li>DefaultGC - a macro that returns the default graphic context of the screen</li>
+<li>DisplayHeight - a macro that returns the height of the screen</li>
+<li>DisplayString - the display string that was used to connect to the X server</li>
+<li>DisplayWidth - a macro that returns the width of the screen</li>
+<li>Expose -  - a flag indicating that an Expose event has been received</li>
+<li>ExposureMask - a bit mask that indicates we want to receive Exposure events</li>
+<li>InputHint - a flag indicating the style of input preferred (pointer follows focus, etc)</li>
+<li>KeyPress - a flag indicating that a KeyPress event has been received</li>
+<li>KeyPressMask - a bit mask that indicates we want to receive KeyPress events</li>
+<li>NormalState - a flag indicating the normal window state (open not maximized)</li>
+<li>PBaseSize - a flag indicating that the program provided the base size value</li>
+<li>PMinSize - a flag indicating that the program provided the minimum size value</li>
+<li>RootWindow - a macro that returns the id of the root window</li>
+<li>StateHint - a flag indicating the preferred starting style of the window (iconified, normal)</li>
+<li>USPosition - a flag indicating that the user provided the position value</li>
+<li>USSize - a flag indicating that the user provided the size value</li>
+<li>XClassHint - a struct containing class information for the window manager</li>
+<li>XCloseDisplay - a function that closes the display</li>
+<li>XDisplayName - a macro that returns the display name</li>
+<li>XDrawString - a function that draws a string into a window</li>
+<li>XFlush - a function to flush the output queue and cause our window to receive events</li>
+<li>Xlib.h - a header file that brings in X.h and defines a bunch of things we will need for doing xlib programming - definitions and such.</li>
+<li>XMapRaised - a function that maps our window to the screen and allows it to be drawn</li>
+<li>XNextEvent - a function that waits for an event to occur (yes it blocks, deal with it)</li>
+<li>XOpenDisplay - a function that opens the display</li>
+<li>XSetClassHint - a function to set the class hint</li>
+<li>XSetWindowAttributes - a function to modify a set of window attributes</li>
+<li>XSetWMHints - a function to set the wm hints</li>
+<li>XSetWMNormalHints - a function to set the window manager normal hints</li>
+<li>XSizeHints - a struct containing size hint information for the window manager</li>
+<li>XStoreName - a function to store (set) the window name</li>
+<li>Xutil.h - a header file that adds some xlib utilities and defines</li>
+<li>XWMHints - a struct containing window manager hints</li>
+</ul>
+<p>All of these are described in great detail in the Xlib Reference Manual (Vol. 2 of O'Reilly's Definitive Guides to the X Window System) cited at the top of the note.</p>
+<p>Here's the link to the source code for the program developed in the note. It is <a href="/assets/files/xlib/xlib-article-files.tar.gz">available here</a></p>
+<p>Reach out to me if you find any issues or have suggestions.</p>
+<p>- will</p>
+<p><em>post last updated 2023-01-23 12:13:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

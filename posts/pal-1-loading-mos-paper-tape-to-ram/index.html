@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PAL-1 Loading MOS Paper Tape to RAM - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">PAL-1 Loading MOS Paper Tape to RAM</h1>
+    <p class="post-meta">Jun 8, 2022
+      <a href="/tags/retro-computing/" class="tag">retro-computing</a> <a href="/tags/pal-1/" class="tag">pal-1</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This post describes how to get your Mac talking to your PAL-1 in order to send MOS papertape format ascii files via minicom to your PAL-1 and run them. Future installments will go into more detail, from the ground up.</p>
+<h2>Preliminaries</h2>
+<ul>
+<li>a PC (in this case, I'm using a Mac, running Mojave)</li>
+<li>macports (homebrew might work, but support for older oses is suspect)</li>
+<li>a PAL-1 (get one here)</li>
+<li>a 7 volt 1 amp (or 2 amp) DC power supply w/ 2.5mm x 5.5mm tip</li>
+<li>a DB-9 gender changer</li>
+<li>a USB 2.0 to Serial (9-Pin) DB-9 RS-232 Converter Cable, Prolific Chipset</li>
+<li>to install the Prolific USB2Serial driver (get it here)</li>
+<li>to install minicom (sudo port install minicom)</li>
+<li>a MOS file (to be described below)</li>
+</ul>
+<h2>Create a MOS file</h2>
+<pre><code>vi test.mos
+;030200A90C0000BA
+;0000010001
+</code></pre>
+<h2>Configure minicom</h2>
+<p>Configure minicom by editing the configuration file (or use the interface):</p>
+<pre><code>sudo vi /opt/local/etc/minirc.dfl
+
+# add to file
+# Machine-generated file - use &quot;minicom -s&quot; to change parameters.
+pu pprog9           ascii-xfr -dsv -c10 -l100
+pu port             /dev/cu.usbserial
+pu baudrate         1200
+pu bits             8
+pu parity           N
+pu stopbits         1
+pu updir            /Users/wsenn/pal
+pu downdir          /Users/wsenn/pal
+pu rtscts           No
+</code></pre>
+<h2>Connect the PAL-1</h2>
+<p>Attach gender changer to the serial connector, attach the USB2Serial cable to that and to the USB connector of your Mac. Attach power to the PAL-1. Press RS.</p>
+<h2>Start minicom and connect to PAL-1</h2>
+<p><code>$ minicom</code></p>
+<p>press <code>enter</code></p>
+<p><img src="/assets/img/mos-tape/01.png" alt="one"></p>
+<h2>Send a file to the PAL-1</h2>
+<ul>
+<li>
+<p>Press <code>L</code></p>
+</li>
+<li>
+<p>Press <code>CTRL-A S</code></p>
+</li>
+<li>
+<p>select <code>ascii</code> for the Upload dialog</p>
+<p><img src="/assets/img/mos-tape/02.png" alt="two"></p>
+</li>
+<li>
+<p>locate and select your test.mos file</p>
+<p><img src="/assets/img/mos-tape/03.png" alt="three"></p>
+</li>
+<li>
+<p>you will briefly see progress</p>
+<p><img src="/assets/img/mos-tape/04.png" alt="four"></p>
+</li>
+<li>
+<p>type 0200 space and enter a few times to see the changes to memory</p>
+<p><img src="/assets/img/mos-tape/05.png" alt="five"></p>
+</li>
+</ul>
+<h2>Run the program</h2>
+<p>To run it, be sure to initialize 17FA/FB to 00 1C and 17FE/FF to same, then, type 0200 space and G to run the code. When it's done, type 00F3 space to see the contents of the A register (0C).</p>
+<p><img src="/assets/img/mos-tape/06.png" alt="six"></p>
+<p>That's it. Success. I know it's not a very sophisticated program (it just loads 0C into the A register), but this demonstrates the moving of a tape file into ram on the PAL-1, so celebrate!</p>
+<p><em>post added 2022-12-02 14:40:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

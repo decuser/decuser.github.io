@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installing and running Fossil on TrueNAS Core - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Installing and running Fossil on TrueNAS Core</h1>
+    <p class="post-meta">Jan 7, 2023
+      <a href="/tags/operating-systems/" class="tag">operating-systems</a> <a href="/tags/truenas-core/" class="tag">truenas-core</a> <a href="/tags/fossil/" class="tag">fossil</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note is about installing and running Fossil SCM on TrueNAS Core.</p>
+<p>Fossil is brought to us by the same people who developed SQLite. It was created to serve their needs, but is useful to everybody with a similar set of needs (pretty much any dev team). According to the fossil folks over at <a href="https://fossil-scm.org">https://fossil-scm.org</a>, &quot;Fossil is a simple, high-reliability, distributed software configuration management system...&quot; To mme, it's my git-killer.</p>
+<p>I have been running Fossil for about a year to see if it was worth replacing git for my own use. After this year, while I still like git and I will continue to use it for disposable repos, I have completely jumped ship for my own repos and won't be going back to hosting them on anything else anytime soon. Fossil is very lightweight, fast and responsive, has a fantastic server side ui, and is slightly more intuitive to use. It is also easier to recover from when things go wonky.</p>
+<p>I will be posting more about TrueNAS Core in the near future, as I learn more about it (so far, it rocks!).</p>
+<h3>Requirements</h3>
+<ul>
+<li>A host to work from (I'm using Mac Pro, Mojave)</li>
+<li>A TrueNAS Core instance (mine is TrueNAS-13.0-U3.1 running on a Lenovo Thinkcentre m92p w/lots of memory, disks, a working network, etc.</li>
+</ul>
+<h3>Overview</h3>
+<p>This is a quick guide for getting fossil up and running in a FreeBSD 13.1 jail, running in TrueNAS Core instance. The steps are:</p>
+<ul>
+<li>
+<p>Create the Jail</p>
+</li>
+<li>
+<p>Start the add jail wizard</p>
+</li>
+<li>
+<p>Name it and choose the FreeBSD Release version</p>
+</li>
+<li>
+<p>Configure the network</p>
+</li>
+<li>
+<p>Review the Summary and hit Submit</p>
+</li>
+<li>
+<p>Configure the Jail</p>
+</li>
+<li>
+<p>Start the Jail</p>
+</li>
+<li>
+<p>Open the Jail's Shell</p>
+</li>
+<li>
+<p>Add a new user</p>
+</li>
+<li>
+<p>Enable and start sshd</p>
+</li>
+<li>
+<p>Get ssh working</p>
+</li>
+<li>
+<p>Do updates and upgrades</p>
+</li>
+<li>
+<p>Install sudo and configure</p>
+</li>
+<li>
+<p>Add a mount point for the fossils directory</p>
+</li>
+<li>
+<p>Mount the fossil directory in the jail in TrueNAS UI</p>
+<ul>
+<li>Stop the jail</li>
+<li>Add the mount point</li>
+<li>Start the jail</li>
+</ul>
+</li>
+<li>
+<p>Install fossil</p>
+</li>
+<li>
+<p>Add a tweak to rc file</p>
+</li>
+<li>
+<p>Start fossil</p>
+</li>
+<li>
+<p>Browse to the repos</p>
+</li>
+</ul>
+<h4>Create the Jail</h4>
+<h5>Start the add jail wizeard</h5>
+<ul>
+<li>Select Jails-&gt;Add-&gt;Wizard</li>
+</ul>
+<h5>Name it and choose the FreeBSD Release version</h5>
+<pre><code>    Name: fossil
+    Jail Type: Default (Clone Jail)
+    Release 13.1 RELEASE
+    Next
+</code></pre>
+<h5>Configure the network</h5>
+<pre><code>    DHCP Autoconfigure IPv4 (it will pick VNET and Berkley Packet Filter)
+    Next
+</code></pre>
+<h5>Review the Summary and hit Submit</h5>
+<pre><code>    Jail Summary
+
+    Jail Name: fossil
+    Release: 13.1-RELEASE
+    DHCP Autoconfigure IPv4: Yes
+    VNET Virtual Networking: Yes
+    NAT Autoconfigure IPv4: No
+</code></pre>
+<ul>
+<li>Click Submit</li>
+</ul>
+<h4>Configure the Jail</h4>
+<h5>Start the Jail</h5>
+<ul>
+<li>Select the jail and click the Start button</li>
+</ul>
+<h5>Open the Jail's Shell</h5>
+<ul>
+<li>Select the jail and click Shell</li>
+</ul>
+<h5>Add a user (add them to wheel)</h5>
+<p><code> adduser</code></p>
+<h5>Enable and start sshd for the jail</h5>
+<pre><code>sysrc sshd_enable=&quot;YES&quot;
+service sshd start
+</code></pre>
+<h5>Get sshd working</h5>
+<ul>
+<li>Get the ip address for the jail</li>
+</ul>
+<pre><code>ifconfig 
+...
+192.168.254.24
+...
+</code></pre>
+<ul>
+<li>On the host add an entry to /etc/hosts</li>
+</ul>
+<p><code>192.168.254.24 fossil fossil.sentech</code></p>
+<ul>
+<li>Copy your ssh key over</li>
+</ul>
+<p><code>ssh-copy-id fossil</code></p>
+<ul>
+<li>ssh in, become root, and change the password</li>
+</ul>
+<pre><code>ssh fossil
+su -
+passwd
+</code></pre>
+<ul>
+<li>turn DNS off for sshd - it adds latency</li>
+</ul>
+<pre><code>vi /etc/ssh/sshd_config
+UseDNS no
+</code></pre>
+<ul>
+<li>Restart sshd and relogin</li>
+</ul>
+<pre><code>service sshd restart
+exit
+
+ssh fossil
+</code></pre>
+<h5>Do updates and upgrades</h5>
+<pre><code>su -
+pkg update
+pkg upgrade -y
+</code></pre>
+<h5>Install sudo and configure</h5>
+<pre><code>pkg install sudo
+visudo
+%wheel ALL=(ALL:ALL) NOPASSWD: ALL
+exit
+sudo ls
+</code></pre>
+<h5>Add a mount point for the fossils directory</h5>
+<p><code>sudo mkdir -p /zfs/fossils</code></p>
+<h5>Mount the fossil directory in the jail in the TrueNAS UI</h5>
+<h6>Stop the jail using TrueNAS UI</h6>
+<h6>add mountpoint for /zfs/fossils</h6>
+<pre><code>Source: /mnt/zfs/fossils
+Destination: /zfs/fossils
+</code></pre>
+<ul>
+<li>Click Submit</li>
+</ul>
+<h6>Start the jail using TrueNAS UI</h6>
+<p>Note: the filesystem will appear to be a regular directory,
+do zfs operations in TrueNas...</p>
+<ul>
+<li>If your fossils are owned by a user, chown them to nobody</li>
+</ul>
+<pre><code>ssh fossil
+sudo chown -R nobody:nobody /zfs/fossils
+</code></pre>
+<h5>Install fossil</h5>
+<p><code>pkg install fossil</code></p>
+<h5>Add a tweak to rc file</h5>
+<ul>
+<li>Add support for fossil_errorlog variable to fossil_args</li>
+</ul>
+<p>Put the following with the other fossil_args</p>
+<pre><code>vi /usr/local/etc/rc.d/fossil
+[ -n &quot;${fossil_errorlog}&quot;  ] &amp;&amp; fossil_args=&quot;${fossil_args} --errorlog ${fossil_errorlog}&quot;
+</code></pre>
+<ul>
+<li>Configure using rc vars</li>
+</ul>
+<pre><code>sysrc fossil_enable=&quot;YES&quot;
+sysrc fossil_repolist=&quot;YES&quot;
+sysrc fossil_directory=&quot;/zfs/fossils&quot;
+sysrc fossil_listenall=&quot;YES&quot;
+sysrc fossil_errorlog=&quot;/zfs/fossils/fossil.log&quot;
+</code></pre>
+<h5>Start fossil</h5>
+<p>service fossil start</p>
+<h5>Browse to the repos</h5>
+<p>http://fossil:8080</p>
+<p>Tool around and convince yourself things are working and celebrate!</p>
+<p><em>post last updated 2023-01-07 15:36:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

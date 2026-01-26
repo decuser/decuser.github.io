@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UCB STk Scheme Interpreter for Working Through Brian Harvey&#39;s CS61A Course - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">UCB STk Scheme Interpreter for Working Through Brian Harvey&#39;s CS61A Course</h1>
+    <p class="post-meta">Jun 27, 2023
+      <a href="/tags/development/" class="tag">development</a> <a href="/tags/scheme/" class="tag">scheme</a> <a href="/tags/ucb-stk/" class="tag">ucb-stk</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>This note describes how to install the UCB STk 4.0.1 Scheme interpreter on modern 64 bit Debian based systems. It also describes a method of building the Debian Package used to install the program. This is the version of scheme used by Brian Harvey in his 2011 course, CS61A: Structure and Interpretation of Computer Programs, named after and using famed text, Structure and Interpretation of Computer Programs by Harold Abelson and Gerald Jay Sussman with Julie Sussman, a phenomenally good computer science textbook.</p>
+<p>Now, I'm not a package maintainer and I certainly don't know the nuances of building packages, this is just meant to document how I was able to get this working in 2023 after reading tons of &quot;too bad, so sad, I can't get it to work posts&quot;, YMMV, but I've tested on LMDE5 (Elsie), Mint 21.1 (Vera), MX Linux 21.3 (Wildflower), and Ubuntu 22.04.2 (Jammy Jellyfish).</p>
+<p>Here's a screenshot of the working system running on LMDE5:</p>
+<p><img src="/assets/img/scheme/01.png" alt="one"></p>
+<h3>Resources</h3>
+<ul>
+<li>
+<p>CS561A: Structure and Interpretation of Computer Programs Video Lectures - <a href="https://archive.org/details/ucberkeley-webcast-PL3E89002AA9B9879E">https://archive.org/details/ucberkeley-webcast-PL3E89002AA9B9879E</a></p>
+</li>
+<li>
+<p>UCB Scheme Webpage - <a href="https://people.eecs.berkeley.edu/~bh/61a-pages/Scheme/">https://people.eecs.berkeley.edu/~bh/61a-pages/Scheme/</a></p>
+</li>
+<li>
+<p>Structure and Interpretation of Computer Programs 2nd ed. eBook - <a href="https://web.mit.edu/6.001/6.037/sicp.pdf">https://web.mit.edu/6.001/6.037/sicp.pdf</a></p>
+</li>
+<li>
+<p>Erick Gallesio's github repo - <a href="https://github.com/egallesio/STk">https://github.com/egallesio/STk</a></p>
+</li>
+</ul>
+<h3>Test Environments</h3>
+<ul>
+<li>IBM ThinkCentre M92p running Linux Mint Debian Edition 5 (Elsie)</li>
+<li>Virtualbox 7 running Linux Mint 21.1_64 (Vera)</li>
+<li>Virtualbox 7 running Ubuntu-22.04.2_64 (Jammy Jellyfish)</li>
+<li>Virtualbox 7 running MX-21.3_64 (Wildflower)</li>
+</ul>
+<h3>Build Environment</h3>
+<ul>
+<li>Ubuntu 16.04.1 LTS 64 bit (not eol before mid 2026) - VirtualBox instance</li>
+</ul>
+<h3>Installation using the debian package</h3>
+<p>The package requires that you have 32bit support in your environment which LMDE does. Other than this, it requires:</p>
+<ul>
+<li>libsm6:i386 libx11-6:i386 along with their dependencies</li>
+</ul>
+<p><code>sudo apt install libsm6:i386 libx11-6:i386</code></p>
+<ul>
+<li><a href="/assets/files/scheme/stk_4.0.1-1_amd64.deb">stk_4.0.1-1_amd64.deb</a></li>
+</ul>
+<p><code>sudo dpkg -i stk_4.0.1-1_amd64.deb</code></p>
+<p>That should be all it takes, test it:</p>
+<p><code>stk-simply</code></p>
+<p>I usually install rlwrap so that I can get command history. If you want that then, install rlwrap:</p>
+<p><code>sudo apt install rlwrap</code></p>
+<p>Then add an alias or three to your .bashrc:</p>
+<pre><code>alias rlstk-simply='rlwrap stk-simply'
+alias rlstk-explorin='rlwrap stk-explorin'
+alias rlstk-grfx='rlwrap stk-grfx'
+</code></pre>
+<p>Then you can do stuff like this:</p>
+<p><img src="/assets/img/scheme/02.png" alt="two"></p>
+<p>Yeah, I know. It's not all about the graphics or turtles, but hey - still kind of cool that it works.</p>
+<h3>Extras</h3>
+<p>Since UCB Scheme is based on Erick Gallesio's STk, we can use the manual from STk for everything that's not a UCB Scheme extension. Here's the manual:</p>
+<p><a href="/assets/files/scheme/gallesio-1999-stk-4.0-manual.pdf">gallesio-1999-stk-4.0-manual.pdf</a></p>
+<p>The differences between Gallesio's STk and the UCB Scheme environment are summed up in this document:</p>
+<p><a href="/assets/files/scheme/explorin-vs-simply.txt">explorin-vs-simply.txt</a></p>
+<p>And an FAQ is also available:
+<a href="/assets/files/scheme/faq.html">faq.html</a></p>
+<p>A quick test on my system:</p>
+<p><img src="/assets/img/scheme/03.png" alt="three"></p>
+<h3>Build the Debian Package from the RPM distribution</h3>
+<p>The first thing to do is to get the RPM. It is available here:</p>
+<p><a href="http://inst.eecs.berkeley.edu/~scheme/precompiled/Linux/STk-4.0.1-ucb1.3.6.i386.rpm">RPM distribution</a></p>
+<p>or locally, here:</p>
+<p><a href="/assets/files/scheme/STk-4.0.1-ucb1.3.6.i386.rpm">STk-4.0.1-ucb1.3.6.i386.rpm</a></p>
+<p>The second thing to do is to download the Ubuntu 16.0.1 LTS 64 bit server image:</p>
+<p><a href="https://old-releases.ubuntu.com/releases/16.04.6/ubuntu-16.04.1-server-amd64.iso">ubuntu-16.04.1-server-amd64.iso</a></p>
+<p>Create a new Virtual Box Instance and use Bridged Networking so your instance will get an IP address on your network. During installation, enable the SSH server.</p>
+<p>After the installation, get the IP address of the instance:</p>
+<pre><code>ifconfig
+192.168.254.15
+</code></pre>
+<p>From your host, scp the rpm file into the instance:</p>
+<p><code>scp STk-4.0.1-ucb1.3.6.i386.rpm your_user@instanceip:STk-4.0.1-ucb1.3.6.i386.rpm</code></p>
+<p>Then ssh into the instance:</p>
+<p><code>ssh 192.168.254.15</code></p>
+<p>Install some necessary applications and libraries:</p>
+<p><code>sudo apt install alien libsm6:i386 libx11-6:i386 libc6-i386 lib32stdc++6 lib32gcc1 lib32ncurses5 lib32z1</code></p>
+<p>Create the debian package from the rpm:</p>
+<p><code>fakeroot alien --target=amd64 STk-4.0.1-ucb1.3.6.i386.rpm</code></p>
+<p>That's all there is to converting rpm to a 64 bit friendly debian package. On the host, scp the file from the instance:</p>
+<p><code>scp your_user@instanceip:stk_4.0.1-1_amd64.deb ./stk_4.0.1-1_amd64.deb</code></p>
+<p>Now, you have a deb file that can be saved off and reused.</p>
+<h3>Get a copy of the manual, build the unmodified source code</h3>
+<p>Gallesio's STk is buildable, just realize that it isn't suitable for following the course. I include these instructions for the sake of getting the manual and for completeness.</p>
+<p>Get the source code and checkout the appropriate version:</p>
+<pre><code>cd ~/sandboxes-git
+git clone https://github.com/egallesio/STk.git
+cd STk
+git checkout Version_4.0.1
+</code></pre>
+<p>Convert the manual to pdf:</p>
+<p><code>ps2pdf Doc/Reference/manual.ps ~/Desktop/gallesio-1999-stk-4.0-manual.pdf</code></p>
+<p>Build the source and optionally install it (don't do this if you have the modified program installed):</p>
+<pre><code>./configure
+make
+sudo make install
+</code></pre>
+<p>Reach out to me if you find any issues or have suggestions.</p>
+<p>- will</p>
+<p><em>post last updated 2023-06-27 21:24:00 -0600</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (1)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (1)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (6)</a>, <a href="/tags/programming/">programming (3)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (20)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (48)</a>, <a href="/tags/v6/">v6 (7)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
