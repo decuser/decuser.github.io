@@ -1,0 +1,18 @@
+{{define "content"}}
+<h1 class="page-heading">{{.TagName}}</h1>
+<ul class="post-list">
+{{range .Posts}}
+<li>
+  <span class="post-meta">{{.Date.Format "Jan 2, 2006"}}</span>
+  {{range .Tags}}<a href="/tags/{{.}}/" class="tag">{{.}}</a> {{end}}
+  <h3><a class="post-link" href="/posts/{{.Slug}}/">{{.Title}}</a></h3>
+  <div class="summary">{{.Summary | safeHTML}}</div>
+</li>
+{{end}}
+</ul>
+<nav class="pagination">
+  {{if .PrevPage}}<a href="{{.PrevPage}}">← newer</a>{{end}}
+  page {{.Page}} of {{.TotalPages}}
+  {{if .NextPage}}<a href="{{.NextPage}}">older →</a>{{end}}
+</nav>
+{{end}}

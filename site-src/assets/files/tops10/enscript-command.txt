@@ -1,0 +1,1 @@
+enscript -B -L70 -f Courier9 --margins=96::: -o mig603.ps mig603.txt && ps2pdf mig603.ps && open mig603.pdf

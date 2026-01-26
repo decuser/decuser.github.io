@@ -1,0 +1,33 @@
+{{define "content"}}
+<h1>Welcome to decuser's blog</h1>
+<p>Topics on this blog include computing, retro-computing, operating systems, math, and whatever other technical subjects I happen to be exploring that I find interesting enough to take and share notes about.</p>
+
+<h2>Posts</h2>
+<input type="text" id="search-input" placeholder="search...">
+<ul id="results-container"></ul>
+
+<ul class="post-list">
+{{range .Posts}}
+<li>
+  <span class="post-meta">{{.Date.Format "Jan 2, 2006"}}</span>
+  {{range .Tags}}<a href="/tags/{{.}}/" class="tag">{{.}}</a> {{end}}
+  <h3><a class="post-link" href="/posts/{{.Slug}}/">{{.Title}}</a></h3>
+  <div class="summary">{{.Summary | safeHTML}}</div>
+</li>
+{{end}}
+</ul>
+<nav class="pagination">
+  {{if .PrevPage}}<a href="{{.PrevPage}}">← newer</a>{{end}}
+  page {{.Page}} of {{.TotalPages}}
+  {{if .NextPage}}<a href="{{.NextPage}}">older →</a>{{end}}
+</nav>
+
+<script src="/assets/js/simple-jekyll-search.min.js"></script>
+<script>
+SimpleJekyllSearch({
+  searchInput: document.getElementById('search-input'),
+  resultsContainer: document.getElementById('results-container'),
+  json: '/search.json'
+})
+</script>
+{{end}}

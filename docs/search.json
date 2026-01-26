@@ -1,5 +1,11 @@
 [
   {
+    "title": "Migrating from Jekyll to a custom static site generator",
+    "url": "/posts/ssg/",
+    "date": "Jan 25, 2026",
+    "tags": "go tools github-pages"
+  },
+  {
     "title": "dex - directory comparison tool in Go",
     "url": "/posts/dex/",
     "date": "Jan 25, 2026",

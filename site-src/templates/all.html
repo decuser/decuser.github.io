@@ -1,0 +1,16 @@
+{{define "content"}}
+<div class="all-posts">
+<h1>all posts</h1>
+{{range .Years}}
+<h2>{{.Year}}</h2>
+{{range .Months}}
+<h3>{{.Month}}</h3>
+<ul>
+{{range .Posts}}
+  <li><a href="/posts/{{.Slug}}/">{{.Date.Format "02"}} - {{.Title}}</a></li>
+{{end}}
+</ul>
+{{end}}
+{{end}}
+</div>
+{{end}}

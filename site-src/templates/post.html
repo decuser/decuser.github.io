@@ -1,0 +1,11 @@
+{{define "content"}}
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">{{.Post.Title}}</h1>
+    <p class="post-meta">{{.Post.Date.Format "Jan 2, 2006"}}
+      {{range .Post.Tags}}<a href="/tags/{{.}}/" class="tag">{{.}}</a> {{end}}
+    </p>
+  </header>
+  <div class="post-content">{{.Post.Content | safeHTML}}</div>
+</article>
+{{end}}
