@@ -762,14 +762,17 @@ Restart the sim:
 mount wolfgang's man.enb tape in the simuation
 
 CTRL-E to suspend the simulation
+```
 simh> attach tm0 v6enb/man.enb
 
 %SIM-INFO: TM0: Tape Image 'v6enb/man.enb' scanned as SIMH format
 
 sim> co
+```
 
 list the files on the tape
 
+```
 tp tm
 
 sav
@@ -789,35 +792,43 @@ man6/primes.6.df
 13 entries
 45 used
 107 last
+```
 
 the tape contains a save and restore script, a number fo diff files, the man script, and an nroff1.s assembly file
 
 restore the files from the tape into /usr/doc/man
-
+```
 chdir /usr/doc/man
 tp xm res
 cat res
+```
 
 restore the files (modify some files)
 
+```
 sh res
+```
 The error /usr/source/s7/nroff1.s.df: cannot open does is not fatal and the man command will work fine.
 
 test man
 
-man man
+`man man`
 
 
 ### test that a telnet session from the host works
 
 open a terminal
-telnet localhost 5555
+
+`telnet localhost 5555`
+
 note the escape character is ^]
 press enter if the word login doesn't immediately appear
 
+```
 login
 stty nl0 cr0
 ls
+```
 
 CTRL-D to logout of v6
 
@@ -827,31 +838,37 @@ q to quit telnet altogether
 
 CTRL-D again to close the terminal
 
-
 ### test copying text files to and from the simulator
 
 because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt
+
 this test is for the paper tape device, see the longer note on Copying Files for more information
 
 
 on the host, put some text in the ptr.txt file
 
+```
 --snip
 Hello, v6 from
 the HOST!!!
 --snip
+```
 
 in v6, read the file from the ppt device
 
+```
 cat > myfile < /dev/ppt
 cat myfile
 Hello, v6 from
 the HOST!!!#
+```
 
 in v6, write the file to the ppt device
 
+```
 cat myfile > /dev/ppt
 sync
+```
 
 CTRL-E to suspend the simulation
 co to resume v6
@@ -862,6 +879,7 @@ on the host, read the ptp file
 
 ### Set up users in v6
 
+```
 @unix
 cat >> /etc/passwd
 wsenn::10:1::/usr/wsenn:
@@ -876,21 +894,26 @@ pwd
 sync
 sync
 sync
+```
 
 CTRL+E to break the emulation
-sim> q
+
+`sim> q`
 
 ### Back up the working instance (baseline)
 
+```
 mkdir baseline-v6
 cp nboot.ini baseline-v6/
 cp rk? baseline-v6/
 tar cvzf baseline-v6.tar.gz baseline-v6
 cp baseline-v6.tar.gz ../
 rm -fr baseline-v6*
+```
 
 test the backup
 
+```
 cd ..
 tar xvf baseline-v6.tar.gz
 cd baseline-v6
@@ -910,29 +933,33 @@ Disabling XQ
 
 login: wsenn
 %
+```
 
 CTRL-E
-simh>q
 
+`simh>q`
+
+```
 cd ..
 rm -fr ./baseline-v6
 cd v6
-
+```
 
 ### add cd command using host editor and reading and writing from ppt
 
-Note: sh is critically important, don't muck it up :).  The issue is that if you do, there
-really isn't an easy way to recover. Just be careful and don't replace the original shell until you have tested the build. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.
+Note: sh is critically important, don't muck it up :).  The issue is that if you do, there really isn't an easy way to recover. Just be careful and don't replace the original shell until you have tested the build. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.
 
+```
 pdp11 nboot.ini
 
 @unix
 root
 stty cr0 nl0
+```
 
 cat to the paper tape punch
 
-cat /usr/source/s2/sh.c > /dev/ppt
+`cat /usr/source/s2/sh.c > /dev/ppt`
 
 CTRL-E to suspend the sim (ensure that the device complete's its write)
 co to continue
@@ -942,6 +969,7 @@ copy it's contents except for the header and footer lines, but be sure to get ev
 
 edit it
 by changing:
+```
         if(equal(cp1, "chdir")) {
             if(t[DCOM+1] != 0) {
                 if(chdir(t[DCOM+1]) < 0)
@@ -950,7 +978,9 @@ by changing:
                 err("chdir: arg count");
             return;
         }
+```
 to:
+```
         if(equal(cp1, "chdir")) {
             if(t[DCOM+1] != 0) {
                 if(chdir(t[DCOM+1]) < 0)
@@ -967,20 +997,25 @@ to:
                 err("cd: arg count");
             return;
         }
+```
 
 paste it into ptr.txt, be sure to copy from the initial # to the end and include an empty line
 
 in v6, read from ppt into a new file
 
 CTRL-E to suspend
+
+```
 detach ptr
 attach ptr ptr.txt
 co
 
 cat > sh.c.new < /dev/ppt
+```
 
 compare the new file to the old file
 
+```
 diff sh.c.new /usr/source/s2/sh.c
 569,576d568
 *               if(equal(cp1, "cd")) {
@@ -991,9 +1026,11 @@ diff sh.c.new /usr/source/s2/sh.c
 *                               err("cd: arg count");
 *                       return;
 *               }
+```
 
 figure out how to build and install sh
 
+```
 chdir /usr/source/s2
 cp sh.c sh.c.original
 cp /sh.c.new sh.c
@@ -1002,56 +1039,67 @@ grep sh run
 cc -s -n -O sh.c
 cmp a.out /bin/sh
 cp a.out /bin/sh
+```
 
 build and install sh
 
-
+```
 cc -s -n -O sh.c
 cmp a.out /bin/sh
 a.out /bin/sh differ: char 4, line 1
 ./a.out
+```
+
 test that it works - should display a shell prompt and act in every way identically to the previous shell, with the exception that cd  should now work. If it doesn't you will likely need to halt the simulation and reboot. Only if it works, copy it over the original after backing the original up.
 
+```
 mv /bin/sh /bin/sh.original
 cp a.out /bin/sh
 chown bin /bin/sh
+```
 
 CTRL-D
+
 relogin
 
-cd /usr
+`cd /usr`
+
 Woohoo!
 CTRL-E
-q
+
+`simh> q`
 
 Make a backup baseline-v6-withcd
 
+```
 mkdir baseline-v6-withcd
 cp nboot.ini baseline-v6-withcd/
 cp rk? baseline-v6-withcd/
 tar cvzf baseline-v6-withcd.tar.gz baseline-v6-withcd
 cp baseline-v6-withcd.tar.gz ../
 rm -fr baseline-v6-withcd*
-
-
+```
 ### Copying Files
-
 
 ### From Unix v6 on PDP-11/40 Open SimH to Host:
 
-
 create and attach an additional rk device, if not already attached
 
+```
 simh> attach rk3 rk3
 co
+```
 
 get a file of interest and note it's size in bytes
 
+```
 # ls -l /etc/rc
 -rw-rw-r--  1 bin        90 Oct 10 12:32 /etc/rc
+```
 
 look at the od dump of the file for comparison later
 
+```
 # od -c /etc/rc
 0000000  r  m     -  f     /  e  t  c  /  m  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
@@ -1060,21 +1108,27 @@ look at the od dump of the file for comparison later
 0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
 0000120  /  u  s  r  /  d  o  c \n \n
 0000132
+```
 
 write the file to the rk device (the sync may not be needed, but the result looks cleaner, also it doesn't apper that you can specify bs=1, device errors out)
 
+```
 dd if=/etc/rc of=/dev/rrk3 conv=sync
 0+1 records in
 1+0 records out
+```
 
 exit the sim and then on the host, read from the rk image using bs=1 and count from the ls output
 
+```
 $ dd if=rk3 of=rc ibs=1 count=90
 90+0 records in
 90+0 records out
+```
 
 look at the od dump
 
+```
 $ od -c rc
 0000000    r   m       -   f       /   e   t   c   /   m   t   a   b  \n
 0000020    /   e   t   c   /   u   p   d   a   t   e  \n   /   e   t   c
@@ -1083,35 +1137,41 @@ $ od -c rc
 0000100    /   m   o   u   n   t       /   d   e   v   /   r   k   2
 0000120    /   u   s   r   /   d   o   c  \n  \n
 0000132
+```
 
 A match!
 
 
 ### From Host to Unix v6 on PDP11/40 Open SimH Host:
 
-
 make a minor edit to the rc file (change m to n in the word mtab) and note it's size in bytes
 
+```
 $ ls -l rc
 -rw-r--r--  1 wsenn  staff  90 Oct 19 15:54 rc
+```
 
 it better be 90, unless I did something other than changing a letter
 
 write rc to a new rk3 file
 
+```
 $ rm rk3
 $ dd if=rc of=rk3 conv=sync
 0+1 records in
 1+0 records out
 512 bytes transferred in 0.000037 secs (13854733 bytes/sec)
+```
+
 note the count of blocks
 
 with the number of blocks on hand, fire up the simulation and read from the rk to disk
 
-# dd if=/dev/rrk3 of=rc.dd count=1
+`# dd if=/dev/rrk3 of=rc.dd count=1`
 
 because of the fact that I can't specify bs=1, the result is padded
 
+```
 od -c rc.dd
 0000000  r  m     -  f     /  e  t  c  /  n  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
@@ -1120,23 +1180,27 @@ od -c rc.dd
 0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
 0000120  /  u  s  r  /  d  o  c \n \n \0 \0 \0 \0 \0 \0
 0001000
+```
 
 read from the dd file with the number of bytes still in hand
 
+```
 dd if=rc.dd of=rc bs=1 count=90
 90+0 records in
 90+0 records out
+```
 
 then diff the file against the original:
 
+```
 diff rc /etc/rc
 1c1
 * rm -f /etc/ntab
 ---
 . rm -f /etc/mtab
+```
 
 Success!
-
 
 ### Some confusing, but special points to remember
 
@@ -1148,43 +1212,61 @@ there is no cd, use chdir (unless you followed the cd instructions)
 ctime.README points the way to successfully compiling stuff:
 sometimes you need to be bin, login as bin with no password
 the correct command to add an object to a lib is:
-ar r ../lib2 myfile.o
+
+`ar r ../lib2 myfile.o`
 
 to learn how to compile stuff, the run script in the source directories
 are good skeletons. to see how to compile login.c in /usr/source/s1
+
+```
 chdir /usr/source/s1
-ed login.c and make any changes you desire (such as fixing the login:
+ed login.c
+```
+and make any changes you desire (such as fixing the login:
 prompt which shows Name: on subsequent retries)
 
 if you can't remember the right commands to compile and install this
 program, do the following:
+
+```
 grep login run
 cc -s -O login.c
 cmp a.out /bin/login
 cp a.out /bin/login
+```
 
 to see who needs to do the compiling
+
+```
 ls -l /bin/login
 -rwsr-xr-x  1 root     2606 Oct 10 14:19 /bin/login
-
+```
 looks like root in this case, whereas for getty.c:
+
+```
 grep getty run
 cc -s -n -O getty.c
 cmp a.out /etc/getty
 cp a.out /etc/getty
 ls -l /etc/getty
 -rwxrwxr--  1 bin      1002 Oct 10 14:09 /etc/getty
+```
+
 looks like bin.
 
 As noted in ctime.README, run in /usr/sys does not actually update the libraries
 
 Before you update libraries, ls -l to see the mode and ownership of the files
+
+```
 ls -l /usr/sys/lib?
 -rw-rw-r--  1 bin     59342 Oct 10 13:17 lib1
 -rw-rw-r--  1 bin     48630 Oct 10 13:18 lib2
+```
 
 if you try to remove a special file (whatever that is), it will display a mode that is six digits long.
 
+```
 rm /usr/sys/lib1
 /usr/sys/lib1: 110664 mode
 
@@ -1206,6 +1288,7 @@ The flags are as follows:
 000100 execute (owner)
 000070 read, write, execute (group)
 000007 read, write, execute (others)
+```
 
 that makes 110664 read:
 the i-node is allocated, it's a large file, it's a plain file, and it is rw-rw-r--.
@@ -1241,11 +1324,16 @@ s/this/that
 this command is tricky, but once you get the hang of it, works great!
 
 to find a file use the following syntax -a means "and" and is absolutely required:
+
+```
 find / -name tty.h -a -print
+
 /usr/sys/tty.h
+```
 
 to find a pattern is straightforward:
-find / -name "tty*" -a -print
+
+`find / -name "tty*" -a -print`
 
 
 *post added 2022-12-02 17:52:00 -0600*

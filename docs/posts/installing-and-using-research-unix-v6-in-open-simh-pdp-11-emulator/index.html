@@ -591,13 +591,17 @@ Disabling XQ
 <p><code>sim&gt; cont</code></p>
 <h2>Add man Command</h2>
 <p>mount wolfgang's man.enb tape in the simuation</p>
-<p>CTRL-E to suspend the simulation
-simh&gt; attach tm0 v6enb/man.enb</p>
-<p>%SIM-INFO: TM0: Tape Image 'v6enb/man.enb' scanned as SIMH format</p>
-<p>sim&gt; co</p>
+<p>CTRL-E to suspend the simulation</p>
+<pre><code>simh&gt; attach tm0 v6enb/man.enb
+
+%SIM-INFO: TM0: Tape Image 'v6enb/man.enb' scanned as SIMH format
+
+sim&gt; co
+</code></pre>
 <p>list the files on the tape</p>
-<p>tp tm</p>
-<p>sav
+<pre><code>tp tm
+
+sav
 res
 man0/naa.df
 man0/tocrc.df
@@ -609,48 +613,56 @@ man5/a.out.5.df
 man6/factor.6.df
 man6/primes.6.df
 /usr/bin/man
-/usr/source/s7/nroff1.s</p>
-<p>13 entries
+/usr/source/s7/nroff1.s
+
+13 entries
 45 used
-107 last</p>
+107 last
+</code></pre>
 <p>the tape contains a save and restore script, a number fo diff files, the man script, and an nroff1.s assembly file</p>
 <p>restore the files from the tape into /usr/doc/man</p>
-<p>chdir /usr/doc/man
+<pre><code>chdir /usr/doc/man
 tp xm res
-cat res</p>
+cat res
+</code></pre>
 <p>restore the files (modify some files)</p>
-<p>sh res
-The error /usr/source/s7/nroff1.s.df: cannot open does is not fatal and the man command will work fine.</p>
+<pre><code>sh res
+</code></pre>
+<p>The error /usr/source/s7/nroff1.s.df: cannot open does is not fatal and the man command will work fine.</p>
 <p>test man</p>
-<p>man man</p>
+<p><code>man man</code></p>
 <h3>test that a telnet session from the host works</h3>
-<p>open a terminal
-telnet localhost 5555
-note the escape character is ^]
+<p>open a terminal</p>
+<p><code>telnet localhost 5555</code></p>
+<p>note the escape character is ^]
 press enter if the word login doesn't immediately appear</p>
-<p>login
+<pre><code>login
 stty nl0 cr0
-ls</p>
+ls
+</code></pre>
 <p>CTRL-D to logout of v6</p>
 <p>CTRL-] to close the telnet session</p>
 <p>q to quit telnet altogether</p>
 <p>CTRL-D again to close the terminal</p>
 <h3>test copying text files to and from the simulator</h3>
-<p>because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt
-this test is for the paper tape device, see the longer note on Copying Files for more information</p>
+<p>because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt</p>
+<p>this test is for the paper tape device, see the longer note on Copying Files for more information</p>
 <p>on the host, put some text in the ptr.txt file</p>
-<p>--snip
+<pre><code>--snip
 Hello, v6 from
 the HOST!!!
---snip</p>
+--snip
+</code></pre>
 <p>in v6, read the file from the ppt device</p>
-<p>cat &gt; myfile &lt; /dev/ppt
+<pre><code>cat &gt; myfile &lt; /dev/ppt
 cat myfile
 Hello, v6 from
-the HOST!!!#</p>
+the HOST!!!#
+</code></pre>
 <p>in v6, write the file to the ppt device</p>
-<p>cat myfile &gt; /dev/ppt
-sync</p>
+<pre><code>cat myfile &gt; /dev/ppt
+sync
+</code></pre>
 <p>CTRL-E to suspend the simulation
 co to resume v6</p>
 <p>on the host, read the ptp file</p>
@@ -658,33 +670,38 @@ co to resume v6</p>
 <li>as of 20151120.0642pm, it appears to be necessary to suspend the simulator to get anything written to the device. This can be done multiple times, as needed.</li>
 </ul>
 <h3>Set up users in v6</h3>
-<p>@unix
+<pre><code>@unix
 cat &gt;&gt; /etc/passwd
 wsenn::10:1::/usr/wsenn:
-CTRL+D</p>
-<p>mkdir /usr/wsenn
+CTRL+D
+
+mkdir /usr/wsenn
 chown wsenn /usr/wsenn
 login wsenn
 pwd
-/usr/wsenn</p>
-<p>sync
+/usr/wsenn
+
 sync
-sync</p>
-<p>CTRL+E to break the emulation
-sim&gt; q</p>
+sync
+sync
+</code></pre>
+<p>CTRL+E to break the emulation</p>
+<p><code>sim&gt; q</code></p>
 <h3>Back up the working instance (baseline)</h3>
-<p>mkdir baseline-v6
+<pre><code>mkdir baseline-v6
 cp nboot.ini baseline-v6/
 cp rk? baseline-v6/
 tar cvzf baseline-v6.tar.gz baseline-v6
 cp baseline-v6.tar.gz ../
-rm -fr baseline-v6*</p>
+rm -fr baseline-v6*
+</code></pre>
 <p>test the backup</p>
-<p>cd ..
+<pre><code>cd ..
 tar xvf baseline-v6.tar.gz
 cd baseline-v6
-pdp11 nboot.ini</p>
-<p>PDP-11 simulator V4.0-0 Current        git commit id: 65410851
+pdp11 nboot.ini
+
+PDP-11 simulator V4.0-0 Current        git commit id: 65410851
 Disabling XQ
 /Users/wsenn/retro-workarea/baseline-v6/nboot.ini-13&gt; attach ptr ptr.txt
 %SIM-INFO: PTR: creating new file
@@ -694,196 +711,193 @@ Disabling XQ
 %SIM-INFO: LPT: creating new file
 /Users/wsenn/retro-workarea/baseline-v6/nboot.ini-19&gt; att dci 5555
 %SIM-INFO: Listening on port 5555
-@unix</p>
-<p>login: wsenn
-%</p>
-<p>CTRL-E
-simh&gt;q</p>
-<p>cd ..
+@unix
+
+login: wsenn
+%
+</code></pre>
+<p>CTRL-E</p>
+<p><code>simh&gt;q</code></p>
+<pre><code>cd ..
 rm -fr ./baseline-v6
-cd v6</p>
+cd v6
+</code></pre>
 <h3>add cd command using host editor and reading and writing from ppt</h3>
-<p>Note: sh is critically important, don't muck it up :).  The issue is that if you do, there
-really isn't an easy way to recover. Just be careful and don't replace the original shell until you have tested the build. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.</p>
-<p>pdp11 nboot.ini</p>
-<p>@unix
+<p>Note: sh is critically important, don't muck it up :).  The issue is that if you do, there really isn't an easy way to recover. Just be careful and don't replace the original shell until you have tested the build. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.</p>
+<pre><code>pdp11 nboot.ini
+
+@unix
 root
-stty cr0 nl0</p>
+stty cr0 nl0
+</code></pre>
 <p>cat to the paper tape punch</p>
-<p>cat /usr/source/s2/sh.c &gt; /dev/ppt</p>
+<p><code>cat /usr/source/s2/sh.c &gt; /dev/ppt</code></p>
 <p>CTRL-E to suspend the sim (ensure that the device complete's its write)
 co to continue</p>
 <p>open ptp.txt in your favorite editor that doesn't muck with the invisible characters
 copy it's contents except for the header and footer lines, but be sure to get every non-header or footer character</p>
 <p>edit it
-by changing:
-if(equal(cp1, &quot;chdir&quot;)) {
-if(t[DCOM+1] != 0) {
-if(chdir(t[DCOM+1]) &lt; 0)
-err(&quot;chdir: bad directory&quot;);
-} else
-err(&quot;chdir: arg count&quot;);
-return;
-}
-to:
-if(equal(cp1, &quot;chdir&quot;)) {
-if(t[DCOM+1] != 0) {
-if(chdir(t[DCOM+1]) &lt; 0)
-err(&quot;chdir: bad directory&quot;);
-} else
-err(&quot;chdir: arg count&quot;);
-return;
-}
-if(equal(cp1, &quot;cd&quot;)) {
-if(t[DCOM+1] != 0) {
-if(chdir(t[DCOM+1]) &lt; 0)
-err(&quot;cd: bad directory&quot;);
-} else
-err(&quot;cd: arg count&quot;);
-return;
-}</p>
+by changing:</p>
+<pre><code>        if(equal(cp1, &quot;chdir&quot;)) {
+            if(t[DCOM+1] != 0) {
+                if(chdir(t[DCOM+1]) &lt; 0)
+                    err(&quot;chdir: bad directory&quot;);
+            } else
+                err(&quot;chdir: arg count&quot;);
+            return;
+        }
+</code></pre>
+<p>to:</p>
+<pre><code>        if(equal(cp1, &quot;chdir&quot;)) {
+            if(t[DCOM+1] != 0) {
+                if(chdir(t[DCOM+1]) &lt; 0)
+                    err(&quot;chdir: bad directory&quot;);
+            } else
+                err(&quot;chdir: arg count&quot;);
+            return;
+        }
+        if(equal(cp1, &quot;cd&quot;)) {
+            if(t[DCOM+1] != 0) {
+                if(chdir(t[DCOM+1]) &lt; 0)
+                    err(&quot;cd: bad directory&quot;);
+            } else
+                err(&quot;cd: arg count&quot;);
+            return;
+        }
+</code></pre>
 <p>paste it into ptr.txt, be sure to copy from the initial # to the end and include an empty line</p>
 <p>in v6, read from ppt into a new file</p>
-<p>CTRL-E to suspend
-detach ptr
+<p>CTRL-E to suspend</p>
+<pre><code>detach ptr
 attach ptr ptr.txt
-co</p>
-<p>cat &gt; sh.c.new &lt; /dev/ppt</p>
+co
+
+cat &gt; sh.c.new &lt; /dev/ppt
+</code></pre>
 <p>compare the new file to the old file</p>
-<p>diff sh.c.new /usr/source/s2/sh.c
-569,576d568</p>
-<ul>
-<li>
-<pre><code>          if(equal(cp1, &quot;cd&quot;)) {
+<pre><code>diff sh.c.new /usr/source/s2/sh.c
+569,576d568
+*               if(equal(cp1, &quot;cd&quot;)) {
+*                       if(t[DCOM+1] != 0) {
+*                               if(chdir(t[DCOM+1]) &lt; 0)
+*                                       err(&quot;cd: bad directory&quot;);
+*                       } else
+*                               err(&quot;cd: arg count&quot;);
+*                       return;
+*               }
 </code></pre>
-</li>
-<li>
-<pre><code>                  if(t[DCOM+1] != 0) {
-</code></pre>
-</li>
-<li>
-<pre><code>                          if(chdir(t[DCOM+1]) &lt; 0)
-</code></pre>
-</li>
-<li>
-<pre><code>                                  err(&quot;cd: bad directory&quot;);
-</code></pre>
-</li>
-<li>
-<pre><code>                  } else
-</code></pre>
-</li>
-<li>
-<pre><code>                          err(&quot;cd: arg count&quot;);
-</code></pre>
-</li>
-<li>
-<pre><code>                  return;
-</code></pre>
-</li>
-<li>
-<pre><code>          }
-</code></pre>
-</li>
-</ul>
 <p>figure out how to build and install sh</p>
-<p>chdir /usr/source/s2
+<pre><code>chdir /usr/source/s2
 cp sh.c sh.c.original
-cp /sh.c.new sh.c</p>
-<p>grep sh run
+cp /sh.c.new sh.c
+
+grep sh run
 cc -s -n -O sh.c
 cmp a.out /bin/sh
-cp a.out /bin/sh</p>
+cp a.out /bin/sh
+</code></pre>
 <p>build and install sh</p>
-<p>cc -s -n -O sh.c
+<pre><code>cc -s -n -O sh.c
 cmp a.out /bin/sh
 a.out /bin/sh differ: char 4, line 1
 ./a.out
-test that it works - should display a shell prompt and act in every way identically to the previous shell, with the exception that cd  should now work. If it doesn't you will likely need to halt the simulation and reboot. Only if it works, copy it over the original after backing the original up.</p>
-<p>mv /bin/sh /bin/sh.original
+</code></pre>
+<p>test that it works - should display a shell prompt and act in every way identically to the previous shell, with the exception that cd  should now work. If it doesn't you will likely need to halt the simulation and reboot. Only if it works, copy it over the original after backing the original up.</p>
+<pre><code>mv /bin/sh /bin/sh.original
 cp a.out /bin/sh
-chown bin /bin/sh</p>
-<p>CTRL-D
-relogin</p>
-<p>cd /usr
-Woohoo!
-CTRL-E
-q</p>
+chown bin /bin/sh
+</code></pre>
+<p>CTRL-D</p>
+<p>relogin</p>
+<p><code>cd /usr</code></p>
+<p>Woohoo!
+CTRL-E</p>
+<p><code>simh&gt; q</code></p>
 <p>Make a backup baseline-v6-withcd</p>
-<p>mkdir baseline-v6-withcd
+<pre><code>mkdir baseline-v6-withcd
 cp nboot.ini baseline-v6-withcd/
 cp rk? baseline-v6-withcd/
 tar cvzf baseline-v6-withcd.tar.gz baseline-v6-withcd
 cp baseline-v6-withcd.tar.gz ../
-rm -fr baseline-v6-withcd*</p>
+rm -fr baseline-v6-withcd*
+</code></pre>
 <h3>Copying Files</h3>
 <h3>From Unix v6 on PDP-11/40 Open SimH to Host:</h3>
 <p>create and attach an additional rk device, if not already attached</p>
-<p>simh&gt; attach rk3 rk3
-co</p>
+<pre><code>simh&gt; attach rk3 rk3
+co
+</code></pre>
 <p>get a file of interest and note it's size in bytes</p>
-<h1>ls -l /etc/rc</h1>
-<p>-rw-rw-r--  1 bin        90 Oct 10 12:32 /etc/rc</p>
+<pre><code># ls -l /etc/rc
+-rw-rw-r--  1 bin        90 Oct 10 12:32 /etc/rc
+</code></pre>
 <p>look at the od dump of the file for comparison later</p>
-<h1>od -c /etc/rc</h1>
-<p>0000000  r  m     -  f     /  e  t  c  /  m  t  a  b \n
+<pre><code># od -c /etc/rc
+0000000  r  m     -  f     /  e  t  c  /  m  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
 0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
 0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
 0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
 0000120  /  u  s  r  /  d  o  c \n \n
-0000132</p>
+0000132
+</code></pre>
 <p>write the file to the rk device (the sync may not be needed, but the result looks cleaner, also it doesn't apper that you can specify bs=1, device errors out)</p>
-<p>dd if=/etc/rc of=/dev/rrk3 conv=sync
+<pre><code>dd if=/etc/rc of=/dev/rrk3 conv=sync
 0+1 records in
-1+0 records out</p>
+1+0 records out
+</code></pre>
 <p>exit the sim and then on the host, read from the rk image using bs=1 and count from the ls output</p>
-<p>$ dd if=rk3 of=rc ibs=1 count=90
+<pre><code>$ dd if=rk3 of=rc ibs=1 count=90
 90+0 records in
-90+0 records out</p>
+90+0 records out
+</code></pre>
 <p>look at the od dump</p>
-<p>$ od -c rc
+<pre><code>$ od -c rc
 0000000    r   m       -   f       /   e   t   c   /   m   t   a   b  \n
 0000020    /   e   t   c   /   u   p   d   a   t   e  \n   /   e   t   c
 0000040    /   m   o   u   n   t       /   d   e   v   /   r   k   1
 0000060    /   u   s   r   /   s   o   u   r   c   e  \n   /   e   t   c
 0000100    /   m   o   u   n   t       /   d   e   v   /   r   k   2
 0000120    /   u   s   r   /   d   o   c  \n  \n
-0000132</p>
+0000132
+</code></pre>
 <p>A match!</p>
 <h3>From Host to Unix v6 on PDP11/40 Open SimH Host:</h3>
 <p>make a minor edit to the rc file (change m to n in the word mtab) and note it's size in bytes</p>
-<p>$ ls -l rc
--rw-r--r--  1 wsenn  staff  90 Oct 19 15:54 rc</p>
+<pre><code>$ ls -l rc
+-rw-r--r--  1 wsenn  staff  90 Oct 19 15:54 rc
+</code></pre>
 <p>it better be 90, unless I did something other than changing a letter</p>
 <p>write rc to a new rk3 file</p>
-<p>$ rm rk3
+<pre><code>$ rm rk3
 $ dd if=rc of=rk3 conv=sync
 0+1 records in
 1+0 records out
 512 bytes transferred in 0.000037 secs (13854733 bytes/sec)
-note the count of blocks</p>
+</code></pre>
+<p>note the count of blocks</p>
 <p>with the number of blocks on hand, fire up the simulation and read from the rk to disk</p>
-<h1>dd if=/dev/rrk3 of=rc.dd count=1</h1>
+<p><code># dd if=/dev/rrk3 of=rc.dd count=1</code></p>
 <p>because of the fact that I can't specify bs=1, the result is padded</p>
-<p>od -c rc.dd
+<pre><code>od -c rc.dd
 0000000  r  m     -  f     /  e  t  c  /  n  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
 0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
 0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
 0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
 0000120  /  u  s  r  /  d  o  c \n \n \0 \0 \0 \0 \0 \0
-0001000</p>
+0001000
+</code></pre>
 <p>read from the dd file with the number of bytes still in hand</p>
-<p>dd if=rc.dd of=rc bs=1 count=90
+<pre><code>dd if=rc.dd of=rc bs=1 count=90
 90+0 records in
-90+0 records out</p>
+90+0 records out
+</code></pre>
 <p>then diff the file against the original:</p>
-<p>diff rc /etc/rc
-1c1</p>
-<ul>
-<li>rm -f /etc/ntab</li>
-</ul>
+<pre><code>diff rc /etc/rc
+1c1
+* rm -f /etc/ntab
+</code></pre>
 </div>
 </article>
 
