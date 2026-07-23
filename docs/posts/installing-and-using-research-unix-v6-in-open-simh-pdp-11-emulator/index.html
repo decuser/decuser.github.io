@@ -34,7 +34,7 @@
   </header>
   <div class="post-content"><p>This note details the process of building a working v6 instance from a copy of the original tape distribution. The v6 instance runs in a virtual PDP-11/40 provided by OpenSIMH, a masterwork emulator.</p>
 <p>Last Updated on October 19, 2022.</p>
-<p>This is an updated and revised version of [this note]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %}).</p>
+<p>This is an updated and revised version of <a href="/posts/installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator/">this note</a>.</p>
 <p>The primary motivator for this revision is the formation of the Open SIMH steering committee and their taking on the maintenance and care of SIMH going forward. Secondarily, it's been 7 years since I originally wrote the note and I wanted to bring it up to date. The note is intended to document the process of running v6 in the PDP-11/40 emulated environment that Open SIMH provides.</p>
 <h2>Helpful Sites</h2>
 <ul>
@@ -500,7 +500,7 @@ free     989
 
 dcheck /dev/rrk0
 /dev/rrk0:
- 
+
 icheck /dev/rrk1
 /dev/rrk1:
 spcl       0
@@ -510,7 +510,7 @@ direc     34
 indir     98
 used    2978
 free     935
- 
+
 dcheck /dev/rrk1
 /dev/rrk1:
 
@@ -590,12 +590,12 @@ Disabling XQ
 <p>Restart the sim:</p>
 <p><code>sim&gt; cont</code></p>
 <h2>Add man Command</h2>
-<h2>mount wolfgang's man.enb tape in the simuation</h2>
+<p>mount wolfgang's man.enb tape in the simuation</p>
 <p>CTRL-E to suspend the simulation
 simh&gt; attach tm0 v6enb/man.enb</p>
 <p>%SIM-INFO: TM0: Tape Image 'v6enb/man.enb' scanned as SIMH format</p>
-<h2>sim&gt; co</h2>
-<h2>list the files on the tape</h2>
+<p>sim&gt; co</p>
+<p>list the files on the tape</p>
 <p>tp tm</p>
 <p>sav
 res
@@ -614,20 +614,16 @@ man6/primes.6.df
 45 used
 107 last</p>
 <p>the tape contains a save and restore script, a number fo diff files, the man script, and an nroff1.s assembly file</p>
-<hr>
-<h2>restore the files from the tape into /usr/doc/man</h2>
+<p>restore the files from the tape into /usr/doc/man</p>
 <p>chdir /usr/doc/man
 tp xm res
 cat res</p>
-<hr>
-<h2>restore the files (modify some files)</h2>
+<p>restore the files (modify some files)</p>
 <p>sh res
 The error /usr/source/s7/nroff1.s.df: cannot open does is not fatal and the man command will work fine.</p>
-<hr>
-<h2>test man</h2>
+<p>test man</p>
 <p>man man</p>
-<hr>
-<h2>-- test that a telnet session from the host works</h2>
+<h3>test that a telnet session from the host works</h3>
 <p>open a terminal
 telnet localhost 5555
 note the escape character is ^]
@@ -639,23 +635,20 @@ ls</p>
 <p>CTRL-] to close the telnet session</p>
 <p>q to quit telnet altogether</p>
 <p>CTRL-D again to close the terminal</p>
-<hr>
-<h2>--  test copying text files to and from the simulator</h2>
-<h2>because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt
-this test is for the paper tape device, see the longer note on Copying Files for more information</h2>
-<h2>on the host, put some text in the ptr.txt file</h2>
+<h3>test copying text files to and from the simulator</h3>
+<p>because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt
+this test is for the paper tape device, see the longer note on Copying Files for more information</p>
+<p>on the host, put some text in the ptr.txt file</p>
 <p>--snip
 Hello, v6 from
 the HOST!!!
 --snip</p>
-<hr>
-<h2>in v6, read the file from the ppt device</h2>
+<p>in v6, read the file from the ppt device</p>
 <p>cat &gt; myfile &lt; /dev/ppt
 cat myfile
 Hello, v6 from
 the HOST!!!#</p>
-<hr>
-<h2>in v6, write the file to the ppt device</h2>
+<p>in v6, write the file to the ppt device</p>
 <p>cat myfile &gt; /dev/ppt
 sync</p>
 <p>CTRL-E to suspend the simulation
@@ -664,8 +657,7 @@ co to resume v6</p>
 <ul>
 <li>as of 20151120.0642pm, it appears to be necessary to suspend the simulator to get anything written to the device. This can be done multiple times, as needed.</li>
 </ul>
-<hr>
-<h2>-- Set up users in v6</h2>
+<h3>Set up users in v6</h3>
 <p>@unix
 cat &gt;&gt; /etc/passwd
 wsenn::10:1::/usr/wsenn:
@@ -678,17 +670,16 @@ pwd
 <p>sync
 sync
 sync</p>
-<h2>CTRL+E to break the emulation
-sim&gt; q</h2>
-<h2>-- Back up the working instance (baseline)</h2>
+<p>CTRL+E to break the emulation
+sim&gt; q</p>
+<h3>Back up the working instance (baseline)</h3>
 <p>mkdir baseline-v6
 cp nboot.ini baseline-v6/
 cp rk? baseline-v6/
 tar cvzf baseline-v6.tar.gz baseline-v6
 cp baseline-v6.tar.gz ../
 rm -fr baseline-v6*</p>
-<hr>
-<h2>test the backup</h2>
+<p>test the backup</p>
 <p>cd ..
 tar xvf baseline-v6.tar.gz
 cd baseline-v6
@@ -711,16 +702,14 @@ simh&gt;q</p>
 <p>cd ..
 rm -fr ./baseline-v6
 cd v6</p>
-<hr>
-<h2>-- add cd command using host editor and reading and writing from ppt</h2>
+<h3>add cd command using host editor and reading and writing from ppt</h3>
 <p>Note: sh is critically important, don't muck it up :).  The issue is that if you do, there
 really isn't an easy way to recover. Just be careful and don't replace the original shell until you have tested the build. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.</p>
 <p>pdp11 nboot.ini</p>
 <p>@unix
 root
 stty cr0 nl0</p>
-<hr>
-<h2>cat to the paper tape punch</h2>
+<p>cat to the paper tape punch</p>
 <p>cat /usr/source/s2/sh.c &gt; /dev/ppt</p>
 <p>CTRL-E to suspend the sim (ensure that the device complete's its write)
 co to continue</p>
@@ -754,15 +743,13 @@ err(&quot;cd: arg count&quot;);
 return;
 }</p>
 <p>paste it into ptr.txt, be sure to copy from the initial # to the end and include an empty line</p>
-<hr>
-<h2>in v6, read from ppt into a new file</h2>
+<p>in v6, read from ppt into a new file</p>
 <p>CTRL-E to suspend
 detach ptr
 attach ptr ptr.txt
 co</p>
 <p>cat &gt; sh.c.new &lt; /dev/ppt</p>
-<hr>
-<h2>compare the new file to the old file</h2>
+<p>compare the new file to the old file</p>
 <p>diff sh.c.new /usr/source/s2/sh.c
 569,576d568</p>
 <ul>
@@ -799,8 +786,7 @@ co</p>
 </code></pre>
 </li>
 </ul>
-<hr>
-<h2>figure out how to build and install sh</h2>
+<p>figure out how to build and install sh</p>
 <p>chdir /usr/source/s2
 cp sh.c sh.c.original
 cp /sh.c.new sh.c</p>
@@ -808,8 +794,7 @@ cp /sh.c.new sh.c</p>
 cc -s -n -O sh.c
 cmp a.out /bin/sh
 cp a.out /bin/sh</p>
-<hr>
-<h2>build and install sh</h2>
+<p>build and install sh</p>
 <p>cc -s -n -O sh.c
 cmp a.out /bin/sh
 a.out /bin/sh differ: char 4, line 1
@@ -831,71 +816,56 @@ cp rk? baseline-v6-withcd/
 tar cvzf baseline-v6-withcd.tar.gz baseline-v6-withcd
 cp baseline-v6-withcd.tar.gz ../
 rm -fr baseline-v6-withcd*</p>
-<hr>
-<h2>-- Copying Files</h2>
-<hr>
-<p>** From Unix v6 on PDP-11/40 Open SimH to Host:</p>
-<hr>
-<hr>
-<h2>create and attach an additional rk device, if not already attached</h2>
+<h3>Copying Files</h3>
+<h3>From Unix v6 on PDP-11/40 Open SimH to Host:</h3>
+<p>create and attach an additional rk device, if not already attached</p>
 <p>simh&gt; attach rk3 rk3
 co</p>
-<hr>
-<h2>get a file of interest and note it's size in bytes</h2>
+<p>get a file of interest and note it's size in bytes</p>
 <h1>ls -l /etc/rc</h1>
 <p>-rw-rw-r--  1 bin        90 Oct 10 12:32 /etc/rc</p>
-<hr>
-<h2>look at the od dump of the file for comparison later</h2>
+<p>look at the od dump of the file for comparison later</p>
 <h1>od -c /etc/rc</h1>
 <p>0000000  r  m     -  f     /  e  t  c  /  m  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
-0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1<br>
+0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
 0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
-0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2<br>
+0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
 0000120  /  u  s  r  /  d  o  c \n \n
 0000132</p>
-<hr>
-<h2>write the file to the rk device (the sync may not be needed, but the result looks cleaner, also it doesn't apper that you can specify bs=1, device errors out)</h2>
+<p>write the file to the rk device (the sync may not be needed, but the result looks cleaner, also it doesn't apper that you can specify bs=1, device errors out)</p>
 <p>dd if=/etc/rc of=/dev/rrk3 conv=sync
 0+1 records in
 1+0 records out</p>
-<hr>
-<h2>exit the sim and then on the host, read from the rk image using bs=1 and count from the ls output</h2>
+<p>exit the sim and then on the host, read from the rk image using bs=1 and count from the ls output</p>
 <p>$ dd if=rk3 of=rc ibs=1 count=90
 90+0 records in
 90+0 records out</p>
-<hr>
-<h2>look at the od dump</h2>
+<p>look at the od dump</p>
 <p>$ od -c rc
 0000000    r   m       -   f       /   e   t   c   /   m   t   a   b  \n
 0000020    /   e   t   c   /   u   p   d   a   t   e  \n   /   e   t   c
-0000040    /   m   o   u   n   t       /   d   e   v   /   r   k   1<br>
+0000040    /   m   o   u   n   t       /   d   e   v   /   r   k   1
 0000060    /   u   s   r   /   s   o   u   r   c   e  \n   /   e   t   c
-0000100    /   m   o   u   n   t       /   d   e   v   /   r   k   2<br>
-0000120    /   u   s   r   /   d   o   c  \n  \n<br>
+0000100    /   m   o   u   n   t       /   d   e   v   /   r   k   2
+0000120    /   u   s   r   /   d   o   c  \n  \n
 0000132</p>
 <p>A match!</p>
-<hr>
-<p>** From Host to Unix v6 on PDP11/40 Open SimH Host:</p>
-<hr>
-<hr>
-<h2>make a minor edit to the rc file (change m to n in the word mtab) and note it's size in bytes</h2>
+<h3>From Host to Unix v6 on PDP11/40 Open SimH Host:</h3>
+<p>make a minor edit to the rc file (change m to n in the word mtab) and note it's size in bytes</p>
 <p>$ ls -l rc
 -rw-r--r--  1 wsenn  staff  90 Oct 19 15:54 rc</p>
 <p>it better be 90, unless I did something other than changing a letter</p>
-<hr>
-<h2>write rc to a new rk3 file</h2>
+<p>write rc to a new rk3 file</p>
 <p>$ rm rk3
 $ dd if=rc of=rk3 conv=sync
 0+1 records in
 1+0 records out
 512 bytes transferred in 0.000037 secs (13854733 bytes/sec)
 note the count of blocks</p>
-<hr>
-<h2>with the number of blocks on hand, fire up the simulation and read from the rk to disk</h2>
+<p>with the number of blocks on hand, fire up the simulation and read from the rk to disk</p>
 <h1>dd if=/dev/rrk3 of=rc.dd count=1</h1>
-<hr>
-<h2>because of the fact that I can't specify bs=1, the result is padded</h2>
+<p>because of the fact that I can't specify bs=1, the result is padded</p>
 <p>od -c rc.dd
 0000000  r  m     -  f     /  e  t  c  /  n  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
@@ -904,13 +874,11 @@ note the count of blocks</p>
 0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
 0000120  /  u  s  r  /  d  o  c \n \n \0 \0 \0 \0 \0 \0
 0001000</p>
-<hr>
-<h2>read from the dd file with the number of bytes still in hand</h2>
+<p>read from the dd file with the number of bytes still in hand</p>
 <p>dd if=rc.dd of=rc bs=1 count=90
 90+0 records in
 90+0 records out</p>
-<hr>
-<h2>then diff the file against the original:</h2>
+<p>then diff the file against the original:</p>
 <p>diff rc /etc/rc
 1c1</p>
 <ul>
