@@ -3,19 +3,19 @@ title: Installing and Using Unix V6 in the Open SIMH PDP-11 Emulator
 tags: unix research-unix v6
 ---
 This note details the process of building a working v6 instance from a copy of the original tape distribution. The v6 instance runs in a virtual PDP-11/40 provided by OpenSIMH, a masterwork emulator.
- 
+
 <!--more-->
 
 Last Updated on October 19, 2022.
 
-This is an updated and revised version of [this note]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %}).
+This is an updated and revised version of [this note](/posts/installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator/).
 
 The primary motivator for this revision is the formation of the Open SIMH steering committee and their taking on the maintenance and care of SIMH going forward. Secondarily, it's been 7 years since I originally wrote the note and I wanted to bring it up to date. The note is intended to document the process of running v6 in the PDP-11/40 emulated environment that Open SIMH provides.
- 
+
 ## Helpful Sites
 
 * Open SIMH Project - [https://opensimh.org](https://opensimh.org)
-* Additional Software for Open SIMH - [https://opensimh.org/software](https://opensimh.org/software) 
+* Additional Software for Open SIMH - [https://opensimh.org/software](https://opensimh.org/software)
 * Setting up Unix - Sixth Edition - [https://doc.cat-v.org/unix/v6/operating-systems-lecture-notes/v6/doc/start.ps](https://doc.cat-v.org/unix/v6/operating-systems-lecture-notes/v6/doc/start.ps)
 * The Unix Heritage Society - [https://www.tuhs.org](https://www.tuhs.org)
 * The PDP Unix Preservation Society - [https://minnie.tuhs.org/PUPS](https://minnie.tuhs.org/PUPS)
@@ -167,7 +167,7 @@ Disabling XQ
 
 Create a magnetic tape device on drive 0, set it locked for write:
 
-`sim> set tm0 locked` 
+`sim> set tm0 locked`
 
 Attach the converted distribution tape to the magnetic tape device:
 
@@ -515,7 +515,7 @@ chmod 640 /dev/*tty*
 ## Install the sources and docs
 
 In order to have a usable system, we will still need to install the sources, the docs, mount them, and edit the rc, and ttys file, and modify and rebuild the df command (I may revisit this note later as Ritchie's notes refer to some other files that need to change).
- 
+
 ### Restore doc and source from rk05s
 
 ```
@@ -539,7 +539,7 @@ sync
 ```
 
 ### Create mount point for doc and source as needed
- 
+
 Create mount point for doc and mount both doc and source (source mountpoint already exists)
 
 ```
@@ -594,7 +594,7 @@ q
 ### Compile df
 
 `cc df.c`
- 
+
 ### Test df
 
 ```
@@ -607,7 +607,7 @@ q
 ```
 
 Note: rk3 doesn't have a file system on it... yet.
- 
+
 ### Install the new df
 
 `cp a.out /bin/df`
@@ -638,7 +638,7 @@ free     989
 
 dcheck /dev/rrk0
 /dev/rrk0:
- 
+
 icheck /dev/rrk1
 /dev/rrk1:
 spcl       0
@@ -648,7 +648,7 @@ direc     34
 indir     98
 used    2978
 free     935
- 
+
 dcheck /dev/rrk1
 /dev/rrk1:
 
@@ -730,7 +730,7 @@ Disabling XQ
 %SIM-INFO: Listening on port 5555
 @
 ```
- 
+
 ### Load the unix kernel
 
 `@unix`
@@ -746,7 +746,7 @@ login as root, with no password
 If you set up the lp device correctly, lp0 is a character device where text can be redirected, and picked up by simh.
 
 `cat /etc/rc > /dev/lp0`
- 
+
 Pause the simulator to get it to write to the lpt file:
 
 `sim> CTRL-E`
@@ -756,20 +756,20 @@ then on the host, open the lpt.txt file
 Restart the sim:
 
 `sim> cont`
- 
+
 ## Add man Command
 
 mount wolfgang's man.enb tape in the simuation
-----
+
 CTRL-E to suspend the simulation
 simh> attach tm0 v6enb/man.enb
- 
+
 %SIM-INFO: TM0: Tape Image 'v6enb/man.enb' scanned as SIMH format
 
 sim> co
-----
+
 list the files on the tape
-----
+
 tp tm
 
 sav
@@ -792,27 +792,24 @@ man6/primes.6.df
 
 the tape contains a save and restore script, a number fo diff files, the man script, and an nroff1.s assembly file
 
-----
 restore the files from the tape into /usr/doc/man
-----
+
 chdir /usr/doc/man
 tp xm res
 cat res
 
-----
 restore the files (modify some files)
-----
+
 sh res
 The error /usr/source/s7/nroff1.s.df: cannot open does is not fatal and the man command will work fine.
 
-----
 test man
-----
+
 man man
 
----------------------------------------------------------------------
--- test that a telnet session from the host works
----------------------------------------------------------------------
+
+### test that a telnet session from the host works
+
 open a terminal
 telnet localhost 5555
 note the escape character is ^]
@@ -830,31 +827,29 @@ q to quit telnet altogether
 
 CTRL-D again to close the terminal
 
----------------------------------------------------------------------
---  test copying text files to and from the simulator
----------------------------------------------------------------------
+
+### test copying text files to and from the simulator
+
 because we set up rk03 and ppt above, we can either read and write from /dev/rk03 or /dev/ppt
 this test is for the paper tape device, see the longer note on Copying Files for more information
-----
+
 
 on the host, put some text in the ptr.txt file
------
+
 --snip
 Hello, v6 from
 the HOST!!!
 --snip
 
-----
 in v6, read the file from the ppt device
-----
+
 cat > myfile < /dev/ppt
 cat myfile
 Hello, v6 from
 the HOST!!!#
 
-----
 in v6, write the file to the ppt device
-----
+
 cat myfile > /dev/ppt
 sync
 
@@ -864,9 +859,9 @@ co to resume v6
 on the host, read the ptp file
 
 * as of 20151120.0642pm, it appears to be necessary to suspend the simulator to get anything written to the device. This can be done multiple times, as needed.
----------------------------------------------------------------------
--- Set up users in v6
----------------------------------------------------------------------
+
+### Set up users in v6
+
 @unix
 cat >> /etc/passwd
 wsenn::10:1::/usr/wsenn:
@@ -884,9 +879,9 @@ sync
 
 CTRL+E to break the emulation
 sim> q
----------------------------------------------------------------------
--- Back up the working instance (baseline)
----------------------------------------------------------------------
+
+### Back up the working instance (baseline)
+
 mkdir baseline-v6
 cp nboot.ini baseline-v6/
 cp rk? baseline-v6/
@@ -894,9 +889,8 @@ tar cvzf baseline-v6.tar.gz baseline-v6
 cp baseline-v6.tar.gz ../
 rm -fr baseline-v6*
 
-----
 test the backup
-----
+
 cd ..
 tar xvf baseline-v6.tar.gz
 cd baseline-v6
@@ -924,9 +918,9 @@ cd ..
 rm -fr ./baseline-v6
 cd v6
 
----------------------------------------------------------------------
--- add cd command using host editor and reading and writing from ppt
----------------------------------------------------------------------
+
+### add cd command using host editor and reading and writing from ppt
+
 Note: sh is critically important, don't muck it up :).  The issue is that if you do, there
 really isn't an easy way to recover. Just be careful and don't replace the original shell until you have tested the build. The idea of this fix is simply to add a cd command handler to the existing code. I chose to exactly mimic chdir and use the chdir command itself for simplicity and less chance of error.
 
@@ -936,9 +930,8 @@ pdp11 nboot.ini
 root
 stty cr0 nl0
 
-----
 cat to the paper tape punch
-----
+
 cat /usr/source/s2/sh.c > /dev/ppt
 
 CTRL-E to suspend the sim (ensure that the device complete's its write)
@@ -977,9 +970,8 @@ to:
 
 paste it into ptr.txt, be sure to copy from the initial # to the end and include an empty line
 
-----
 in v6, read from ppt into a new file
-----
+
 CTRL-E to suspend
 detach ptr
 attach ptr ptr.txt
@@ -987,9 +979,8 @@ co
 
 cat > sh.c.new < /dev/ppt
 
-----
 compare the new file to the old file
-----
+
 diff sh.c.new /usr/source/s2/sh.c
 569,576d568
 *               if(equal(cp1, "cd")) {
@@ -1001,9 +992,8 @@ diff sh.c.new /usr/source/s2/sh.c
 *                       return;
 *               }
 
-----
 figure out how to build and install sh
-----
+
 chdir /usr/source/s2
 cp sh.c sh.c.original
 cp /sh.c.new sh.c
@@ -1013,9 +1003,8 @@ cc -s -n -O sh.c
 cmp a.out /bin/sh
 cp a.out /bin/sh
 
-----
 build and install sh
-----
+
 
 cc -s -n -O sh.c
 cmp a.out /bin/sh
@@ -1044,80 +1033,72 @@ tar cvzf baseline-v6-withcd.tar.gz baseline-v6-withcd
 cp baseline-v6-withcd.tar.gz ../
 rm -fr baseline-v6-withcd*
 
----------------------------------------------------------------------
--- Copying Files
----------------------------------------------------------------------
-****
-** From Unix v6 on PDP-11/40 Open SimH to Host:
-****
 
-----
+### Copying Files
+
+
+### From Unix v6 on PDP-11/40 Open SimH to Host:
+
+
 create and attach an additional rk device, if not already attached
-----
+
 simh> attach rk3 rk3
 co
 
-----
 get a file of interest and note it's size in bytes
-----
+
 # ls -l /etc/rc
 -rw-rw-r--  1 bin        90 Oct 10 12:32 /etc/rc
 
-----
 look at the od dump of the file for comparison later
-----
+
 # od -c /etc/rc
 0000000  r  m     -  f     /  e  t  c  /  m  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
-0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1   
+0000040  /  m  o  u  n  t     /  d  e  v  /  r  k  1
 0000060  /  u  s  r  /  s  o  u  r  c  e \n  /  e  t  c
-0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2   
+0000100  /  m  o  u  n  t     /  d  e  v  /  r  k  2
 0000120  /  u  s  r  /  d  o  c \n \n
 0000132
 
-----
 write the file to the rk device (the sync may not be needed, but the result looks cleaner, also it doesn't apper that you can specify bs=1, device errors out)
-----
+
 dd if=/etc/rc of=/dev/rrk3 conv=sync
 0+1 records in
 1+0 records out
 
-----
 exit the sim and then on the host, read from the rk image using bs=1 and count from the ls output
-----
+
 $ dd if=rk3 of=rc ibs=1 count=90
 90+0 records in
 90+0 records out
 
-----
 look at the od dump
-----
+
 $ od -c rc
 0000000    r   m       -   f       /   e   t   c   /   m   t   a   b  \n
 0000020    /   e   t   c   /   u   p   d   a   t   e  \n   /   e   t   c
-0000040    /   m   o   u   n   t       /   d   e   v   /   r   k   1    
+0000040    /   m   o   u   n   t       /   d   e   v   /   r   k   1
 0000060    /   u   s   r   /   s   o   u   r   c   e  \n   /   e   t   c
-0000100    /   m   o   u   n   t       /   d   e   v   /   r   k   2    
-0000120    /   u   s   r   /   d   o   c  \n  \n                        
+0000100    /   m   o   u   n   t       /   d   e   v   /   r   k   2
+0000120    /   u   s   r   /   d   o   c  \n  \n
 0000132
 
 A match!
 
-****
-** From Host to Unix v6 on PDP11/40 Open SimH Host:
-****
 
-----
+### From Host to Unix v6 on PDP11/40 Open SimH Host:
+
+
 make a minor edit to the rc file (change m to n in the word mtab) and note it's size in bytes
-----
+
 $ ls -l rc
 -rw-r--r--  1 wsenn  staff  90 Oct 19 15:54 rc
 
 it better be 90, unless I did something other than changing a letter
 
-----
 write rc to a new rk3 file
-----
+
 $ rm rk3
 $ dd if=rc of=rk3 conv=sync
 0+1 records in
@@ -1125,14 +1106,12 @@ $ dd if=rc of=rk3 conv=sync
 512 bytes transferred in 0.000037 secs (13854733 bytes/sec)
 note the count of blocks
 
-----
 with the number of blocks on hand, fire up the simulation and read from the rk to disk
-----
+
 # dd if=/dev/rrk3 of=rc.dd count=1
 
-----
 because of the fact that I can't specify bs=1, the result is padded
-----
+
 od -c rc.dd
 0000000  r  m     -  f     /  e  t  c  /  n  t  a  b \n
 0000020  /  e  t  c  /  u  p  d  a  t  e \n  /  e  t  c
@@ -1142,16 +1121,14 @@ od -c rc.dd
 0000120  /  u  s  r  /  d  o  c \n \n \0 \0 \0 \0 \0 \0
 0001000
 
-----
 read from the dd file with the number of bytes still in hand
-----
+
 dd if=rc.dd of=rc bs=1 count=90
 90+0 records in
 90+0 records out
 
-----
 then diff the file against the original:
-----
+
 diff rc /etc/rc
 1c1
 * rm -f /etc/ntab
@@ -1160,9 +1137,9 @@ diff rc /etc/rc
 
 Success!
 
----------------------------------------------------------------------
--- Some confusing, but special points to remember
----------------------------------------------------------------------
+
+### Some confusing, but special points to remember
+
 there is no vi, use ed (see below)
 there is no cd, use chdir (unless you followed the cd instructions)
 
@@ -1233,9 +1210,9 @@ The flags are as follows:
 that makes 110664 read:
 the i-node is allocated, it's a large file, it's a plain file, and it is rw-rw-r--.
 
----------------------------------------------------------------------
--- ed cheatsheet
----------------------------------------------------------------------
+
+### ed cheatsheet
+
 ed is the editor, there is no vi
 ed is ok, here's a quick cheat sheet
 
@@ -1256,9 +1233,9 @@ w - write file
 
 s/this/that
 
----------------------------------------------------------------------
---  Command Help
----------------------------------------------------------------------
+
+### Command Help
+
 * find - find files
 
 this command is tricky, but once you get the hang of it, works great!
