@@ -10,6 +10,10 @@ This was an early reformatted edition of John Lions’ *UNIX Operating System So
 
 Last Updated October 29, 2022
 
-<iframe allow="autoplay" height="480" src="https://drive.google.com/file/d/16irfELgKK8-HEb08tDZ18DnUd6emUM_i/preview" width="640"></iframe>
+<iframe
+  allow="autoplay"
+  src="https://drive.google.com/file/d/16irfELgKK8-HEb08tDZ18DnUd6emUM_i/preview"
+  style="width: 100%; max-width: 640px; height: 480px; border: 0;"
+></iframe>
 
 *Post added 2022-12-02 10:54:00 -0600*

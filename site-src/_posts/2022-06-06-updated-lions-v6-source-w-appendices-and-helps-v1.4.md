@@ -10,7 +10,11 @@ This edition also adds a table of contents, an alphabetical source-file listing,
 
 This revision supersedes my earlier *Tweaked version of Lions for Printing and Viewing*.
 
-<iframe allow="autoplay" height="480" src="https://drive.google.com/file/d/1x2_MOPMeUVlohFJWQABM7dhYkIoMgeAh/preview" width="640"></iframe>
+<iframe
+  allow="autoplay"
+  src="https://drive.google.com/file/d/1x2_MOPMeUVlohFJWQABM7dhYkIoMgeAh/preview"
+  style="width:100%; max-width:640px; height:480px; border:0;"
+></iframe>
 
 *Revision 1.4, March 2022.*
 
