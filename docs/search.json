@@ -1,5 +1,11 @@
 [
   {
+    "title": "Setting Up UNIX—Sixth Edition: An OpenSIMH Laboratory for Reading Lions",
+    "url": "/posts/setting-up-unix-sixth-edition-opensimh-laboratory-for-reading-lions/",
+    "date": "Jul 24, 2026",
+    "tags": "unix research-unix v6"
+  },
+  {
     "title": "Migrating from Jekyll to a custom static site generator",
     "url": "/posts/ssg/",
     "date": "Jan 25, 2026",
