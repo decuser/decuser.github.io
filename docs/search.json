@@ -1,5 +1,11 @@
 [
   {
+    "title": "Getting DOS-11 V004A Running on a PDP-11/40",
+    "url": "/posts/getting-dos-11-v004a-running-on-a-pdp-11-40/",
+    "date": "Aug 7, 2026",
+    "tags": "unix research-unix v6 dec"
+  },
+  {
     "title": "Setting Up UNIX—Sixth Edition: An OpenSIMH Laboratory for Reading Lions",
     "url": "/posts/setting-up-unix-sixth-edition-opensimh-laboratory-for-reading-lions/",
     "date": "Jul 24, 2026",
