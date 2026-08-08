@@ -1,8 +1,14 @@
 [
   {
+    "title": "Lions Laboratory: A Sixth Edition UNIX Laboratory for OpenSIMH",
+    "url": "/posts/lions-laboratory-github-repo/",
+    "date": "Aug 8, 2026",
+    "tags": "unix unix-v6 lions pdp-11 opensimh"
+  },
+  {
     "title": "Getting DOS-11 V004A Running on a PDP-11/40",
     "url": "/posts/getting-dos-11-v004a-running-on-a-pdp-11-40/",
-    "date": "Aug 7, 2026",
+    "date": "Aug 8, 2026",
     "tags": "unix research-unix v6 dec"
   },
   {
@@ -354,16 +360,22 @@
     "tags": "electronics theory videos"
   },
   {
+    "title": "Nyquist what?! Gobsmacked by Sampling Frequency",
+    "url": "/posts/nyquist-what-gobsmacked-by-sampling-frequency/",
+    "date": "Jun 9, 2022",
+    "tags": "electronics theory"
+  },
+  {
     "title": "Using an el-cheapo logic analyser to detect address bus activity",
     "url": "/posts/using-an-el-cheapo-logic-analyzer-to-detect-address-bus-activity/",
     "date": "Jun 9, 2022",
     "tags": "electronics analysis"
   },
   {
-    "title": "Nyquist what?! Gobsmacked by Sampling Frequency",
-    "url": "/posts/nyquist-what-gobsmacked-by-sampling-frequency/",
-    "date": "Jun 9, 2022",
-    "tags": "electronics theory"
+    "title": "PAL-1 Entering a Program at the Keypad",
+    "url": "/posts/pal-1-entering-a-program-at-the-keypad/",
+    "date": "Jun 8, 2022",
+    "tags": "retro-computing pal-1"
   },
   {
     "title": "PAL-1 Loading MOS Paper Tape to RAM",
@@ -378,20 +390,14 @@
     "tags": "retro-computing pal-1"
   },
   {
-    "title": "PAL-1 Entering a Program at the Keypad",
-    "url": "/posts/pal-1-entering-a-program-at-the-keypad/",
-    "date": "Jun 8, 2022",
+    "title": "PAL-1 Getting Started",
+    "url": "/posts/pal-1-getting-started/",
+    "date": "Jun 7, 2022",
     "tags": "retro-computing pal-1"
   },
   {
     "title": "PAL-1 Resources A Curated List",
     "url": "/posts/pal-1-resources-a-curated-list/",
-    "date": "Jun 7, 2022",
-    "tags": "retro-computing pal-1"
-  },
-  {
-    "title": "PAL-1 Getting Started",
-    "url": "/posts/pal-1-getting-started/",
     "date": "Jun 7, 2022",
     "tags": "retro-computing pal-1"
   },
@@ -420,16 +426,16 @@
     "tags": "unix research-unix v7"
   },
   {
-    "title": "Enabling the DZ in v7",
-    "url": "/posts/enabling-dz-in-research-unix-v7/",
-    "date": "Feb 3, 2022",
-    "tags": "unix research-unix v7"
-  },
-  {
     "title": "ratfor and Kernighan and Plaugers Software Tools",
     "url": "/posts/ratfor-and-kernighan-and-plaugers-software-tools-getting-started-using-v7/",
     "date": "Feb 3, 2022",
     "tags": "unix research-unix v7 ratfor"
+  },
+  {
+    "title": "Enabling the DZ in v7",
+    "url": "/posts/enabling-dz-in-research-unix-v7/",
+    "date": "Feb 3, 2022",
+    "tags": "unix research-unix v7"
   },
   {
     "title": "Installing and Using Research Unix Version 7 in the SIMH PDP-11/45 and 11/70 Emulators 2.0",
@@ -540,12 +546,6 @@
     "tags": "unix"
   },
   {
-    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
-    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
-    "date": "Jul 21, 2020",
-    "tags": "unix freebsd"
-  },
-  {
     "title": "Using a Mac's xterm as a remote Tektronics display for a FreeBSD 12.1 Server",
     "url": "/posts/using-a-macs-xterm-as-a-remote-tektronics-display-for-freebsd-12.1-server/",
     "date": "Jul 21, 2020",
@@ -560,6 +560,12 @@
   {
     "title": "Setting up XDM on FreeBSD 12.1",
     "url": "/posts/setting-up-xdm-on-freebsd-12.1/",
+    "date": "Jul 21, 2020",
+    "tags": "unix freebsd"
+  },
+  {
+    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
+    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
     "date": "Jul 21, 2020",
     "tags": "unix freebsd"
   },
@@ -654,16 +660,16 @@
     "tags": "pdp-11 rt-11"
   },
   {
-    "title": "PDP-11 Bootstrap loaders - some analysis",
-    "url": "/posts/pdp-11-bootstrap-loaders-some-analysis/",
-    "date": "Dec 24, 2015",
-    "tags": "pdp-11"
-  },
-  {
     "title": "PDP-11 BASIC, booting the hard way",
     "url": "/posts/pdp-11-basic-booting-the-hard-way/",
     "date": "Dec 24, 2015",
     "tags": "pdp-11 analysis"
+  },
+  {
+    "title": "PDP-11 Bootstrap loaders - some analysis",
+    "url": "/posts/pdp-11-bootstrap-loaders-some-analysis/",
+    "date": "Dec 24, 2015",
+    "tags": "pdp-11"
   },
   {
     "title": "Analysis of the PDP-11 bootstrap loader code",
@@ -706,6 +712,12 @@
     "url": "/posts/codeproject-hello-world-a-primitive-view-of-the-state-of-the-art/",
     "date": "Apr 30, 2004",
     "tags": "programming c#"
+  },
+  {
+    "title": "LogDriver - A simplified log4j using C++",
+    "url": "/posts/codeguru-logdriver-a-simplified-log4j-using-c-plus-plus/",
+    "date": "Jan 7, 2002",
+    "tags": "programming c++"
   },
   {
     "title": "LogDriver - A simplified log4j using C++",

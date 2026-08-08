@@ -13,7 +13,7 @@ That led me to PAL-11R, DEC's relocatable assembler for the PDP-11, and from the
 
 <!--more-->
 
-Last Updated August 7, 2026 at 4:15pm
+Last Updated August 8, 2026 at 4:15pm
 
 The comparison turned out to be more interesting than I expected. It is easy, from a UNIX perspective, to dismiss something called the "DOS Monitor" as little more than a program loader. That isn't really fair. DOS-11 provides a recognizable operating environment: a monitor, filesystem, device-independent I/O, program loading, an assembler, linker, editor, debugger, librarian, and file utility. An assembly-language application written for DOS-11 can use operating-system services in much the same conceptual sense that a V6 assembly program uses UNIX system calls.
 
@@ -807,4 +807,4 @@ For DOS errors and warnings, see Appendix F, **Summary of DOS Error Messages**, 
 
 One lesson from this exercise is worth emphasizing: with software this old, the manuals aren't supplementary documentation. They are part of the system.
 
-*post added 2026-08-07 20:06:00 -0500*
+*post added 2026-08-08 20:06:00 -0500*
