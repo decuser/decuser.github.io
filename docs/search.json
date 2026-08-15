@@ -1,5 +1,11 @@
 [
   {
+    "title": "Aiki: First Public Alpha",
+    "url": "/posts/aiki-alpha-release/",
+    "date": "Aug 14, 2026",
+    "tags": "aiki programming-languages ai education"
+  },
+  {
     "title": "Lions Laboratory: A Sixth Edition UNIX Laboratory for OpenSIMH",
     "url": "/posts/lions-laboratory-github-repo/",
     "date": "Aug 8, 2026",
@@ -36,20 +42,20 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E9.2 - Assembly Lines ch. 6 cont. - keys and strobing",
-    "url": "/posts/bit-by-bit-e9.2/",
-    "date": "Oct 20, 2025",
-    "tags": "retro assembly videos"
-  },
-  {
     "title": "Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard",
     "url": "/posts/bit-by-bit-e9.1/",
     "date": "Oct 20, 2025",
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
-    "url": "/posts/bit-by-bit-e8/",
+    "title": "Bit by Bit - E9.2 - Assembly Lines ch. 6 cont. - keys and strobing",
+    "url": "/posts/bit-by-bit-e9.2/",
+    "date": "Oct 20, 2025",
+    "tags": "retro assembly videos"
+  },
+  {
+    "title": "Bit by Bit - E6 - Bits in Bits Out",
+    "url": "/posts/bit-by-bit-e6/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -60,8 +66,8 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E6 - Bits in Bits Out",
-    "url": "/posts/bit-by-bit-e6/",
+    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
+    "url": "/posts/bit-by-bit-e8/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -156,8 +162,8 @@
     "tags": "lisp"
   },
   {
-    "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
-    "url": "/posts/pike-lisp-1.5-in-go/",
+    "title": "LISP 1.5 running on an emulated IBM 7094",
+    "url": "/posts/lisp-1.5/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
@@ -168,8 +174,8 @@
     "tags": "lisp"
   },
   {
-    "title": "LISP 1.5 running on an emulated IBM 7094",
-    "url": "/posts/lisp-1.5/",
+    "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
+    "url": "/posts/pike-lisp-1.5-in-go/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
@@ -240,14 +246,14 @@
     "tags": "operating-systems truenas-core fossil"
   },
   {
-    "title": "Sculpt 22.10 - A Truly Alternative OS",
-    "url": "/posts/sculpt-os-22.10-a-truly-alternative-os/",
+    "title": "Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop",
+    "url": "/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/",
     "date": "Dec 30, 2022",
     "tags": "operating-systems genode sculpt"
   },
   {
-    "title": "Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop",
-    "url": "/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/",
+    "title": "Sculpt 22.10 - A Truly Alternative OS",
+    "url": "/posts/sculpt-os-22.10-a-truly-alternative-os/",
     "date": "Dec 30, 2022",
     "tags": "operating-systems genode sculpt"
   },
@@ -372,12 +378,6 @@
     "tags": "electronics analysis"
   },
   {
-    "title": "PAL-1 Entering a Program at the Keypad",
-    "url": "/posts/pal-1-entering-a-program-at-the-keypad/",
-    "date": "Jun 8, 2022",
-    "tags": "retro-computing pal-1"
-  },
-  {
     "title": "PAL-1 Loading MOS Paper Tape to RAM",
     "url": "/posts/pal-1-loading-mos-paper-tape-to-ram/",
     "date": "Jun 8, 2022",
@@ -390,14 +390,20 @@
     "tags": "retro-computing pal-1"
   },
   {
-    "title": "PAL-1 Getting Started",
-    "url": "/posts/pal-1-getting-started/",
-    "date": "Jun 7, 2022",
+    "title": "PAL-1 Entering a Program at the Keypad",
+    "url": "/posts/pal-1-entering-a-program-at-the-keypad/",
+    "date": "Jun 8, 2022",
     "tags": "retro-computing pal-1"
   },
   {
     "title": "PAL-1 Resources A Curated List",
     "url": "/posts/pal-1-resources-a-curated-list/",
+    "date": "Jun 7, 2022",
+    "tags": "retro-computing pal-1"
+  },
+  {
+    "title": "PAL-1 Getting Started",
+    "url": "/posts/pal-1-getting-started/",
     "date": "Jun 7, 2022",
     "tags": "retro-computing pal-1"
   },
@@ -660,16 +666,16 @@
     "tags": "pdp-11 rt-11"
   },
   {
-    "title": "PDP-11 BASIC, booting the hard way",
-    "url": "/posts/pdp-11-basic-booting-the-hard-way/",
-    "date": "Dec 24, 2015",
-    "tags": "pdp-11 analysis"
-  },
-  {
     "title": "PDP-11 Bootstrap loaders - some analysis",
     "url": "/posts/pdp-11-bootstrap-loaders-some-analysis/",
     "date": "Dec 24, 2015",
     "tags": "pdp-11"
+  },
+  {
+    "title": "PDP-11 BASIC, booting the hard way",
+    "url": "/posts/pdp-11-basic-booting-the-hard-way/",
+    "date": "Dec 24, 2015",
+    "tags": "pdp-11 analysis"
   },
   {
     "title": "Analysis of the PDP-11 bootstrap loader code",

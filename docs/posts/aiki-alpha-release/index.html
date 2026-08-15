@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aiki: First Public Alpha - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate"
+      type="application/rss+xml"
+      title="DECUSER RSS Feed"
+      href="/feed.xml">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+	<a href="/feed.xml">RSS</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Aiki: First Public Alpha</h1>
+    <p class="post-meta">Aug 14, 2026
+      <a href="/tags/aiki/" class="tag">aiki</a> <a href="/tags/programming-languages/" class="tag">programming-languages</a> <a href="/tags/ai/" class="tag">ai</a> <a href="/tags/education/" class="tag">education</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>I've put the first public alpha of Aiki on GitHub.</p>
+<p><a href="https://github.com/decuser/aiki">Aiki</a> is a small experimental programming language I've been working on for the past several months. I describe it as both a programming language and a <em>learning field</em>: an environment designed to make computational relationships visible enough to inspect, experiment with, and reason about.</p>
+<p>The current release is <code>v0.4.0-alpha</code>. It includes the interpreter, standard library, documentation, examples, tests, validation machinery, and the project's engineering record. Intel/amd64 release archives are available for Linux, Windows, and macOS.</p>
+<p>Aiki has become considerably more serious than the small language experiment I started with, but it is still small enough to get your hands around.</p>
+<p>Building and starting it on Linux is deliberately uneventful:</p>
+<p><img src="/assets/img/aiki/Fig1.png" alt="Aiki build, REPL, exact arithmetic, and left-to-right evaluation"></p>
+<p>There are a couple of things hiding in that little transcript.</p>
+<p>Aiki uses exact rational arithmetic. <code>1/3</code> is <code>1/3</code>, and decimal notation does not quietly introduce binary floating-point approximation: <code>0.1 + 1/10 + 0.1</code> is exactly <code>3/10</code>.</p>
+<p>Ordinary binary expressions are evaluated from left to right unless parentheses explicitly group them. Thus:</p>
+<pre><code class="language-text">2 + 3 * 4
+</code></pre>
+<p>is <code>20</code>, while:</p>
+<pre><code class="language-text">2 * 3 + 4
+</code></pre>
+<p>is <code>10</code>.</p>
+<p>That is intentional. Evaluation order is part of the visible language rather than something the programmer has to reconstruct from a precedence table.</p>
+<h2>A Small Surface</h2>
+<p>One of the things I want from Aiki is inspectability. The language should not require a great deal of machinery before you can begin to understand what is there.</p>
+<p>Typing <code>help()</code> at the REPL gives a pretty good view of the current surface:</p>
+<p><img src="/assets/img/aiki/Fig2.png" alt="Aiki help showing syntax, prelude, and modules"></p>
+<p>The syntax, prelude, and available modules fit comfortably on one screen. More detailed help is available directly from the REPL with forms such as:</p>
+<pre><code class="language-aiki">help(&quot;spawn&quot;)
+help(&quot;math&quot;)
+help(&quot;math.sqrt&quot;)
+</code></pre>
+<p>The same idea runs through the rest of the system: make the important relationships visible, inspectable, and executable where possible.</p>
+<h2>A Little Turtle</h2>
+<p>Aiki is also supposed to be approachable.</p>
+<p>The <code>turtle/simple</code> module deliberately removes most of the machinery needed to get something moving on the screen:</p>
+<pre><code class="language-aiki">use(&quot;turtle/simple&quot;)
+
+new(400)
+background(:white)
+pencolor(:black)
+pen_size(3)
+
+forward(50)
+right(90)
+forward(50)
+right(90)
+forward(50)
+right(90)
+forward(50)
+</code></pre>
+<p><img src="/assets/img/aiki/Fig3.png" alt="Aiki turtle/simple drawing"></p>
+<p>That side of the language matters to me. I am working on a few little books about Aiki, including material aimed particularly at non-programmers, younger learners, and readers who might like to explore programming without first absorbing a large body of machinery.</p>
+<p>The idea is that you ought to be able to begin by making a turtle move around a screen and, if curiosity carries you far enough, eventually find yourself thinking about evaluation, recursion, concurrency, representation, and the machinery underneath.</p>
+<h2>What Aiki Has Become</h2>
+<p>The alpha includes exact rational arithmetic, left-to-right evaluation, shaped data, modules, graphics and turtle facilities, recoverable errors, isolated spawn concurrency, executable documentation, semantic profiling, and a fairly broad standard library.</p>
+<p>Aiki also now has an extensive invariant framework.</p>
+<p>Grammar and evaluator behavior are coupled. Documentation examples execute. Library exports are checked against help and documentation. Behavioral tests are checked against gold files. The distribution tree itself is structurally checked. These are not simply piles of tests; each one expresses a relationship that the project intends to keep true.</p>
+<p>This matters particularly because of another unusual aspect of Aiki.</p>
+<p>Generative AI has been used extensively as an implementation instrument. I conceived, architected, designed, specified, and directed the language; AI systems produced substantial amounts of source code, tests, tooling, and related engineering material under that direction.</p>
+<p>I have made that relationship explicit in the repository rather than hiding it or reducing it to a vague statement that &quot;AI was used.&quot;</p>
+<p>Design authority and generated implementation are deliberately separated. The implementation is judged against the observable language, specifications, executable documentation, behavioral tests, gold files, structural invariants, and other externally imposed criteria. The generated implementation is replaceable. The language is not whatever the implementation happens to do.</p>
+<p>The README contains the fuller statement on AI and authorship, along with a description of the invariant framework and working method.</p>
+<h2>Two Aiki Documents</h2>
+<p>I've also made two longer documents available.</p>
+<p><em>This Is Aiki</em> is the more conversational introduction to the language and its ideas.</p>
+<iframe allow="autoplay" height="480" src="https://drive.google.com/file/d/1aMRSnBhokCJhtZI3ABlm1cK9u9kTv0mm/preview" width="640"></iframe>
+<p><em>Report on the Programming Language Aiki</em> is the more formal language report.</p>
+<iframe allow="autoplay" height="480" src="https://drive.google.com/file/d/1fQbTSoCGZiALZOBZUnn4sdjV8jWyrUTq/preview" width="640"></iframe>
+<p>Both are alpha documents too. They will continue to evolve with the language.</p>
+<h2>The Alpha</h2>
+<p>Aiki is cross-platform and is developed primarily on Linux. The first alpha provides Intel/amd64 builds for Linux, Windows, and macOS. Linux remains the primary development and validation environment; Windows and macOS have received lighter smoke testing.</p>
+<p>This is still an alpha. Syntax, library interfaces, tooling, and other details may change as I continue to simplify, harden, and exercise the language.</p>
+<p>But Aiki has reached the point where I think it is worth putting in front of other people.</p>
+<p>If you try it, I am interested in failures, questions, experiments, documentation problems, criticism, and especially places where the language behaves differently from the way its surface led you to expect.</p>
+<h3>Links</h3>
+<ul>
+<li><a href="https://github.com/decuser/aiki">Aiki on GitHub</a></li>
+<li><a href="https://github.com/decuser/aiki/releases">Aiki releases</a></li>
+<li><a href="https://github.com/decuser/aiki/releases/tag/v0.4.0-alpha">Aiki v0.4.0-alpha</a></li>
+<li><a href="/assets/pdf/aiki/this-is-aiki-a1.pdf">This Is Aiki — PDF</a></li>
+<li><a href="/assets/pdf/aiki/report-aiki-a1.pdf">Report on the Programming Language Aiki — PDF</a></li>
+<li><a href="https://drive.google.com/file/d/1aMRSnBhokCJhtZI3ABlm1cK9u9kTv0mm/view?usp=sharing">This Is Aiki — Google Drive</a></li>
+<li><a href="https://drive.google.com/file/d/1fQbTSoCGZiALZOBZUnn4sdjV8jWyrUTq/view?usp=sharing">Report on the Programming Language Aiki — Google Drive</a></li>
+</ul>
+<p><em>post added 2026-08-14 19:38:00 -0500</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/ai/">ai (1)</a>, <a href="/tags/aiki/">aiki (1)</a>, <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (2)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/dec/">dec (1)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/education/">education (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lions/">lions (1)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (2)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (7)</a>, <a href="/tags/programming/">programming (4)</a>, <a href="/tags/programming-languages/">programming-languages (1)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (22)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (51)</a>, <a href="/tags/unix-v6/">unix-v6 (1)</a>, <a href="/tags/v6/">v6 (9)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
