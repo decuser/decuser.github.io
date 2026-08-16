@@ -1,5 +1,11 @@
 [
   {
+    "title": "Aiki: Alpha Milestone 26 Update",
+    "url": "/posts/aiki-alpha-mileston26-update/",
+    "date": "Aug 15, 2026",
+    "tags": "aiki programming-languages ai self-hosting"
+  },
+  {
     "title": "Aiki: First Public Alpha",
     "url": "/posts/aiki-alpha-release/",
     "date": "Aug 14, 2026",
@@ -54,8 +60,8 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E6 - Bits in Bits Out",
-    "url": "/posts/bit-by-bit-e6/",
+    "title": "Bit by Bit - E5 - Escape Mode",
+    "url": "/posts/bit-by-bit-e5/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -66,14 +72,14 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
-    "url": "/posts/bit-by-bit-e8/",
+    "title": "Bit by Bit - E6 - Bits in Bits Out",
+    "url": "/posts/bit-by-bit-e6/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E5 - Escape Mode",
-    "url": "/posts/bit-by-bit-e5/",
+    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
+    "url": "/posts/bit-by-bit-e8/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -162,12 +168,6 @@
     "tags": "lisp"
   },
   {
-    "title": "LISP 1.5 running on an emulated IBM 7094",
-    "url": "/posts/lisp-1.5/",
-    "date": "Jul 24, 2023",
-    "tags": "lisp"
-  },
-  {
     "title": "Schemes, LISPs, and Lambda",
     "url": "/posts/lisp-explorations/",
     "date": "Jul 24, 2023",
@@ -176,6 +176,12 @@
   {
     "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
     "url": "/posts/pike-lisp-1.5-in-go/",
+    "date": "Jul 24, 2023",
+    "tags": "lisp"
+  },
+  {
+    "title": "LISP 1.5 running on an emulated IBM 7094",
+    "url": "/posts/lisp-1.5/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
