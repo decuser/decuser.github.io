@@ -1,5 +1,11 @@
 [
   {
+    "title": "Aiki Alpha 2 Released",
+    "url": "/posts/aiki-alpha-2-release/",
+    "date": "Aug 18, 2026",
+    "tags": "aiki programming-languages systems"
+  },
+  {
     "title": "Aiki: Alpha Milestone 26 Update",
     "url": "/posts/aiki-alpha-mileston26-update/",
     "date": "Aug 15, 2026",
@@ -48,20 +54,20 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard",
-    "url": "/posts/bit-by-bit-e9.1/",
-    "date": "Oct 20, 2025",
-    "tags": "retro assembly videos"
-  },
-  {
     "title": "Bit by Bit - E9.2 - Assembly Lines ch. 6 cont. - keys and strobing",
     "url": "/posts/bit-by-bit-e9.2/",
     "date": "Oct 20, 2025",
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E5 - Escape Mode",
-    "url": "/posts/bit-by-bit-e5/",
+    "title": "Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard",
+    "url": "/posts/bit-by-bit-e9.1/",
+    "date": "Oct 20, 2025",
+    "tags": "retro assembly videos"
+  },
+  {
+    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
+    "url": "/posts/bit-by-bit-e8/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -78,8 +84,8 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
-    "url": "/posts/bit-by-bit-e8/",
+    "title": "Bit by Bit - E5 - Escape Mode",
+    "url": "/posts/bit-by-bit-e5/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -168,14 +174,14 @@
     "tags": "lisp"
   },
   {
-    "title": "Schemes, LISPs, and Lambda",
-    "url": "/posts/lisp-explorations/",
+    "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
+    "url": "/posts/pike-lisp-1.5-in-go/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
   {
-    "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
-    "url": "/posts/pike-lisp-1.5-in-go/",
+    "title": "Schemes, LISPs, and Lambda",
+    "url": "/posts/lisp-explorations/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
@@ -252,14 +258,14 @@
     "tags": "operating-systems truenas-core fossil"
   },
   {
-    "title": "Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop",
-    "url": "/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/",
+    "title": "Sculpt 22.10 - A Truly Alternative OS",
+    "url": "/posts/sculpt-os-22.10-a-truly-alternative-os/",
     "date": "Dec 30, 2022",
     "tags": "operating-systems genode sculpt"
   },
   {
-    "title": "Sculpt 22.10 - A Truly Alternative OS",
-    "url": "/posts/sculpt-os-22.10-a-truly-alternative-os/",
+    "title": "Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop",
+    "url": "/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/",
     "date": "Dec 30, 2022",
     "tags": "operating-systems genode sculpt"
   },
@@ -372,16 +378,16 @@
     "tags": "electronics theory videos"
   },
   {
-    "title": "Nyquist what?! Gobsmacked by Sampling Frequency",
-    "url": "/posts/nyquist-what-gobsmacked-by-sampling-frequency/",
-    "date": "Jun 9, 2022",
-    "tags": "electronics theory"
-  },
-  {
     "title": "Using an el-cheapo logic analyser to detect address bus activity",
     "url": "/posts/using-an-el-cheapo-logic-analyzer-to-detect-address-bus-activity/",
     "date": "Jun 9, 2022",
     "tags": "electronics analysis"
+  },
+  {
+    "title": "Nyquist what?! Gobsmacked by Sampling Frequency",
+    "url": "/posts/nyquist-what-gobsmacked-by-sampling-frequency/",
+    "date": "Jun 9, 2022",
+    "tags": "electronics theory"
   },
   {
     "title": "PAL-1 Loading MOS Paper Tape to RAM",
@@ -438,16 +444,16 @@
     "tags": "unix research-unix v7"
   },
   {
-    "title": "ratfor and Kernighan and Plaugers Software Tools",
-    "url": "/posts/ratfor-and-kernighan-and-plaugers-software-tools-getting-started-using-v7/",
-    "date": "Feb 3, 2022",
-    "tags": "unix research-unix v7 ratfor"
-  },
-  {
     "title": "Enabling the DZ in v7",
     "url": "/posts/enabling-dz-in-research-unix-v7/",
     "date": "Feb 3, 2022",
     "tags": "unix research-unix v7"
+  },
+  {
+    "title": "ratfor and Kernighan and Plaugers Software Tools",
+    "url": "/posts/ratfor-and-kernighan-and-plaugers-software-tools-getting-started-using-v7/",
+    "date": "Feb 3, 2022",
+    "tags": "unix research-unix v7 ratfor"
   },
   {
     "title": "Installing and Using Research Unix Version 7 in the SIMH PDP-11/45 and 11/70 Emulators 2.0",
@@ -558,6 +564,12 @@
     "tags": "unix"
   },
   {
+    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
+    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
+    "date": "Jul 21, 2020",
+    "tags": "unix freebsd"
+  },
+  {
     "title": "Using a Mac's xterm as a remote Tektronics display for a FreeBSD 12.1 Server",
     "url": "/posts/using-a-macs-xterm-as-a-remote-tektronics-display-for-freebsd-12.1-server/",
     "date": "Jul 21, 2020",
@@ -572,12 +584,6 @@
   {
     "title": "Setting up XDM on FreeBSD 12.1",
     "url": "/posts/setting-up-xdm-on-freebsd-12.1/",
-    "date": "Jul 21, 2020",
-    "tags": "unix freebsd"
-  },
-  {
-    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
-    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
     "date": "Jul 21, 2020",
     "tags": "unix freebsd"
   },
@@ -672,16 +678,16 @@
     "tags": "pdp-11 rt-11"
   },
   {
-    "title": "PDP-11 Bootstrap loaders - some analysis",
-    "url": "/posts/pdp-11-bootstrap-loaders-some-analysis/",
-    "date": "Dec 24, 2015",
-    "tags": "pdp-11"
-  },
-  {
     "title": "PDP-11 BASIC, booting the hard way",
     "url": "/posts/pdp-11-basic-booting-the-hard-way/",
     "date": "Dec 24, 2015",
     "tags": "pdp-11 analysis"
+  },
+  {
+    "title": "PDP-11 Bootstrap loaders - some analysis",
+    "url": "/posts/pdp-11-bootstrap-loaders-some-analysis/",
+    "date": "Dec 24, 2015",
+    "tags": "pdp-11"
   },
   {
     "title": "Analysis of the PDP-11 bootstrap loader code",
