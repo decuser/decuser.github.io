@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6K8M1G32XP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-6K8M1G32XP');
+  </script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aiki Alpha 3 Released - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate"
+      type="application/rss+xml"
+      title="DECUSER RSS Feed"
+      href="/feed.xml">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+	<a href="/feed.xml">RSS</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Aiki Alpha 3 Released</h1>
+    <p class="post-meta">Aug 30, 2026
+      <a href="/tags/aiki/" class="tag">aiki</a> <a href="/tags/programming-languages/" class="tag">programming-languages</a> <a href="/tags/systems/" class="tag">systems</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>Aiki Alpha 3 is out.</p>
+<p>Tagged <a href="https://github.com/decuser/aiki/tree/v0.4.0-alpha-36"><code>v0.4.0-alpha-36</code></a> and available from the <a href="https://github.com/decuser/aiki/releases/tag/v0.4.0-alpha-36">GitHub release</a>.</p>
+<p>Alpha 1 made the language real. Alpha 2 made the architecture explicit. Alpha 3 makes the implementation substantially more exact, efficient, constrained, and observable without enlarging the core language.</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Alpha 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Numbers</td>
+<td>One exact language-level number model with adaptive internal realization</td>
+</tr>
+<tr>
+<td>Runtime</td>
+<td>Major reductions in allocation, call overhead, traversal, and realization cost</td>
+</tr>
+<tr>
+<td>Lists</td>
+<td>Adaptive persistent realization beneath immutable list semantics</td>
+</tr>
+<tr>
+<td>Control</td>
+<td>Lazy <code>and</code> / <code>or</code>, proper tail calls, strict left-to-right evaluation retained</td>
+</tr>
+<tr>
+<td>Math</td>
+<td>Exact native authority, bounded exact FFI acceleration, explicit approximate math</td>
+</tr>
+<tr>
+<td>Profiling</td>
+<td>Single observation network for calls, boundaries, allocations, and host cost</td>
+</tr>
+<tr>
+<td>Coverage</td>
+<td>Static coverable structure combined with dynamic observation hits</td>
+</tr>
+<tr>
+<td>Libraries</td>
+<td>Stronger module/help/export/native/FFI invariants across the shipped library</td>
+</tr>
+<tr>
+<td>Tooling</td>
+<td>Unified command registry, recursive target handling, stronger validation levels</td>
+</tr>
+<tr>
+<td>Distribution</td>
+<td>Relocatable Linux, macOS, and Windows amd64 releases</td>
+</tr>
+<tr>
+<td>Repository</td>
+<td>Engineering material consolidated; experiments moved to their own repository</td>
+</tr>
+</tbody>
+</table>
+<p>The most important changes, roughly in descending order of impact:</p>
+<ul>
+<li>
+<p><strong>Runtime realization is much cheaper.</strong> Calls, environments, argument frames, AST traversal, literal realization, parser bookkeeping, and immutable string observation were all tightened. The intent is semantic invariance: the language remains the same while the machinery underneath it does less work.</p>
+</li>
+<li>
+<p><strong>Exact numbers now have adaptive physical representations.</strong> Aiki still presents one exact <code>number</code> type. Internally, values can use compact integers, compact rationals, exact finite-binary forms, or arbitrary-precision rationals as appropriate. Representation is an implementation choice; exactness is the language rule.</p>
+</li>
+<li>
+<p><strong>Persistent lists received the same treatment.</strong> Lists remain immutable values, but their realization can adapt between flat, frontier, and persistent/forked forms without exposing those choices to programs.</p>
+</li>
+<li>
+<p><strong>Proper tail calls and lazy logical control are now part of the realized language surface.</strong> <code>and</code> and <code>or</code> evaluate their right operand only when required. Other binary expressions still evaluate strictly left to right; Aiki still has no conventional operator-precedence hierarchy.</p>
+</li>
+<li>
+<p><strong>Profiling was rebuilt as a single observation network.</strong> It can account for caller/callee relationships, runtime-layer and implementation-boundary crossings, allocation counts and bytes, inclusive and exclusive host cost, and selected realization categories.</p>
+</li>
+<li>
+<p><strong>Coverage now shares that same execution evidence.</strong> Coverable sites come from a static model of the program and AST; dynamic hits come from the observation network rather than from a second independent runtime accounting mechanism.</p>
+</li>
+<li>
+<p><strong>The math surface is now separated by semantic role.</strong> <code>math/native</code> is the exact semantic authority and bare <code>math</code> resolves there. <code>math/ffi</code> accelerates the exact <code>floor</code>, <code>ceil</code>, and <code>modulo</code> surface. <code>math/approx</code> contains explicitly approximate <code>sin</code>, <code>cos</code>, and <code>sqrt</code> rather than weakening Aiki's number model.</p>
+</li>
+<li>
+<p><strong>Library structure is more mechanically constrained.</strong> Module summaries, exports, help, documentation, aliases, native/FFI policy, and declared acceleration surfaces are checked against one another instead of being allowed to drift independently.</p>
+</li>
+<li>
+<p><strong>Command-line and validation structure were simplified.</strong> Top-level dispatch and help share one registry, recursive target handling is centralized, and validation now has explicit levels including <code>make validate-lang</code>, <code>make validate-all</code>, <code>make rigorous</code>, <code>make distcheck</code>, and <code>make historycheck</code>.</p>
+</li>
+<li>
+<p><strong>The repository is smaller and more sharply divided by purpose.</strong> Engineering records, proposals, profiling material, Git hooks, evidence, and the AI-assisted engineering method now live under <code>engineering/</code>. Samples and editor support have explicit homes. The core repository is increasingly about the language itself.</p>
+</li>
+</ul>
+<p>The experiments have also moved out of the Aiki core repository into a separate project:</p>
+<ul>
+<li><a href="https://github.com/decuser/aiki-experiments">aiki-experiments</a></li>
+</ul>
+<p>That separation is intentional. The experiments use Aiki from the outside and act as independent integration and stress surfaces rather than becoming part of the language implementation.</p>
+<p>The existing experiments include:</p>
+<ul>
+<li>001 — semantic profiling and recursive self-interpretation</li>
+<li>002 — Thompson’s 1968 regular-expression compiler and IBM 7094 reconstruction</li>
+<li>003 — Four-Way Life, exercising concurrency, processes, storage, and mixed implementation surfaces</li>
+<li>005 — PDP-11/40 reconstruction aimed at running UNIX V6 on a monitorable machine surface</li>
+</ul>
+<p>This arrangement also makes the boundary clearer: machine-specific work stays in the experiment unless it exposes a genuine Aiki bug or a generally useful missing capability.</p>
+<p>Alpha 3 includes updated editions of <em>Report on the Programming Language Aiki</em> and <em>This Is Aiki — The Aiki Alpha 3 Release</em>. The language report now covers the complete shipped library surface and the formal grammar; the historical Alpha 1 and Alpha 2 documents remain preserved.</p>
+<p>Aiki remains an alpha. Syntax, libraries, tooling, and implementation details may still change. The core design remains recognizable: exact values, left-to-right evaluation, explicit grouping, recoverable shaped errors, proper tail calls, isolated concurrency, inspectable implementation boundaries, and executable invariants tying the system together.</p>
+<p>Release archives are available for Linux, macOS, and Windows.</p>
+<h3>Links</h3>
+<ul>
+<li><a href="https://github.com/decuser/aiki">Aiki on GitHub</a></li>
+<li><a href="https://github.com/decuser/aiki/releases/tag/v0.4.0-alpha-36">Alpha 3 release</a></li>
+<li><a href="https://github.com/decuser/aiki-experiments">Aiki Experiments</a></li>
+<li><a href="https://github.com/decuser/aiki/releases/tag/v0.4.0-alpha-35">Alpha 2 release</a></li>
+</ul>
+<p><em>post added 2026-08-30 15:27:00 -0500</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/ai/">ai (2)</a>, <a href="/tags/aiki/">aiki (4)</a>, <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (2)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/dec/">dec (1)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/education/">education (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lions/">lions (1)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (2)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (7)</a>, <a href="/tags/programming/">programming (4)</a>, <a href="/tags/programming-languages/">programming-languages (4)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (22)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/self-hosting/">self-hosting (1)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/systems/">systems (2)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (51)</a>, <a href="/tags/unix-v6/">unix-v6 (1)</a>, <a href="/tags/v6/">v6 (9)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
