@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6K8M1G32XP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-6K8M1G32XP');
+  </script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>V6 BASIC with Graphics! in OpenSIMH: Reconstructing the VT01 Display Path - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate"
+      type="application/rss+xml"
+      title="DECUSER RSS Feed"
+      href="/feed.xml">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+	<a href="/feed.xml">RSS</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">V6 BASIC with Graphics! in OpenSIMH: Reconstructing the VT01 Display Path</h1>
+    <p class="post-meta">Sep 13, 2026
+      <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/v6/" class="tag">v6</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/basic/" class="tag">basic</a> <a href="/tags/pdp-11/" class="tag">pdp-11</a> <a href="/tags/opensimh/" class="tag">opensimh</a> <a href="/tags/vt01/" class="tag">vt01</a> 
+    </p>
+  </header>
+  <div class="post-content"><p>Today's post is a dive into getting this:</p>
+<p><img src="/assets/img/v6/v6vt/v6vt-2.png" alt="V6 BASIC draw, erase, and display"></p>
+<p>to work on a basic v6 instance running bas, the v6 version of BASIC:</p>
+<p><img src="/assets/img/v6/v6vt/v6vt-1.png" alt="V6 BASIC graphics under OpenSIMH"></p>
+<h3>Background</h3>
+<p>Lately, my interests have revolved around language design. I wrote Aiki, pulled its heart out into Nezha, and in the process realized that I needed a deeper understanding of compilers and compiler design, and of how they came to be.</p>
+<p>That led me to ALGOL 60 and the early compilers—or translators, as they were often called. I dug out my copies of the three Dragon Books and settled on the Green one for a deep dive into early techniques. In the process of reading and thinking about language translation, I realized that I should have a language in mind to compile.</p>
+<p>Aiki has its appeal, but it is not a good first target. Nezha is small and constrained enough, but no, I thought, I want something more conventional. K&amp;R C? Perhaps. V6 assembly? That has its appeal, that's for sure. I heart V6.</p>
+<p>So I logged in to see what other candidates it might offer up and found SNOBOL, and then <code>bas</code>—V6 BASIC.</p>
+<p>But BASIC, really? Surely this was just a sad little implementation of BASIC for V6 that didn't even do graphics.</p>
+<p>I pulled up the source with little hope, and then saw: wait a minute. It <em>does</em> do graphics?</p>
+<p>Nothing in V6 does graphics.</p>
+<p>But there it was.</p>
+<p>The V6 BASIC source contains <code>draw</code>, <code>erase</code>, and <code>display</code>, and writes its graphics output to <code>/dev/vt0</code>. The corresponding kernel driver is still present in <code>/usr/sys/dmr/vt.c</code> and identifies itself as:</p>
+<pre><code>VT01 driver via DR11C to 11/20
+</code></pre>
+<p>At that point the compiler investigation became a hardware reconstruction problem.</p>
+<p>OpenSIMH has a <code>VT</code> device, but it is not the device this V6 driver expects. The existing OpenSIMH device emulates the VT11/VS60/GT40 family. The V6 driver instead expects a DR11-C interface connected to another PDP-11/20 handling the display.</p>
+<p>Rather than emulate that entire historical arrangement, I wanted to see how little had to be reconstructed to make the original V6 software work unchanged.</p>
+<p>The answer turned out to be: not very much.</p>
+<p>The reconstructed path is:</p>
+<pre><code>V6 BASIC
+    |
+    v
+/dev/vt0
+    |
+    v
+V6 vt.c
+    |
+    v
+DR11-C registers at 0167770
+    |
+    v
+OpenSIMH V6VT
+    |
+    v
+SIMH display window
+</code></pre>
+<p>The distinction matters. <code>V6VT</code> is not intended to be a complete VT01 emulator. It implements the V6-facing endpoint required by the original driver and BASIC implementation.</p>
+<p>For the UNIX side I started from the pristine Lions Laboratory baseline:</p>
+<p>https://github.com/decuser/lions-laboratory/blob/master/known-good/baseline-v6.tar.gz</p>
+<p>The complete Lions Laboratory repository is here:</p>
+<p>https://github.com/decuser/lions-laboratory</p>
+<h3>OpenSIMH changes</h3>
+<p>The first part of the reconstruction was on the OpenSIMH side. I cloned the current source tree and installed its build dependencies:</p>
+<pre><code>sudo apt install cmake cmake-data
+
+mkdir ~/v6vt-work
+cd ~/v6vt-work
+git clone https://github.com/open-simh/simh.git
+
+cd simh
+sudo sh .travis/deps.sh linux
+</code></pre>
+<p>The simulator-side change is deliberately small: add one PDP-11 device source file, register it with the PDP-11 simulator, and add it to the build.</p>
+<p>In <code>makefile</code>, find:</p>
+<pre><code>${PDP11D}/pdp11_vt.c ${PDP11D}/pdp11_td.c ${PDP11D}/pdp11_io_lib.c \
+</code></pre>
+<p>and add <code>${PDP11D}/pdp11_v6vt.c</code>:</p>
+<pre><code>${PDP11D}/pdp11_vt.c ${PDP11D}/pdp11_v6vt.c ${PDP11D}/pdp11_td.c ${PDP11D}/pdp11_io_lib.c \
+</code></pre>
+<p>In <code>PDP11/pdp11_sys.c</code>, find:</p>
+<pre><code>extern DEVICE vt_dev;
+</code></pre>
+<p>and add:</p>
+<pre><code>extern DEVICE v6vt_dev;
+</code></pre>
+<p>Then find:</p>
+<pre><code>#ifdef USE_DISPLAY
+    &amp;vt_dev,
+#endif
+</code></pre>
+<p>and change it to:</p>
+<pre><code>#ifdef USE_DISPLAY
+    &amp;vt_dev,
+    &amp;v6vt_dev,
+#endif
+</code></pre>
+<p>Finally, create <code>PDP11/pdp11_v6vt.c</code>.</p>
+<p>This is the complete device:</p>
+<pre><code class="language-c">#ifdef USE_DISPLAY
+/* pdp11_v6vt.c: V6 VT01/DR11-C display endpoint
+
+   This device implements the V6-facing endpoint used by /dev/vt0: the
+   DR11-C register handshake plus the display command stream used by V6 BASIC.
+   It renders onto SIMH's generic Tektronix 611-style display model.  It does
+   not emulate the remote PDP-11/20 or deliver DR11-C interrupts.
+*/
+
+#include &quot;pdp11_defs.h&quot;
+#include &quot;display/display.h&quot;
+
+#define V6VT_IOBA       (IOPAGEBASE + 007770)   /* V6 0167770 */
+#define V6VT_IOLN       004                     /* CSR, buffer */
+
+/* Bits used by the V6 vt driver. */
+#define V6VT_RQINT      000001
+#define V6VT_BIENABL    000040
+#define V6VT_SEOF       0100000
+
+static uint16 v6vt_csr = 0;
+static uint16 v6vt_buf = 0;
+
+#define V6VT_PROTO_IDLE       0
+#define V6VT_PROTO_ERASE      1
+#define V6VT_PROTO_TEXT_XY    2
+#define V6VT_PROTO_TEXT_SYNC  3
+#define V6VT_PROTO_TEXT       4
+#define V6VT_PROTO_DRAW       5
+
+static uint8 v6vt_proto_state = V6VT_PROTO_IDLE;
+static uint8 v6vt_proto_buf[8];
+static uint32 v6vt_proto_count = 0;
+static t_bool v6vt_display_open = FALSE;
+static double v6vt_text_origin_x = 0.0;
+static double v6vt_text_origin_y = 0.0;
+static int v6vt_text_x = 0;
+static int v6vt_text_y = 0;
+static int v6vt_text_origin_px = 0;
+
+static void v6vt_request (void);
+static void v6vt_decode_byte (uint8 byte);
+static void v6vt_decode_reset (void);
+static t_bool v6vt_display_ensure (void);
+static void v6vt_display_erase (void);
+static void v6vt_display_draw (double x1, double y1, double x2, double y2);
+static void v6vt_display_text_begin (double x, double y);
+static void v6vt_display_text_char (uint8 byte);
+
+t_stat v6vt_rd (int32 *data, int32 PA, int32 access);
+t_stat v6vt_wr (int32 data, int32 PA, int32 access);
+t_stat v6vt_reset (DEVICE *dptr);
+const char *v6vt_description (DEVICE *dptr);
+
+DIB v6vt_dib = {
+    V6VT_IOBA, V6VT_IOLN, &amp;v6vt_rd, &amp;v6vt_wr,
+    0, 0, 0, { NULL }
+    };
+
+UNIT v6vt_unit = {
+    UDATA (NULL, 0, 0)
+    };
+
+REG v6vt_reg[] = {
+    { ORDATAD (CSR, v6vt_csr, 16, &quot;control/status register&quot;) },
+    { ORDATAD (BUF, v6vt_buf, 16, &quot;data buffer&quot;) },
+    { GRDATA (DEVADDR, v6vt_dib.ba, DEV_RDX, 32, 0), REG_HRO },
+    { NULL }
+    };
+
+MTAB v6vt_mod[] = {
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 004, &quot;ADDRESS&quot;, &quot;ADDRESS&quot;,
+      &amp;set_addr, &amp;show_addr, NULL, &quot;Bus address&quot; },
+    { 0 }
+    };
+
+#define DBG_IO      0001
+#define DBG_DATA    0002
+#define DBG_DECODE  0004
+#define DBG_DISPLAY 0010
+
+DEBTAB v6vt_deb[] = {
+    { &quot;IO&quot;,      DBG_IO,      &quot;register reads and writes&quot; },
+    { &quot;DATA&quot;,    DBG_DATA,    &quot;V6 display request data&quot; },
+    { &quot;DECODE&quot;,  DBG_DECODE,  &quot;decoded V6 BASIC display operations&quot; },
+    { &quot;DISPLAY&quot;, DBG_DISPLAY, &quot;generic XY display operations&quot; },
+    { NULL, 0 }
+    };
+
+DEVICE v6vt_dev = {
+    &quot;V6VT&quot;, &amp;v6vt_unit, v6vt_reg, v6vt_mod,
+    1, 8, 16, 1, 8, 16,
+    NULL, NULL, &amp;v6vt_reset,
+    NULL, NULL, NULL,
+    &amp;v6vt_dib, DEV_DIS | DEV_DISABLE | DEV_UBUS | DEV_DEBUG,
+    0, v6vt_deb, NULL, NULL, NULL, NULL, NULL,
+    &amp;v6vt_description
+    };
+
+/*
+ * Coordinates emitted by BASIC are signed 16-bit values in little-endian
+ * byte order.  BASIC forms them as (coordinate - .5) * 4096, so converting
+ * back to the user-visible 0..1 coordinate is n/4096 + .5.
+ */
+static double v6vt_coord (const uint8 *p)
+{
+    int16 n = (int16)((uint16)p[0] | ((uint16)p[1] &lt;&lt; 8));
+    return ((double)n / 4096.0) + 0.5;
+}
+
+static void v6vt_decode_reset (void)
+{
+    v6vt_proto_state = V6VT_PROTO_IDLE;
+    v6vt_proto_count = 0;
+}
+
+
+/*
+ * The Tektronix 611 entry already present in SIMH's generic display layer is
+ * DIS_NG (512 x 512).  BASIC presents coordinates as 0..1, so map them onto
+ * that raster only after the byte protocol has been decoded.
+ */
+static t_bool v6vt_display_ensure (void)
+{
+    if (v6vt_display_open)
+        return TRUE;
+
+    if (!display_init (DIS_NG, RES_FULL, &amp;v6vt_dev)) {
+        sim_debug (DBG_DISPLAY, &amp;v6vt_dev, &quot;display initialization failed\n&quot;);
+        return FALSE;
+        }
+
+    v6vt_display_open = TRUE;
+    sim_debug (DBG_DISPLAY, &amp;v6vt_dev, &quot;display opened (%d x %d)\n&quot;,
+               display_xpoints (), display_ypoints ());
+    return TRUE;
+}
+
+static int v6vt_display_coord (double v, int points)
+{
+    if (v &lt; 0.0)
+        v = 0.0;
+    else if (v &gt; 1.0)
+        v = 1.0;
+
+    return (int)(v * (double)(points - 1) + 0.5);
+}
+
+static void v6vt_display_erase (void)
+{
+    /* display_reset() is currently a no-op.  Recreate this display to clear it. */
+    if (v6vt_display_open) {
+        display_close (&amp;v6vt_dev);
+        v6vt_display_open = FALSE;
+        }
+
+    if (v6vt_display_ensure ()) {
+        display_sync ();
+        sim_debug (DBG_DISPLAY, &amp;v6vt_dev, &quot;erase\n&quot;);
+        }
+}
+
+
+/*
+ * Dot-matrix glyphs reused from SIMH's VT11 character generator.  They give
+ * this endpoint the same simulator-native vector-display text appearance
+ * without adding a second font implementation elsewhere in the display layer.
+ */
+static const unsigned char v6vt_dots[0200][6] = {
+    { 0x8f, 0x50, 0x20, 0x10, 0x08, 0x07 },     /* 000 lambda */
+    { 0x1e, 0x21, 0x22, 0x14, 0x0c, 0x13 },     /* 001 alpha */
+    { 0x00, 0x18, 0x24, 0xff, 0x24, 0x18 },     /* 002 phi */
+    { 0x83, 0xc5, 0xa9, 0x91, 0x81, 0xc3 },     /* 003 SIGMA */
+    { 0x00, 0x46, 0xa9, 0x91, 0x89, 0x06 },     /* 004 delta */
+    { 0x03, 0x05, 0x09, 0x11, 0x21, 0x7f },     /* 005 DELTA */
+    { 0x00, 0x20, 0x20, 0x3f, 0x01, 0x01 },     /* 006 iota */
+    { 0x46, 0x29, 0x11, 0x2e, 0x40, 0x80 },     /* 007 gamma */
+    { 0x7f, 0x80, 0x80, 0x80, 0x80, 0x7f },     /* 010 intersect */
+    { 0x40, 0x3c, 0x04, 0xff, 0x04, 0x78 },     /* 011 psi */
+    { 0x00, 0x10, 0x10, 0x54, 0x10, 0x10 },     /* 012 divide by */
+    { 0x00, 0x60, 0x90, 0x90, 0x60, 0x00 },     /* 013 degree */
+    { 0x00, 0x01, 0x00, 0x10, 0x00, 0x01 },     /* 014 therefore */
+    { 0x01, 0x02, 0x3c, 0x02, 0x02, 0x3c },     /* 015 mu */
+    { 0x11, 0x7f, 0x91, 0x81, 0x41, 0x03 },     /* 016 pound sterling */
+    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },     /* 017 SHIFT IN */
+    { 0x20, 0x40, 0x7f, 0x40, 0x7f, 0x40 },     /* 020 pi */
+    { 0x00, 0xff, 0x00, 0x00, 0xff, 0x00 },     /* 021 parallel */
+    { 0x1d, 0x23, 0x40, 0x42, 0x25, 0x19 },     /* 022 OMEGA */
+    { 0x1c, 0x22, 0x61, 0x51, 0x4e, 0x40 },     /* 023 sigma */
+    { 0x20, 0x40, 0x40, 0x7f, 0x40, 0x40 },     /* 024 UPSILON */
+    { 0x00, 0x1c, 0x2a, 0x49, 0x49, 0x00 },     /* 025 epsilon */
+    { 0x10, 0x38, 0x54, 0x10, 0x10, 0x10 },     /* 026 left arrow */
+    { 0x10, 0x10, 0x10, 0x54, 0x38, 0x10 },     /* 027 right arrow */
+    { 0x00, 0x20, 0x40, 0xfe, 0x40, 0x20 },     /* 030 up arrow */
+    { 0x00, 0x04, 0x02, 0x7f, 0x02, 0x04 },     /* 031 down arrow */
+    { 0x00, 0xff, 0x80, 0x80, 0x80, 0x80 },     /* 032 GAMMA */
+    { 0x00, 0x01, 0x01, 0xff, 0x01, 0x01 },     /* 033 perpendicular */
+    { 0x2a, 0x2c, 0x28, 0x38, 0x68, 0xa8 },     /* 034 unequal */
+    { 0x24, 0x48, 0x48, 0x24, 0x24, 0x48 },     /* 035 approx equal */
+    { 0x00, 0x20, 0x10, 0x08, 0x10, 0x20 },     /* 036 vel */
+    { 0xff, 0x81, 0x81, 0x81, 0x81, 0xff },     /* 037 box */
+    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },     /* 040 space */
+    { 0x00, 0x00, 0x00, 0xfd, 0x00, 0x00 },     /* 041 ! */
+    { 0x00, 0xe0, 0x00, 0x00, 0xe0, 0x00 },     /* 042 &quot; */
+    { 0x00, 0x24, 0xff, 0x24, 0xff, 0x24 },     /* 043 # */
+    { 0x22, 0x52, 0xff, 0x52, 0x4c, 0x00 },     /* 044 $ */
+    { 0x42, 0xa4, 0x48, 0x12, 0x25, 0x42 },     /* 045 % */
+    { 0x66, 0x99, 0x99, 0x66, 0x0a, 0x11 },     /* 046 &amp; */
+    { 0x00, 0x00, 0x20, 0x40, 0x80, 0x00 },     /* 047 ' */
+    { 0x00, 0x00, 0x3c, 0x42, 0x81, 0x00 },     /* 050 ( */
+    { 0x00, 0x00, 0x81, 0x42, 0x3c, 0x00 },     /* 051 ) */
+    { 0x00, 0x44, 0x28, 0xf0, 0x28, 0x44 },     /* 052 * */
+    { 0x00, 0x10, 0x10, 0x7c, 0x10, 0x10 },     /* 053 + */
+    { 0x00, 0x01, 0x06, 0x00, 0x00, 0x00 },     /* 054 , */
+    { 0x00, 0x10, 0x10, 0x10, 0x10, 0x10 },     /* 055 - */
+    { 0x00, 0x00, 0x06, 0x06, 0x00, 0x00 },     /* 056 . */
+    { 0x02, 0x04, 0x08, 0x10, 0x20, 0x40 },     /* 057 / */
+    { 0x7e, 0x85, 0x89, 0x91, 0xa1, 0x7e },     /* 060 0 */
+    { 0x00, 0x41, 0xff, 0x01, 0x00, 0x00 },     /* 061 1 */
+    { 0x47, 0x89, 0x91, 0x91, 0x91, 0x61 },     /* 062 2 */
+    { 0x42, 0x81, 0x91, 0xb1, 0xd1, 0x8e },     /* 063 3 */
+    { 0x0c, 0x14, 0x24, 0x44, 0xff, 0x04 },     /* 064 4 */
+    { 0xf2, 0x91, 0x91, 0x91, 0x91, 0x8e },     /* 065 5 */
+    { 0x3c, 0x46, 0x89, 0x89, 0x89, 0x46 },     /* 066 6 */
+    { 0x40, 0x87, 0x88, 0x90, 0xa0, 0xc0 },     /* 067 7 */
+    { 0x6e, 0x91, 0x91, 0x91, 0x91, 0x6e },     /* 070 8 */
+    { 0x62, 0x91, 0x91, 0x91, 0x62, 0x3c },     /* 071 9 */
+    { 0x00, 0x66, 0x66, 0x00, 0x00, 0x00 },     /* 072 : */
+    { 0x00, 0x00, 0x61, 0x66, 0x00, 0x00 },     /* 073 ; */
+    { 0x00, 0x18, 0x24, 0x42, 0x81, 0x00 },     /* 074 &lt; */
+    { 0x00, 0x28, 0x28, 0x28, 0x28, 0x28 },     /* 075 = */
+    { 0x00, 0x81, 0x42, 0x24, 0x18, 0x00 },     /* 076 &gt; */
+    { 0x00, 0x40, 0x80, 0x9d, 0x90, 0x60 },     /* 077 ? */
+    { 0x3c, 0x42, 0x91, 0xa9, 0xa9, 0x72 },     /* 100 @ */
+    { 0x3f, 0x48, 0x88, 0x88, 0x48, 0x3f },     /* 101 A */
+    { 0x81, 0xff, 0x91, 0x91, 0x91, 0x6e },     /* 102 B */
+    { 0x3c, 0x42, 0x81, 0x81, 0x81, 0x42 },     /* 103 C */
+    { 0x81, 0xff, 0x81, 0x81, 0x42, 0x3c },     /* 104 D */
+    { 0x81, 0xff, 0x91, 0x91, 0x91, 0xc3 },     /* 105 E */
+    { 0x81, 0xff, 0x91, 0x90, 0x80, 0xc0 },     /* 106 F */
+    { 0x3c, 0x42, 0x81, 0x89, 0x89, 0x4f },     /* 107 G */
+    { 0xff, 0x10, 0x10, 0x10, 0x10, 0xff },     /* 110 H */
+    { 0x00, 0x81, 0xff, 0x81, 0x00, 0x00 },     /* 111 I */
+    { 0x0e, 0x01, 0x01, 0x81, 0xfe, 0x80 },     /* 112 J */
+    { 0xff, 0x08, 0x10, 0x28, 0x44, 0x83 },     /* 113 K */
+    { 0x81, 0xff, 0x81, 0x01, 0x01, 0x03 },     /* 114 L */
+    { 0xff, 0x40, 0x30, 0x30, 0x40, 0xff },     /* 115 M */
+    { 0xff, 0x20, 0x10, 0x08, 0x04, 0xff },     /* 116 N */
+    { 0x3c, 0x42, 0x81, 0x81, 0x42, 0x3c },     /* 117 O */
+    { 0x81, 0xff, 0x90, 0x90, 0x90, 0x60 },     /* 120 P */
+    { 0x3c, 0x42, 0x81, 0x8f, 0x42, 0x3d },     /* 121 Q */
+    { 0x81, 0xff, 0x90, 0x98, 0x94, 0x63 },     /* 122 R */
+    { 0x22, 0x51, 0x91, 0x91, 0x89, 0x46 },     /* 123 S */
+    { 0xc0, 0x80, 0x81, 0xff, 0x81, 0xc0 },     /* 124 T */
+    { 0xfe, 0x01, 0x01, 0x01, 0x01, 0xfe },     /* 125 U */
+    { 0xff, 0x02, 0x04, 0x08, 0x10, 0xe0 },     /* 126 V */
+    { 0xff, 0x02, 0x0c, 0x0c, 0x02, 0xff },     /* 127 W */
+    { 0xc3, 0x24, 0x18, 0x18, 0x24, 0xc3 },     /* 130 X */
+    { 0x00, 0xe0, 0x10, 0x0f, 0x10, 0xe0 },     /* 131 Y */
+    { 0x83, 0x85, 0x89, 0x91, 0xa1, 0xc1 },     /* 132 Z */
+    { 0x00, 0x00, 0xff, 0x81, 0x81, 0x00 },     /* 133 [ */
+    { 0x00, 0x40, 0x20, 0x10, 0x08, 0x04 },     /* 134 \ */
+    { 0x00, 0x00, 0x81, 0x81, 0xff, 0x00 },     /* 135 ] */
+    { 0x00, 0x10, 0x20, 0x40, 0x20, 0x10 },     /* 136 ^ */
+    { 0x01, 0x01, 0x01, 0x01, 0x01, 0x00 },     /* 137 _ */
+    /* for all lowercase characters, first column is just a &quot;descender&quot; flag: */
+    { 0x00, 0x00, 0x80, 0x40, 0x20, 0x00 },     /* 140 ` */
+    { 0x00, 0x26, 0x29, 0x29, 0x2a, 0x1f },     /* 141 a */
+    { 0x00, 0xff, 0x12, 0x21, 0x21, 0x1e },     /* 142 b */
+    { 0x00, 0x1e, 0x21, 0x21, 0x21, 0x12 },     /* 143 c */
+    { 0x00, 0x1e, 0x21, 0x21, 0x12, 0xff },     /* 144 d */
+    { 0x00, 0x1e, 0x29, 0x29, 0x29, 0x19 },     /* 145 e */
+    { 0x00, 0x20, 0x7f, 0xa0, 0xa0, 0x80 },     /* 146 f */
+    { 0x01, 0x78, 0x85, 0x85, 0x49, 0xfe },     /* 147 g */
+    { 0x00, 0xff, 0x10, 0x20, 0x20, 0x1f },     /* 150 h */
+    { 0x00, 0x00, 0x21, 0xbf, 0x01, 0x00 },     /* 151 i */
+    { 0x01, 0x02, 0x01, 0x81, 0xfe, 0x00 },     /* 152 j */
+    { 0x00, 0xff, 0x08, 0x14, 0x22, 0x21 },     /* 153 k */
+    { 0x00, 0x00, 0xfe, 0x01, 0x01, 0x00 },     /* 154 l */
+    { 0x00, 0x3f, 0x20, 0x3f, 0x20, 0x3f },     /* 155 m */
+    { 0x00, 0x3f, 0x10, 0x20, 0x20, 0x1f },     /* 156 n */
+    { 0x00, 0x1e, 0x21, 0x21, 0x21, 0x1e },     /* 157 o */
+    { 0x01, 0xff, 0x48, 0x84, 0x84, 0x78 },     /* 160 p */
+    { 0x01, 0x78, 0x84, 0x84, 0x48, 0xff },     /* 161 q */
+    { 0x00, 0x3f, 0x08, 0x10, 0x20, 0x20 },     /* 162 r */
+    { 0x00, 0x12, 0x29, 0x29, 0x29, 0x26 },     /* 163 s */
+    { 0x00, 0x20, 0xfe, 0x21, 0x21, 0x00 },     /* 164 t */
+    { 0x00, 0x3e, 0x01, 0x01, 0x02, 0x3f },     /* 165 u */
+    { 0x00, 0x3c, 0x02, 0x01, 0x02, 0x3c },     /* 166 v */
+    { 0x00, 0x3e, 0x01, 0x1e, 0x01, 0x3e },     /* 167 w */
+    { 0x00, 0x23, 0x14, 0x08, 0x14, 0x23 },     /* 170 x */
+    { 0x01, 0xf8, 0x05, 0x05, 0x09, 0xfe },     /* 171 y */
+    { 0x00, 0x23, 0x25, 0x29, 0x31, 0x21 },     /* 172 z */
+    { 0x00, 0x18, 0x66, 0x81, 0x81, 0x00 },     /* 173 { */
+    { 0x00, 0x00, 0xe7, 0x00, 0x00, 0x00 },     /* 174 | */
+    { 0x00, 0x00, 0x81, 0x81, 0x66, 0x18 },     /* 175 } */
+    { 0x00, 0x0c, 0x10, 0x08, 0x04, 0x18 },     /* 176 ~ */
+    { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff }      /* 177 rubout */
+    };
+
+static void v6vt_display_draw (double x1, double y1, double x2, double y2)
+{
+    int px1, py1, px2, py2;
+
+    if (!v6vt_display_ensure ())
+        return;
+
+    px1 = v6vt_display_coord (x1, display_xpoints ());
+    py1 = v6vt_display_coord (y1, display_ypoints ());
+    px2 = v6vt_display_coord (x2, display_xpoints ());
+    py2 = v6vt_display_coord (y2, display_ypoints ());
+
+    display_line (px1, py1, px2, py2, DISPLAY_INT_MAX);
+    display_sync ();
+    sim_debug (DBG_DISPLAY, &amp;v6vt_dev,
+               &quot;line (%d,%d) -&gt; (%d,%d)\n&quot;, px1, py1, px2, py2);
+}
+
+static void v6vt_display_text_begin (double x, double y)
+{
+    if (!v6vt_display_ensure ())
+        return;
+
+    v6vt_text_origin_x = x;
+    v6vt_text_origin_y = y;
+    v6vt_text_origin_px = v6vt_display_coord (x, display_xpoints ());
+    v6vt_text_x = v6vt_text_origin_px;
+    v6vt_text_y = v6vt_display_coord (y, display_ypoints ());
+
+    sim_debug (DBG_DISPLAY, &amp;v6vt_dev, &quot;text origin (%d,%d)\n&quot;,
+               v6vt_text_x, v6vt_text_y);
+}
+
+static void v6vt_display_text_char (uint8 byte)
+{
+    const unsigned char *glyph;
+    int col, row;
+
+    if (!v6vt_display_ensure ())
+        return;
+
+    switch (byte) {
+    case '\r':
+        v6vt_text_x = v6vt_text_origin_px;
+        return;
+
+    case '\n':
+        v6vt_text_x = v6vt_text_origin_px;
+        v6vt_text_y -= 18;
+        return;
+
+    case '\b':
+        v6vt_text_x -= 12;
+        if (v6vt_text_x &lt; 0)
+            v6vt_text_x = 0;
+        return;
+
+    case '\t':
+        v6vt_text_x += 48;
+        return;
+
+    default:
+        break;
+        }
+
+    if (byte &lt; 040 || byte &gt;= 0177)
+        return;
+
+    glyph = v6vt_dots[byte];
+    for (col = 0; col &lt; 6; col++) {
+        for (row = 0; row &lt; 8; row++) {
+            if (glyph[col] &amp; (1u &lt;&lt; row)) {
+                int x = v6vt_text_x + col * 2;
+                int y = v6vt_text_y + row * 2;
+                display_point (x,     y,     DISPLAY_INT_MAX, 0);
+                display_point (x + 1, y,     DISPLAY_INT_MAX, 0);
+                display_point (x,     y + 1, DISPLAY_INT_MAX, 0);
+                display_point (x + 1, y + 1, DISPLAY_INT_MAX, 0);
+                }
+            }
+        }
+
+    v6vt_text_x += 12;
+    display_sync ();
+    sim_debug (DBG_DISPLAY, &amp;v6vt_dev, &quot;char '%c' at (%d,%d)\n&quot;,
+               byte, v6vt_text_x - 12, v6vt_text_y);
+}
+
+static void v6vt_decode_byte (uint8 byte)
+{
+    switch (v6vt_proto_state) {
+    case V6VT_PROTO_IDLE:
+        switch (byte) {
+        case 001:
+            v6vt_proto_state = V6VT_PROTO_ERASE;
+            break;
+
+        case 002:
+            v6vt_proto_state = V6VT_PROTO_TEXT_XY;
+            v6vt_proto_count = 0;
+            break;
+
+        case 003:
+            v6vt_proto_state = V6VT_PROTO_DRAW;
+            v6vt_proto_count = 0;
+            break;
+
+        case 000:
+            sim_debug (DBG_DECODE, &amp;v6vt_dev, &quot;display end\n&quot;);
+            break;
+
+        default:
+            sim_debug (DBG_DECODE, &amp;v6vt_dev,
+                       &quot;unrecognized command byte %03o (0x%02X)\n&quot;,
+                       byte, byte);
+            break;
+            }
+        break;
+
+    case V6VT_PROTO_ERASE:
+        if (byte == 001) {
+            sim_debug (DBG_DECODE, &amp;v6vt_dev, &quot;erase\n&quot;);
+            v6vt_display_erase ();
+            }
+        else
+            sim_debug (DBG_DECODE, &amp;v6vt_dev,
+                       &quot;unrecognized 001 sequence: %03o (0x%02X)\n&quot;,
+                       byte, byte);
+        v6vt_decode_reset ();
+        break;
+
+    case V6VT_PROTO_TEXT_XY:
+        v6vt_proto_buf[v6vt_proto_count++] = byte;
+        if (v6vt_proto_count == 4) {
+            double x = v6vt_coord (&amp;v6vt_proto_buf[0]);
+            double y = v6vt_coord (&amp;v6vt_proto_buf[2]);
+
+            sim_debug (DBG_DECODE, &amp;v6vt_dev,
+                       &quot;display begin at (%.6f, %.6f)\n&quot;, x, y);
+            v6vt_display_text_begin (x, y);
+            v6vt_proto_state = V6VT_PROTO_TEXT_SYNC;
+            v6vt_proto_count = 0;
+            }
+        break;
+
+    case V6VT_PROTO_TEXT_SYNC:
+        /* BASIC emits 001,003 after the display origin, then text bytes. */
+        if (v6vt_proto_count == 0 &amp;&amp; byte == 001) {
+            v6vt_proto_count = 1;
+            break;
+            }
+        if (v6vt_proto_count == 1 &amp;&amp; byte == 003) {
+            v6vt_proto_state = V6VT_PROTO_TEXT;
+            v6vt_proto_count = 0;
+            break;
+            }
+        sim_debug (DBG_DECODE, &amp;v6vt_dev,
+                   &quot;bad display sync byte %03o (0x%02X)\n&quot;, byte, byte);
+        v6vt_decode_reset ();
+        break;
+
+    case V6VT_PROTO_TEXT:
+        if (byte == 000) {
+            sim_debug (DBG_DECODE, &amp;v6vt_dev, &quot;display end\n&quot;);
+            v6vt_decode_reset ();
+            }
+        else {
+            if (byte &gt;= 040 &amp;&amp; byte &lt; 0177)
+                sim_debug (DBG_DECODE, &amp;v6vt_dev, &quot;display char '%c'\n&quot;, byte);
+            else
+                sim_debug (DBG_DECODE, &amp;v6vt_dev,
+                           &quot;display byte %03o (0x%02X)\n&quot;, byte, byte);
+            v6vt_display_text_char (byte);
+            }
+        break;
+
+    case V6VT_PROTO_DRAW:
+        v6vt_proto_buf[v6vt_proto_count++] = byte;
+        if (v6vt_proto_count == 8) {
+            double x1 = v6vt_coord (&amp;v6vt_proto_buf[0]);
+            double y1 = v6vt_coord (&amp;v6vt_proto_buf[2]);
+            double x2 = v6vt_coord (&amp;v6vt_proto_buf[4]);
+            double y2 = v6vt_coord (&amp;v6vt_proto_buf[6]);
+
+            sim_debug (DBG_DECODE, &amp;v6vt_dev,
+                       &quot;draw (%.6f, %.6f) -&gt; (%.6f, %.6f)\n&quot;,
+                       x1, y1, x2, y2);
+            v6vt_display_draw (x1, y1, x2, y2);
+            v6vt_decode_reset ();
+            }
+        break;
+
+    default:
+        v6vt_decode_reset ();
+        break;
+        }
+}
+
+/*
+ * V6 writes a value to BUF and then sets CSR&lt;RQINT&gt;.  We consume the
+ * request synchronously and clear RQINT before returning.
+ */
+static void v6vt_request (void)
+{
+    if (v6vt_buf &amp; V6VT_SEOF) {
+        sim_debug (DBG_DATA, &amp;v6vt_dev, &quot;request SEOF (BUF=%06o)\n&quot;, v6vt_buf);
+        sim_debug (DBG_DECODE, &amp;v6vt_dev, &quot;session end\n&quot;);
+        v6vt_decode_reset ();
+        }
+    else {
+        uint8 byte = (uint8)(v6vt_buf &amp; 0377);
+        sim_debug (DBG_DATA, &amp;v6vt_dev, &quot;request byte %03o (0x%02X)\n&quot;,
+                   byte, byte);
+        v6vt_decode_byte (byte);
+        }
+
+    v6vt_csr &amp;= ~V6VT_RQINT;
+}
+
+t_stat v6vt_rd (int32 *data, int32 PA, int32 access)
+{
+    switch (PA &amp; 02) {
+    case 00:
+        *data = v6vt_csr;
+        sim_debug (DBG_IO, &amp;v6vt_dev, &quot;read CSR = %06o\n&quot;, *data);
+        return SCPE_OK;
+
+    case 02:
+        *data = v6vt_buf;
+        sim_debug (DBG_IO, &amp;v6vt_dev, &quot;read BUF = %06o\n&quot;, *data);
+        return SCPE_OK;
+        }
+
+    return SCPE_NXM;
+}
+
+t_stat v6vt_wr (int32 data, int32 PA, int32 access)
+{
+    switch (PA &amp; 02) {
+    case 00:
+        v6vt_csr = data &amp; DMASK;
+        sim_debug (DBG_IO, &amp;v6vt_dev, &quot;write CSR = %06o\n&quot;, v6vt_csr);
+        if (v6vt_csr &amp; V6VT_RQINT)
+            v6vt_request ();
+        return SCPE_OK;
+
+    case 02:
+        v6vt_buf = data &amp; DMASK;
+        sim_debug (DBG_IO, &amp;v6vt_dev, &quot;write BUF = %06o\n&quot;, v6vt_buf);
+        return SCPE_OK;
+        }
+
+    return SCPE_NXM;
+}
+
+t_stat v6vt_reset (DEVICE *dptr)
+{
+    v6vt_csr = 0;
+    v6vt_buf = 0;
+    v6vt_decode_reset ();
+    if (v6vt_display_open) {
+        display_close (&amp;v6vt_dev);
+        v6vt_display_open = FALSE;
+        }
+    return SCPE_OK;
+}
+
+const char *v6vt_description (DEVICE *dptr)
+{
+    return &quot;V6 VT01/DR11-C display endpoint&quot;;
+}
+#endif
+</code></pre>
+<p>Build it</p>
+<p><code>make pdp11</code></p>
+<p>You should see:</p>
+<pre><code> Running internal register sanity checks on PDP-11 simulator.
+*** Good Registers in PDP-11 simulator.
+</code></pre>
+<p>If so, install it somewhere useful:</p>
+<p><code>cp BIN/pdp11 ~/bin/</code></p>
+<h3>V6 Changes</h3>
+<p>The other half of the work is inside the pristine V6 baseline.</p>
+<pre><code>cd ~/v6vt-work
+wget -O baseline-v6.tar.gz \
+  https://github.com/decuser/lions-laboratory/raw/refs/heads/master/known-good/baseline-v6.tar.gz
+cd  ~/v6vt-work/baseline-v6
+ls
+ls
+boot.ini  rk0  rk1  rk2  rk3
+</code></pre>
+<p>Start pdp11</p>
+<pre><code>pdp11 boot.ini
+PDP-11 simulator Open SIMH V4.1-0 Current        git commit id: a1f57fa3+uncommitted-changes
+Disabling XQ
+/home/wsenn/v6vt-work/baseline-v6/boot.ini-14&gt; attach ptr ptr.txt
+%SIM-INFO: PTR: creating new file
+/home/wsenn/v6vt-work/baseline-v6/boot.ini-15&gt; attach ptp ptp.txt
+%SIM-INFO: PTP: creating new file
+/home/wsenn/v6vt-work/baseline-v6/boot.ini-16&gt; attach lpt lpt.txt
+%SIM-INFO: LPT: creating new file
+@unix
+
+login: root
+#
+</code></pre>
+<p>Although <code>/usr/sys/dmr/vt.c</code> is present, the driver object is not included in the baseline device-driver library:</p>
+<pre><code># ar t /usr/sys/lib2
+bio.o
+tty.o
+dc.o
+dn.o
+dp.o
+kl.o
+mem.o
+pc.o
+rf.o
+rk.o
+tc.o
+tm.o
+partab.o
+rp.o
+lp.o
+dhdm.o
+dh.o
+dhfdm.o
+sys.o
+hp.o
+ht.o
+hs.o
+</code></pre>
+<p>There is no <code>vt.o</code>.</p>
+<p>Following the V6 configuration procedure, I compiled the existing driver and added it to <code>lib2</code>:</p>
+<pre><code>chdir /usr/sys/dmr
+cc -c -O vt.c
+ar r ../lib2 vt.o
+rm vt.o
+</code></pre>
+<p>The stock <code>mkconf</code> also does not know about <code>vt</code>, so I added it as another character device.</p>
+<pre><code>chdir /usr/sys/conf
+ed mkconf.c
+8726
+37p
+        0
+37i
+        &quot;vt&quot;,
+.
+36,38p
+        &quot;ht&quot;,
+        &quot;vt&quot;,
+        0
+
+251,p
+        &quot;dl&quot;,
+251i
+        &quot;vt&quot;,
+        0,      0,      CHAR,
+        &quot;&quot;,
+        &quot;&quot;,
+        &quot;&quot;,
+        &quot;&quot;,
+        &quot;\t&amp;vtopen,   &amp;vtclose,  &amp;nodev,    &amp;vtwrite,  &amp;nodev,&quot;,
+.
+251,259p
+        &quot;vt&quot;,
+        0,      0,      CHAR,
+        &quot;&quot;,
+        &quot;&quot;,
+        &quot;&quot;,
+        &quot;&quot;,
+        &quot;\t&amp;vtopen,   &amp;vtclose,  &amp;nodev,    &amp;vtwrite,  &amp;nodev,&quot;,
+
+        &quot;dl&quot;,
+
+w
+8897
+q
+</code></pre>
+<p>I saved the file, rebuilt <code>mkconf</code>, and generated a new system configuration:</p>
+<pre><code>cc mkconf.c
+mv a.out mkconf
+
+./mkconf
+rk
+tm
+pc
+lp
+vt
+done
+</code></pre>
+<p>As usual, <code>mkconf</code> creates <code>c.c</code> and <code>l.s</code>. I inspected both before linking the kernel:</p>
+<pre><code>cat c.c
+cat l.s
+</code></pre>
+<p>In this configuration VT is character-device major 16.</p>
+<p>I then rebuilt the kernel:</p>
+<pre><code>as m40.s
+mv a.out m40.o
+
+cc -c c.c
+as l.s
+
+ld -x a.out m40.o c.o ../lib1 ../lib2
+mv a.out /unix.vt
+
+sync
+sync
+sync
+</code></pre>
+<p>and created the special file:</p>
+<pre><code>/etc/mknod /dev/vt0 c 16 0
+chmod 666 /dev/vt0
+</code></pre>
+<p>Pause the sim and exit</p>
+<pre><code>CTL-e
+q
+</code></pre>
+<p>On the OpenSIMH side, normal operation requires only:</p>
+<p><code>set v6vt enable</code></p>
+<p>Debugging is optional. To keep simulator diagnostics out of the V6 console, I send them to a host file:</p>
+<pre><code>set debug v6vt-debug.log
+set v6vt debug=decode;display
+</code></pre>
+<p>For the full register and protocol trace:</p>
+<p><code>set v6vt debug=io;data;decode;display</code></p>
+<pre><code>vi boot.ini (and v6vt entries after tm)
+set cpu 11/40
+set cpu idle
+set tto 7b
+;set tm0 locked
+set v6vt enable
+; set debug v6vt-debug.log
+; set v6vt debug=decode;display
+; set v6vt debug=io;data;decode;display
+; set v6vt nodebug
+; set nodebug
+;attach tm0 dist.tap
+set rk0 en noautosize
+set rk1 en noautosize
+set rk2 en noautosize
+set rk3 en noautosize
+attach rk0 rk0
+attach rk1 rk1
+attach rk2 rk2
+attach rk3 rk3
+attach ptr ptr.txt
+attach ptp ptp.txt
+attach lpt lpt.txt
+;dep system sr 173030
+boot rk0
+</code></pre>
+<h3>Running in bas</h3>
+<p>Boot normally:</p>
+<pre><code>~/v6vt-work/baseline-v6 $ pdp11 boot.ini
+
+PDP-11 simulator Open SIMH V4.1-0 Current        git commit id: a1f57fa3+uncommitted-changes
+Disabling XQ
+@unix.vt
+
+login: root
+# 
+</code></pre>
+<p>and the original V6 BASIC interpreter can use the reconstructed display path without modification.</p>
+<pre><code>bas
+10 erase
+20 draw .2 .2 0
+30 draw .8 .2 1
+40 draw .8 .8 1
+50 draw .2 .8 1
+60 draw .2 .2 1
+70 draw .35 .5 0
+80 display &quot;UNIX V6 BASIC&quot;
+90 done
+run
+</code></pre>
+<p>produces a square with text in the SIMH graphics window:</p>
+<p><img src="/assets/img/v6/v6vt/v6vt-2.png" alt="V6 BASIC draw, erase, and display"></p>
+<p>The same program can be saved as a normal V6 BASIC source file:</p>
+<pre><code>ed hello.bas
+a
+10 erase
+20 draw .2 .2 0
+30 draw .8 .2 1
+40 draw .8 .8 1
+50 draw .2 .8 1
+60 draw .2 .2 1
+70 draw .35 .5 0
+80 display &quot;UNIX V6 BASIC&quot;
+90 done
+run
+.
+w
+q
+
+145
+</code></pre>
+<p>and run directly:</p>
+<p><code>bas hello.bas</code></p>
+<p>If you want to destroy the graphics display, it's in simh:</p>
+<pre><code>CTL-e
+sim&gt; set v6vt disable
+</code></pre>
+<h3>Conclusions</h3>
+<p>The interesting part for me is that essentially none of the original V6 software needs to know that the historical display hardware is gone.</p>
+<p>The original BASIC emits the same command stream. The original kernel driver writes to the same address. <code>/dev/vt0</code> remains the interface seen by the application.</p>
+<p>Only the hardware side of that boundary has been replaced.</p>
+<p>This is not a complete VT01 reconstruction, but it is enough to make the graphics support already present in Sixth Edition UNIX BASIC work again under OpenSIMH.</p>
+<p>And now I can go back to figuring out whether BASIC is the language I wanted to compile in the first place.</p>
+<p><em>post added 2026-09-13 17:19:00 -0500</em></p>
+</div>
+</article>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/ai/">ai (2)</a>, <a href="/tags/aiki/">aiki (4)</a>, <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (2)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (2)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/dec/">dec (1)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/education/">education (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lions/">lions (1)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (3)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (8)</a>, <a href="/tags/programming/">programming (4)</a>, <a href="/tags/programming-languages/">programming-languages (4)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (23)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/self-hosting/">self-hosting (1)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/systems/">systems (2)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (52)</a>, <a href="/tags/unix-v6/">unix-v6 (1)</a>, <a href="/tags/v6/">v6 (10)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/vt01/">vt01 (1)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

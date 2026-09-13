@@ -1,5 +1,11 @@
 [
   {
+    "title": "V6 BASIC with Graphics! in OpenSIMH: Reconstructing the VT01 Display Path",
+    "url": "/posts/v6-basic-with-graphics/",
+    "date": "Sep 13, 2026",
+    "tags": "unix v6 research-unix basic pdp-11 opensimh vt01"
+  },
+  {
     "title": "Aiki Alpha 3 Released",
     "url": "/posts/aiki-alpha-3-release/",
     "date": "Aug 30, 2026",
@@ -60,20 +66,26 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E9.2 - Assembly Lines ch. 6 cont. - keys and strobing",
-    "url": "/posts/bit-by-bit-e9.2/",
-    "date": "Oct 20, 2025",
-    "tags": "retro assembly videos"
-  },
-  {
     "title": "Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard",
     "url": "/posts/bit-by-bit-e9.1/",
     "date": "Oct 20, 2025",
     "tags": "retro assembly videos"
   },
   {
+    "title": "Bit by Bit - E9.2 - Assembly Lines ch. 6 cont. - keys and strobing",
+    "url": "/posts/bit-by-bit-e9.2/",
+    "date": "Oct 20, 2025",
+    "tags": "retro assembly videos"
+  },
+  {
     "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
     "url": "/posts/bit-by-bit-e8/",
+    "date": "Oct 18, 2025",
+    "tags": "retro assembly videos"
+  },
+  {
+    "title": "Bit by Bit - E5 - Escape Mode",
+    "url": "/posts/bit-by-bit-e5/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -90,9 +102,9 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E5 - Escape Mode",
-    "url": "/posts/bit-by-bit-e5/",
-    "date": "Oct 18, 2025",
+    "title": "Bit by Bit - E2 - Getting Started",
+    "url": "/posts/bit-by-bit-e2/",
+    "date": "Oct 11, 2025",
     "tags": "retro assembly videos"
   },
   {
@@ -104,12 +116,6 @@
   {
     "title": "Bit by Bit - E3 - Assemblers",
     "url": "/posts/bit-by-bit-e3/",
-    "date": "Oct 11, 2025",
-    "tags": "retro assembly videos"
-  },
-  {
-    "title": "Bit by Bit - E2 - Getting Started",
-    "url": "/posts/bit-by-bit-e2/",
     "date": "Oct 11, 2025",
     "tags": "retro assembly videos"
   },
@@ -150,22 +156,16 @@
     "tags": "unix research-unix v7"
   },
   {
-    "title": "Will's Geometry - A Setting Out.",
-    "url": "/posts/wills-geometry/",
-    "date": "Dec 19, 2023",
-    "tags": "geometry"
-  },
-  {
     "title": "Geometry Explorations",
     "url": "/posts/geometry-explorations/",
     "date": "Dec 19, 2023",
     "tags": "geometry"
   },
   {
-    "title": "MACLISP in ITS running on an emulated PDP-10",
-    "url": "/posts/maclisp/",
-    "date": "Jul 31, 2023",
-    "tags": "lisp"
+    "title": "Will's Geometry - A Setting Out.",
+    "url": "/posts/wills-geometry/",
+    "date": "Dec 19, 2023",
+    "tags": "geometry"
   },
   {
     "title": "Franz LISP Opus 32 in 3BSD running on an emulated VAX 780",
@@ -174,9 +174,21 @@
     "tags": "lisp"
   },
   {
+    "title": "MACLISP in ITS running on an emulated PDP-10",
+    "url": "/posts/maclisp/",
+    "date": "Jul 31, 2023",
+    "tags": "lisp"
+  },
+  {
     "title": "pdp1-lisp running on an emulated PDP-1",
     "url": "/posts/pdp-1-lisp/",
     "date": "Jul 30, 2023",
+    "tags": "lisp"
+  },
+  {
+    "title": "LISP 1.5 running on an emulated IBM 7094",
+    "url": "/posts/lisp-1.5/",
+    "date": "Jul 24, 2023",
     "tags": "lisp"
   },
   {
@@ -188,12 +200,6 @@
   {
     "title": "Schemes, LISPs, and Lambda",
     "url": "/posts/lisp-explorations/",
-    "date": "Jul 24, 2023",
-    "tags": "lisp"
-  },
-  {
-    "title": "LISP 1.5 running on an emulated IBM 7094",
-    "url": "/posts/lisp-1.5/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
@@ -450,16 +456,16 @@
     "tags": "unix research-unix v7"
   },
   {
-    "title": "Enabling the DZ in v7",
-    "url": "/posts/enabling-dz-in-research-unix-v7/",
-    "date": "Feb 3, 2022",
-    "tags": "unix research-unix v7"
-  },
-  {
     "title": "ratfor and Kernighan and Plaugers Software Tools",
     "url": "/posts/ratfor-and-kernighan-and-plaugers-software-tools-getting-started-using-v7/",
     "date": "Feb 3, 2022",
     "tags": "unix research-unix v7 ratfor"
+  },
+  {
+    "title": "Enabling the DZ in v7",
+    "url": "/posts/enabling-dz-in-research-unix-v7/",
+    "date": "Feb 3, 2022",
+    "tags": "unix research-unix v7"
   },
   {
     "title": "Installing and Using Research Unix Version 7 in the SIMH PDP-11/45 and 11/70 Emulators 2.0",
@@ -570,12 +576,6 @@
     "tags": "unix"
   },
   {
-    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
-    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
-    "date": "Jul 21, 2020",
-    "tags": "unix freebsd"
-  },
-  {
     "title": "Using a Mac's xterm as a remote Tektronics display for a FreeBSD 12.1 Server",
     "url": "/posts/using-a-macs-xterm-as-a-remote-tektronics-display-for-freebsd-12.1-server/",
     "date": "Jul 21, 2020",
@@ -590,6 +590,12 @@
   {
     "title": "Setting up XDM on FreeBSD 12.1",
     "url": "/posts/setting-up-xdm-on-freebsd-12.1/",
+    "date": "Jul 21, 2020",
+    "tags": "unix freebsd"
+  },
+  {
+    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
+    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
     "date": "Jul 21, 2020",
     "tags": "unix freebsd"
   },
@@ -684,16 +690,16 @@
     "tags": "pdp-11 rt-11"
   },
   {
-    "title": "PDP-11 BASIC, booting the hard way",
-    "url": "/posts/pdp-11-basic-booting-the-hard-way/",
-    "date": "Dec 24, 2015",
-    "tags": "pdp-11 analysis"
-  },
-  {
     "title": "PDP-11 Bootstrap loaders - some analysis",
     "url": "/posts/pdp-11-bootstrap-loaders-some-analysis/",
     "date": "Dec 24, 2015",
     "tags": "pdp-11"
+  },
+  {
+    "title": "PDP-11 BASIC, booting the hard way",
+    "url": "/posts/pdp-11-basic-booting-the-hard-way/",
+    "date": "Dec 24, 2015",
+    "tags": "pdp-11 analysis"
   },
   {
     "title": "Analysis of the PDP-11 bootstrap loader code",
