@@ -44,6 +44,38 @@
 <ul class="post-list">
 
 <li>
+  <span class="post-meta">Sep 16, 2026</span>
+  <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/v6/" class="tag">v6</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/basic/" class="tag">basic</a> <a href="/tags/pdp-11/" class="tag">pdp-11</a> <a href="/tags/opensimh/" class="tag">opensimh</a> <a href="/tags/votrax/" class="tag">votrax</a> 
+  <h3><a class="post-link" href="/posts/v6-basic-with-graphics-and-speak/">V6 Speaks! in OpenSIMH: Reconstructing the Votrax Speech Synthesizer Endpoint.</a></h3>
+  <div class="summary"><h2>Research UNIX V6 speaks again.</h2>
+<p>After getting the old VT01 graphics path working under OpenSIMH, I went back to another piece of Bell Labs hardware support still present in the sources: the Votrax speech interface.</p>
+<p>The path now works end to end:</p>
+<p>Research UNIX V6 <code>speak</code></p>
+<ul>
+<li>historical pronunciation rules</li>
+<li><code>/dev/vs</code></li>
+<li>original V6 Votrax driver behavior</li>
+<li>reconstructed Votrax/SC-01A synthesis</li>
+<li>modern audio output</li>
+</ul>
+<p>The UNIX side remains historical: <code>speak</code> emits its native Votrax byte stream, including the original phoneme numbering and inflection bits, while the simulator handles the hardware realization.</p>
+<p>This is what speaks:</p>
+<pre><code>echo 'all your base are belong to us. Research Unix V6 is speaking aloud
+in 2026' | /bin/speak
+</code></pre>
+<p>Listen:</p>
+<audio controls>
+  <source src="https://decuser.github.io/assets/audio/votrax-v6.wav" type="audio/wav">
+  Your browser does not support the audio element.
+</audio>
+<p>Code, historical sources, reconstruction notes, and tested procedures:</p>
+<p><a href="https://github.com/decuser/v6vtvs">https://github.com/decuser/v6vtvs</a></p>
+<p>It is gloriously mechanical, a little difficult to understand, and very recognizably Votrax.</p>
+<p><em>post added 2026-09-16 14:51:00 -0500</em></p>
+</div>
+</li>
+
+<li>
   <span class="post-meta">Sep 13, 2026</span>
   <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/v6/" class="tag">v6</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/basic/" class="tag">basic</a> <a href="/tags/pdp-11/" class="tag">pdp-11</a> <a href="/tags/opensimh/" class="tag">opensimh</a> <a href="/tags/vt01/" class="tag">vt01</a> 
   <h3><a class="post-link" href="/posts/v6-basic-with-graphics/">V6 BASIC with Graphics! in OpenSIMH: Reconstructing the VT01 Display Path</a></h3>
@@ -140,25 +172,17 @@
 </div>
 </li>
 
-<li>
-  <span class="post-meta">Nov 23, 2015</span>
-  <a href="/tags/unix/" class="tag">unix</a> <a href="/tags/research-unix/" class="tag">research-unix</a> <a href="/tags/v6/" class="tag">v6</a> 
-  <h3><a class="post-link" href="/posts/installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator/">Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emulator</a></h3>
-  <div class="summary"><p>This note is intended to document the process of running v6 in a PDP-11/40 emulated environment. A subsequent note covers [v7]({% post_url 2015-12-07-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.0 %})</p>
-</div>
-</li>
-
 </ul>
 <nav class="pagination">
   
-  page 1 of 1
-  
+  page 1 of 2
+  <a href="/tags/v6/page/2/">older →</a>
 </nav>
 
         </div>
         <aside>
 	  <h3>tags</h3>
-	  <a href="/tags/ai/">ai (2)</a>, <a href="/tags/aiki/">aiki (4)</a>, <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (2)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (2)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/dec/">dec (1)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/education/">education (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lions/">lions (1)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (3)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (8)</a>, <a href="/tags/programming/">programming (4)</a>, <a href="/tags/programming-languages/">programming-languages (4)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (23)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/self-hosting/">self-hosting (1)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/systems/">systems (2)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (52)</a>, <a href="/tags/unix-v6/">unix-v6 (1)</a>, <a href="/tags/v6/">v6 (10)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/vt01/">vt01 (1)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	  <a href="/tags/ai/">ai (2)</a>, <a href="/tags/aiki/">aiki (4)</a>, <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (3)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (2)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/dec/">dec (1)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/education/">education (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lions/">lions (1)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (2)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/opensimh/">opensimh (4)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (8)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (9)</a>, <a href="/tags/programming/">programming (4)</a>, <a href="/tags/programming-languages/">programming-languages (4)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research-unix/">research-unix (24)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/self-hosting/">self-hosting (1)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/systems/">systems (2)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (53)</a>, <a href="/tags/unix-v6/">unix-v6 (1)</a>, <a href="/tags/v6/">v6 (11)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/votrax/">votrax (1)</a>, <a href="/tags/vt01/">vt01 (1)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
 	</aside>
       </div>
     </div>

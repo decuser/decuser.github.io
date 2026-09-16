@@ -1,5 +1,11 @@
 [
   {
+    "title": "V6 Speaks! in OpenSIMH: Reconstructing the Votrax Speech Synthesizer Endpoint.",
+    "url": "/posts/v6-basic-with-graphics-and-speak/",
+    "date": "Sep 16, 2026",
+    "tags": "unix v6 research-unix basic pdp-11 opensimh votrax"
+  },
+  {
     "title": "V6 BASIC with Graphics! in OpenSIMH: Reconstructing the VT01 Display Path",
     "url": "/posts/v6-basic-with-graphics/",
     "date": "Sep 13, 2026",
@@ -78,14 +84,14 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
-    "url": "/posts/bit-by-bit-e8/",
+    "title": "Bit by Bit - E5 - Escape Mode",
+    "url": "/posts/bit-by-bit-e5/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E5 - Escape Mode",
-    "url": "/posts/bit-by-bit-e5/",
+    "title": "Bit by Bit - E8 - Assembly Lines ch 5. More Loops and Paddling Around",
+    "url": "/posts/bit-by-bit-e8/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -156,14 +162,14 @@
     "tags": "unix research-unix v7"
   },
   {
-    "title": "Geometry Explorations",
-    "url": "/posts/geometry-explorations/",
+    "title": "Will's Geometry - A Setting Out.",
+    "url": "/posts/wills-geometry/",
     "date": "Dec 19, 2023",
     "tags": "geometry"
   },
   {
-    "title": "Will's Geometry - A Setting Out.",
-    "url": "/posts/wills-geometry/",
+    "title": "Geometry Explorations",
+    "url": "/posts/geometry-explorations/",
     "date": "Dec 19, 2023",
     "tags": "geometry"
   },
@@ -186,12 +192,6 @@
     "tags": "lisp"
   },
   {
-    "title": "LISP 1.5 running on an emulated IBM 7094",
-    "url": "/posts/lisp-1.5/",
-    "date": "Jul 24, 2023",
-    "tags": "lisp"
-  },
-  {
     "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
     "url": "/posts/pike-lisp-1.5-in-go/",
     "date": "Jul 24, 2023",
@@ -200,6 +200,12 @@
   {
     "title": "Schemes, LISPs, and Lambda",
     "url": "/posts/lisp-explorations/",
+    "date": "Jul 24, 2023",
+    "tags": "lisp"
+  },
+  {
+    "title": "LISP 1.5 running on an emulated IBM 7094",
+    "url": "/posts/lisp-1.5/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
@@ -270,14 +276,14 @@
     "tags": "operating-systems truenas-core fossil"
   },
   {
-    "title": "Sculpt 22.10 - A Truly Alternative OS",
-    "url": "/posts/sculpt-os-22.10-a-truly-alternative-os/",
+    "title": "Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop",
+    "url": "/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/",
     "date": "Dec 30, 2022",
     "tags": "operating-systems genode sculpt"
   },
   {
-    "title": "Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop",
-    "url": "/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/",
+    "title": "Sculpt 22.10 - A Truly Alternative OS",
+    "url": "/posts/sculpt-os-22.10-a-truly-alternative-os/",
     "date": "Dec 30, 2022",
     "tags": "operating-systems genode sculpt"
   },
