@@ -15,11 +15,11 @@ The project has a shared Free Pascal core, a command-line interface, and a Lazar
 
 The GUI, with its timeline and historical file browser:
 
-![Git Time Machine graphical interface](/assets/img/gtm/gtm-gui.png)
+![Git Time Machine graphical interface](/assets/img/git-time-machine/gtm-gui.png)
 
 And the terminal interface:
 
-![Git Time Machine terminal interface](/assets/img/gtm/gtm-tui.png)
+![Git Time Machine terminal interface](/assets/img/git-time-machine/gtm-tui.png)
 
 One part of the experiment is exposing a selected snapshot as a read-only filesystem through FUSE. The interesting thing is that the files are not restored into a checkout: the historical view is supplied on demand from Git objects.
 

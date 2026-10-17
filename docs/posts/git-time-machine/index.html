@@ -52,9 +52,9 @@
 <p>Pick a repository, a branch, and a moment. GTM finds the corresponding historical snapshot. From there you can browse files, inspect their histories, compare versions, and extract an older file without disturbing your working tree.</p>
 <p>The project has a shared Free Pascal core, a command-line interface, and a Lazarus GUI. There is also a terminal interface, because sometimes a terminal is exactly the right place to be.</p>
 <p>The GUI, with its timeline and historical file browser:</p>
-<p><img src="/assets/img/gtm/gtm-gui.png" alt="Git Time Machine graphical interface"></p>
+<p><img src="/assets/img/git-time-machine/gtm-gui.png" alt="Git Time Machine graphical interface"></p>
 <p>And the terminal interface:</p>
-<p><img src="/assets/img/gtm/gtm-tui.png" alt="Git Time Machine terminal interface"></p>
+<p><img src="/assets/img/git-time-machine/gtm-tui.png" alt="Git Time Machine terminal interface"></p>
 <p>One part of the experiment is exposing a selected snapshot as a read-only filesystem through FUSE. The interesting thing is that the files are not restored into a checkout: the historical view is supplied on demand from Git objects.</p>
 <p>GTM is still development software. There are rough edges, particularly around navigating large histories and presenting branches, forks, and merges clearly. But the central idea is working well enough to use while developing other projects.</p>
 <p>Source and development baseline:</p>
