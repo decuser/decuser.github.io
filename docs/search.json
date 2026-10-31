@@ -1,5 +1,11 @@
 [
   {
+    "title": "Research, Publications, and CV",
+    "url": "/posts/research-page-and-cv/",
+    "date": "Oct 30, 2026",
+    "tags": "research publications information-science academic"
+  },
+  {
     "title": "Nezha: Aiki's Smaller, Tougher Sibling.",
     "url": "/posts/nezha-aikis-smaller-tougher-sibling/",
     "date": "Oct 17, 2026",
@@ -66,21 +72,27 @@
     "tags": "unix research-unix v6"
   },
   {
-    "title": "Migrating from Jekyll to a custom static site generator",
-    "url": "/posts/ssg/",
-    "date": "Jan 25, 2026",
-    "tags": "go tools github-pages"
-  },
-  {
     "title": "dex - directory comparison tool in Go",
     "url": "/posts/dex/",
     "date": "Jan 25, 2026",
     "tags": "tools go"
   },
   {
+    "title": "Migrating from Jekyll to a custom static site generator",
+    "url": "/posts/ssg/",
+    "date": "Jan 25, 2026",
+    "tags": "go tools github-pages"
+  },
+  {
     "title": "Bit by Bit - E10.1 - Assembly Lines ch. 7 - addressing modes",
     "url": "/posts/bit-by-bit-e10.1/",
     "date": "Nov 3, 2025",
+    "tags": "retro assembly videos"
+  },
+  {
+    "title": "Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard",
+    "url": "/posts/bit-by-bit-e9.1/",
+    "date": "Oct 20, 2025",
     "tags": "retro assembly videos"
   },
   {
@@ -90,9 +102,9 @@
     "tags": "retro assembly videos"
   },
   {
-    "title": "Bit by Bit - E9.1 - Assembly Lines ch. 6 - I/O Using the Monitor and Keyboard",
-    "url": "/posts/bit-by-bit-e9.1/",
-    "date": "Oct 20, 2025",
+    "title": "Bit by Bit - E5 - Escape Mode",
+    "url": "/posts/bit-by-bit-e5/",
+    "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
   {
@@ -110,12 +122,6 @@
   {
     "title": "Bit by Bit - E6 - Bits in Bits Out",
     "url": "/posts/bit-by-bit-e6/",
-    "date": "Oct 18, 2025",
-    "tags": "retro assembly videos"
-  },
-  {
-    "title": "Bit by Bit - E5 - Escape Mode",
-    "url": "/posts/bit-by-bit-e5/",
     "date": "Oct 18, 2025",
     "tags": "retro assembly videos"
   },
@@ -174,14 +180,14 @@
     "tags": "unix research-unix v7"
   },
   {
-    "title": "Will's Geometry - A Setting Out.",
-    "url": "/posts/wills-geometry/",
+    "title": "Geometry Explorations",
+    "url": "/posts/geometry-explorations/",
     "date": "Dec 19, 2023",
     "tags": "geometry"
   },
   {
-    "title": "Geometry Explorations",
-    "url": "/posts/geometry-explorations/",
+    "title": "Will's Geometry - A Setting Out.",
+    "url": "/posts/wills-geometry/",
     "date": "Dec 19, 2023",
     "tags": "geometry"
   },
@@ -204,14 +210,14 @@
     "tags": "lisp"
   },
   {
-    "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
-    "url": "/posts/pike-lisp-1.5-in-go/",
+    "title": "Schemes, LISPs, and Lambda",
+    "url": "/posts/lisp-explorations/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
   {
-    "title": "Schemes, LISPs, and Lambda",
-    "url": "/posts/lisp-explorations/",
+    "title": "Rob Pike's LISP 1.5 in Go running on Debian 12",
+    "url": "/posts/pike-lisp-1.5-in-go/",
     "date": "Jul 24, 2023",
     "tags": "lisp"
   },
@@ -258,10 +264,10 @@
     "tags": "operating-systems mojave x-windows"
   },
   {
-    "title": "Site Update for Monday, January 23, 2023",
-    "url": "/posts/site-update/",
+    "title": "Merging binary files in Fossil - to do or not to do?",
+    "url": "/posts/fossil-merging-binary-files/",
     "date": "Jan 23, 2023",
-    "tags": "general"
+    "tags": "fossil merging"
   },
   {
     "title": "Enabling Mermaid in Jekyll without a Plugin",
@@ -270,10 +276,10 @@
     "tags": "github jekyll mermaid"
   },
   {
-    "title": "Merging binary files in Fossil - to do or not to do?",
-    "url": "/posts/fossil-merging-binary-files/",
+    "title": "Site Update for Monday, January 23, 2023",
+    "url": "/posts/site-update/",
     "date": "Jan 23, 2023",
-    "tags": "fossil merging"
+    "tags": "general"
   },
   {
     "title": "Installing and running DragonFly BSD 6.4",
@@ -306,16 +312,16 @@
     "tags": "operating-systems genode sculpt"
   },
   {
-    "title": "Warren Toomey Awarded 2022 USENIX Flame",
-    "url": "/posts/usenix-flame-award-2022/",
-    "date": "Dec 15, 2022",
-    "tags": "unix"
-  },
-  {
     "title": "dircmp.py - a plan to improve and extend",
     "url": "/posts/dircmp.py-improvements/",
     "date": "Dec 15, 2022",
     "tags": "unix python"
+  },
+  {
+    "title": "Warren Toomey Awarded 2022 USENIX Flame",
+    "url": "/posts/usenix-flame-award-2022/",
+    "date": "Dec 15, 2022",
+    "tags": "unix"
   },
   {
     "title": "Site Update for Thursday, December 8, 2022",
@@ -408,16 +414,16 @@
     "tags": "electronics theory videos"
   },
   {
-    "title": "Nyquist what?! Gobsmacked by Sampling Frequency",
-    "url": "/posts/nyquist-what-gobsmacked-by-sampling-frequency/",
-    "date": "Jun 9, 2022",
-    "tags": "electronics theory"
-  },
-  {
     "title": "Using an el-cheapo logic analyser to detect address bus activity",
     "url": "/posts/using-an-el-cheapo-logic-analyzer-to-detect-address-bus-activity/",
     "date": "Jun 9, 2022",
     "tags": "electronics analysis"
+  },
+  {
+    "title": "Nyquist what?! Gobsmacked by Sampling Frequency",
+    "url": "/posts/nyquist-what-gobsmacked-by-sampling-frequency/",
+    "date": "Jun 9, 2022",
+    "tags": "electronics theory"
   },
   {
     "title": "PAL-1 Loading MOS Paper Tape to RAM",
@@ -594,12 +600,6 @@
     "tags": "unix"
   },
   {
-    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
-    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
-    "date": "Jul 21, 2020",
-    "tags": "unix freebsd"
-  },
-  {
     "title": "Using a Mac's xterm as a remote Tektronics display for a FreeBSD 12.1 Server",
     "url": "/posts/using-a-macs-xterm-as-a-remote-tektronics-display-for-freebsd-12.1-server/",
     "date": "Jul 21, 2020",
@@ -614,6 +614,12 @@
   {
     "title": "Setting up XDM on FreeBSD 12.1",
     "url": "/posts/setting-up-xdm-on-freebsd-12.1/",
+    "date": "Jul 21, 2020",
+    "tags": "unix freebsd"
+  },
+  {
+    "title": "How to Monitor Battery Life and Sleep on FreeBSD 12.1",
+    "url": "/posts/how-to-monitor-battery-life-and-sleep-non-ui-freebsd-12.1/",
     "date": "Jul 21, 2020",
     "tags": "unix freebsd"
   },
@@ -708,16 +714,16 @@
     "tags": "pdp-11 rt-11"
   },
   {
-    "title": "PDP-11 BASIC, booting the hard way",
-    "url": "/posts/pdp-11-basic-booting-the-hard-way/",
-    "date": "Dec 24, 2015",
-    "tags": "pdp-11 analysis"
-  },
-  {
     "title": "PDP-11 Bootstrap loaders - some analysis",
     "url": "/posts/pdp-11-bootstrap-loaders-some-analysis/",
     "date": "Dec 24, 2015",
     "tags": "pdp-11"
+  },
+  {
+    "title": "PDP-11 BASIC, booting the hard way",
+    "url": "/posts/pdp-11-basic-booting-the-hard-way/",
+    "date": "Dec 24, 2015",
+    "tags": "pdp-11 analysis"
   },
   {
     "title": "Analysis of the PDP-11 bootstrap loader code",

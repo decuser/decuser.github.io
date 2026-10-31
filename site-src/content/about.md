@@ -7,3 +7,5 @@ I have benefitted enormously from the information others have posted and think i
 Enjoy.
 
 \- will
+
+My academic publications are listed on the [research page](/research/).
