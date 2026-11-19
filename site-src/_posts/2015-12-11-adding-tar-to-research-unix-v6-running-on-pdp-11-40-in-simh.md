@@ -1,6 +1,6 @@
 ---
 title:	Adding tar to Research Unix Version 6 Running on a PDP 11/40 in SimH
-tags: unix research-unix v6
+tags: unix research-unix v6 emulators
 ---
 This note explains an approach to getting a working version of tar running on Research Unix Version 6 (v6) running in a SimH PDP-11/40 Simulator.
 
@@ -12,8 +12,8 @@ NOTE: After working at this for a bit, it is clear to me that while this is work
 
 You need to have a working v6 and v7 instance. If that is not the case, get them running by follow the instructions located at:
 
-* [Version 6]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %})
-* [Version 7]({% post_url 2015-12-07-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.0 %})
+* [Version 6](/posts/installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator/)
+* [Version 7](/posts/installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.0/)
 
 You will need to have the document [https://www.tuhs.org/Archive/Documentation/PUPS/Setup/v7_setup.html](https://www.tuhs.org/Archive/Documentation/PUPS/Setup/v7_setup.html) by Charles Haley and Dennis Ritchie close at hand.
 

@@ -1,6 +1,6 @@
 ---
 title:	PAL-1 Getting Started
-tags: retro-computing pal-1
+tags: 6502 kim-1 pal-1 retro-computing
 ---
 
 This is a note on how to get and get started using a PAL-1. The PAL-1 is a replica of the KIM-1, an old-school 6502 trainer, from back in the day.

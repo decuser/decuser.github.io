@@ -1,6 +1,6 @@
 ---
 title:	Linux Mint Note
-tags: unix linux mint
+tags: linux os
 ---
 A note with fixes for issues arising with the use of linux mint.
 <!--more-->

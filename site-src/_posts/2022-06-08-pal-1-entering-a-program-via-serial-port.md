@@ -1,6 +1,6 @@
 ---
 title:	PAL-1 Entering a Program via Serial Port
-tags: retro-computing pal-1
+tags: 6502 kim-1 pal-1 retro-computing
 ---
 Note describing a minimalist example of how to input via serial and run a program on the PAL-1.
 

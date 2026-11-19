@@ -1,10 +1,10 @@
 ---
 title:	Quick Setup RT-11v5.3 (Mac/Linux)
-tags: pdp-11 rt-11 macro-11s
+tags: dec pdp-11 rt-11 assembly mac
 ---
 A quick start note for getting up and running with RT-11v5.3 on PDP-11 with little to no fuss.
 
-see [Tutorial - Setting up RT-11 v5.3 on SimH PDP-11 (Dec 30, 2015)]({% post_url 2015-12-30-tutorial-setting-up-rt-11-v5.3-on-simh-pdp-11 %}) for a more verbose version.
+see [Tutorial - Setting up RT-11 v5.3 on SimH PDP-11 (Dec 30, 2015)](/posts/tutorial-setting-up-rt-11-v5.3-on-simh-pdp-11/) for a more verbose version.
 <!--more-->
 
 ## The Minimalist Version

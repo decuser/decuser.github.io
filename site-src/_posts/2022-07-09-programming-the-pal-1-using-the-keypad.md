@@ -1,6 +1,6 @@
 ---
 title:	Programming the PAL-1 Using the Keypad
-tags: retro-computing pal-1 videos
+tags: 6502 kim-1 pal-1 retro-computing
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/d_ZxbORWSU8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

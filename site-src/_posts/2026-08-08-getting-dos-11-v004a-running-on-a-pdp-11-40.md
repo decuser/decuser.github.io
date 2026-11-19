@@ -1,6 +1,6 @@
 ---
 title: Getting DOS-11 V004A Running on a PDP-11/40
-tags: unix research-unix v6 dec
+tags: os dec pdp-11 emulators retro-computing
 ---
 
 # Getting DOS-11 V004A Running on a PDP-11/40

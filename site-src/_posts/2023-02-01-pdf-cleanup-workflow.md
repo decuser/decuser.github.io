@@ -1,6 +1,6 @@
 ---
 title:  "A Modern PDF Cleanup Workflow"
-tags: pdfs
+tags: tools
 ---
 
 This note provides a workflow for taking a less than optimized PDF and optimizing it for viewing and printing. It isn't a cure-all for sick PDF's, but it does work for a lot of them. I've struggled with badly scanned PDF's for a long time and this workflow represents my current best approach.

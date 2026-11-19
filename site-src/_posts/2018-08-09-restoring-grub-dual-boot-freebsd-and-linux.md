@@ -1,6 +1,6 @@
 ---
 title:	Restoring Grub - dual boot FreeBSD and Linux
-tags: unix
+tags: bsd linux os
 ---
 Note describing how to restore the grub bootloader after it is catastrophically removed. Please note that it may be specific to my setup:
 <!--more-->

@@ -1,6 +1,6 @@
 ---
 title:	Setting up XDM on FreeBSD 12.1
-tags: unix freebsd
+tags: bsd os
 ---
 A note about how I I got XDM working on my Thinkpad T430 in 2020. It's not difficult, but it's not common anymore.
 

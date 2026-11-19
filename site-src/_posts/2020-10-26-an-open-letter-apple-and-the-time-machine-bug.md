@@ -1,6 +1,6 @@
 ---
 title:	An Open Letter to Apple and the Time Machine Bug
-tags: unix macos
+tags: os mac
 ---
 Dear Apple,
 

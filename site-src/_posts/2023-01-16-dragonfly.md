@@ -1,6 +1,6 @@
 ---
 title:  "Installing and running DragonFly BSD 6.4"
-tags: operating-systems bsd dragonfly-bsd
+tags: bsd os
 ---
 This note is about installing and running DragonFly BSD 6.4
 

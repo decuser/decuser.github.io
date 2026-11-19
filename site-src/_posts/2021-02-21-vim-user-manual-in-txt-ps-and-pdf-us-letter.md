@@ -1,6 +1,6 @@
 ---
 title:	Vim User Manual in txt and ps and pdf us-letter
-tags: unix vim
+tags: unix tools
 ---
 This note describes how to create a pdf (and ps, and txt) version of the latest Vim documentation. I got sick of trying to find a useable and current pdf on the web, so I just figured out how to do it from source and am posting the howto for others who might come after.
 

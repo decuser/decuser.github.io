@@ -1,6 +1,6 @@
 ---
 title: Installing and Using Unix V6 in the Open SIMH PDP-11 Emulator
-tags: unix research-unix v6
+tags: unix research-unix v6 dec pdp-11
 ---
 This note details the process of building a working v6 instance from a copy of the original tape distribution. The v6 instance runs in a virtual PDP-11/40 provided by OpenSIMH, a masterwork emulator.
 

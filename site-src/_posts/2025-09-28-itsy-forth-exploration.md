@@ -1,6 +1,6 @@
 ---
 title:  Exploring Itsy Forth
-tags: forth
+tags: programming
 ---
 
 

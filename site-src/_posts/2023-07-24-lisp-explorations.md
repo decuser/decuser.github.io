@@ -1,6 +1,6 @@
 ---
 title:	Schemes, LISPs, and Lambda
-tags: LISP
+tags: lisp
 ---
 This note sets up a series of related notes pertaining to my explorations in LISP and Scheme. I began to be interested in functional programming a few years ago and started looking around to find resources to learn it... in my limited spare time. After finding some resources, I would study it, set it aside as too esoteric, pick it up again thinking - this is it, I'm going to master this one way or another, only to set it aside as frustratingly difficult to understand and lacking in applicability. Lately though, I have found some standout resources and worked through enough of them to begin to actually get my mind wrapped around functional programming. Below you will find a brief, informal annotated bibliography of sorts and an explanation of what's coming in the further explorations into implementations.
 

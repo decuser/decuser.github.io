@@ -1,6 +1,6 @@
 ---
 title:  "UCB STk Scheme Interpreter for Working Through Brian Harvey's CS61A Course"
-tags: development scheme ucb-stk
+tags: lisp programming
 ---
 
 This note describes how to install the UCB STk 4.0.1 Scheme interpreter on modern 64 bit Debian based systems. It also describes a method of building the Debian Package used to install the program. This is the version of scheme used by Brian Harvey in his 2011 course, CS61A: Structure and Interpretation of Computer Programs, named after and using famed text, Structure and Interpretation of Computer Programs by Harold Abelson and Gerald Jay Sussman with Julie Sussman, a phenomenally good computer science textbook.

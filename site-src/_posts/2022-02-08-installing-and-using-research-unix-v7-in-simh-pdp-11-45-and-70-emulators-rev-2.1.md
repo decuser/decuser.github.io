@@ -1,6 +1,6 @@
 ---
 title:	Installing and Using Research Unix Version 7 in the SIMH PDP-11/45 and 11/70 Emulators 2.1
-tags: unix research-unix v7
+tags: unix research-unix v7 emulators
 ---
 It covers building a working v7 instance from tape files that will run on the SimH emulator. First, the reader will be led through the restoration of a pristine v7 instance from tape to disk. Next, the reader will be led through adding a regular user, making the system multi-user capable. Then, the reader will be shown how to make the system multi-session cable allowing multiple simultaneous sessions. Finally, the system will be put to use with hello world, DMR style, and the learn system will be enabled. 
 

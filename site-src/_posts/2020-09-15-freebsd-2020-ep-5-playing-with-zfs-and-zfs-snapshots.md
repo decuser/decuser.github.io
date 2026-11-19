@@ -1,6 +1,6 @@
 ---
 title:	freebsd 2020 ep 5 playing with zfs and zfs snapshots
-tags: unix freebsd videos
+tags: bsd os
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/OLm_d4b15tc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

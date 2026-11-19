@@ -1,6 +1,6 @@
 ---
 title:	model-100-bibliography
-tags: retro-computing m100
+tags: m100 retro-computing
 ---
 A list of known Tandy TRS-80 Model 100 books and articles, with links. My faves are in bold.
 

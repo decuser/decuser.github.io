@@ -1,6 +1,6 @@
 ---
 title:	Analysis of the PDP-11 bootstrap loader code
-tags: pdp-11 analysis
+tags: dec pdp-11
 ---
 This note describes, in detail, how the bootstrap loader code operates. While it is only 14 words, it is not trivial to understand. The bootstrap loader is self-modifying code
 

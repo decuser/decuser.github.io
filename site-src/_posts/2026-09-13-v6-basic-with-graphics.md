@@ -1,6 +1,6 @@
 ---
 title: "V6 BASIC with Graphics! in OpenSIMH: Reconstructing the VT01 Display Path"
-tags: [unix v6 research-unix basic pdp-11 opensimh vt01]
+tags: unix research-unix v6 dec pdp-11
 ---
 
 Today's post is a dive into getting this:

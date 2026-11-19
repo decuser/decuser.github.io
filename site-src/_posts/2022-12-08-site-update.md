@@ -1,6 +1,6 @@
 ---
 title:  "Site Update for Thursday, December 8, 2022"
-tags: general
+tags: 
 ---
 
 The Blog is completely migrated! It's good to be over that google blog experience. Too little control. It's like I stopped having to take lyft and got my own car with a free parking pass.

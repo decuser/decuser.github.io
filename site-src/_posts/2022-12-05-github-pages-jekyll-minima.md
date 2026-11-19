@@ -1,6 +1,6 @@
 ---
 title:	Creating a github pages jekyll minima themed site with pagination
-tags: github-pages jekyll minima
+tags: tools
 ---
 
 A note about creating a github pages jekyll minima themed blog site and about adding pagination after the fact. This note captures what I learned when I created this blog.

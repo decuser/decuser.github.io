@@ -1,6 +1,6 @@
 ---
 title:	PAL-1 A KIM-1 replica
-tags: retro-computing pal-1
+tags: 6502 kim-1 pal-1 retro-computing
 ---
 A post about my very own working PAL-1. It's definitely up and running.
 

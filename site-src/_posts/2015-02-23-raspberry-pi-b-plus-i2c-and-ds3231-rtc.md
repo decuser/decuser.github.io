@@ -1,6 +1,6 @@
 ---
 title:	Raspberry Pi B+, i2c, and DS3231 RTC
-tags: hardware raspberry-pi
+tags: electronics
 ---
 Here are some notes on how to get your pi talking to a cheapo DS3231 Realtime clock using nothing more than a pi, an ethernet cable (for downloads), a serial cable, and an RTC.
 

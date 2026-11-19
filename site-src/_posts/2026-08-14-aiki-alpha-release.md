@@ -1,7 +1,7 @@
 ---
 
 title:	Aiki: First Public Alpha
-tags: aiki programming-languages ai education
+tags: aiki programming
 ---
 
 I've put the first public alpha of Aiki on GitHub.

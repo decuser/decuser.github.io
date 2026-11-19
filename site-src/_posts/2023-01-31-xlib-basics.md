@@ -1,6 +1,6 @@
 ---
 title:  "Xlib basics"
-tags: development x-windows xlib
+tags: programming
 ---
 
 This note explores the basics of Xlib. It covers enough to open a window, configure it, display a message, respond to some events, and close it gracefully - see figure 1 for a hint at what this will look like.

@@ -1,6 +1,6 @@
 ---
 title: Setting Up UNIX—Sixth Edition: An OpenSIMH Laboratory for Reading Lions
-tags: unix research-unix v6
+tags: unix research-unix v6 emulators
 ---
 
 This note covers building a complete, restorable Sixth Edition UNIX laboratory in OpenSIMH for reading John Lions’ *A Commentary on the UNIX Operating System*. First, the reader is led through restoring the original V6 distribution from tape to RK05 disk images. Next, the kernel is reconfigured and rebuilt for the PDP-11/40 and the simulated devices used in the laboratory. The remaining source and documentation filesystems are then installed, the required special files are created, and the completed system is verified and archived as a restorable baseline.

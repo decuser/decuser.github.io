@@ -1,6 +1,6 @@
 ---
 title:	hello, world - A primitive view of the state of the art
-tags: programming c#
+tags: programming
 ---
 An article I wrote back in the day (2004-04-30) and published on [CodeProject](https://www.codeproject.com/). The article is rated 4.67 and has been viewed more than 161k times as of October 21, 2025. Codeproject is no longer active. The links below refer to wayback's archived version.
 

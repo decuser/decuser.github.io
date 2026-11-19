@@ -1,6 +1,6 @@
 ---
 title: "Research, Publications, and CV"
-tags: [research publications information-science academic]
+tags: research
 ---
 
 ## A home for the research.

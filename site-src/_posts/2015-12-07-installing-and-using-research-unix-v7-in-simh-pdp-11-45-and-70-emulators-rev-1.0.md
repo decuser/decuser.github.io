@@ -1,8 +1,8 @@
 ---
 title:	Installing and Using Research Unix Version 7 in SimH PDP-11/45 Emulator
-tags: unix research-unix v7
+tags: unix research-unix v7 emulators
 ---
-This note is intended to document the process of running v7 in a PDP-11/45 emulated environment. A previous note covers [v6]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %}) originally posted November 23, 2015 and there is a more recent note covering [v7]({% post_url 2017-10-11-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.6 %}).
+This note is intended to document the process of running v7 in a PDP-11/45 emulated environment. A previous note covers [v6](/posts/installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator/) originally posted November 23, 2015 and there is a more recent note covering [v7](/posts/installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.6/).
 
 <!--more-->
 
@@ -18,7 +18,7 @@ Helpful Reference Sites:
 * Warren Toomey's work on restoration and archiving: [http://minnie.tuhs.org/](http://minnie.tuhs.org/)
 
 
-This note follows the approach laid out in the previous blog entry, [Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emulator]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %}). It is written for anyone wishing to bring a v7 instance into life on modern hardware. It does not delve deeply into administrative details or installing additional software. At the end of the exercise, the reader will have enough knowledge at hand to bring a working system up and to explore it.
+This note follows the approach laid out in the previous blog entry, [Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emulator](/posts/installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator/). It is written for anyone wishing to bring a v7 instance into life on modern hardware. It does not delve deeply into administrative details or installing additional software. At the end of the exercise, the reader will have enough knowledge at hand to bring a working system up and to explore it.
 
 As alluded to in the previous entry, the so-called original bits that will be used are binary copies of original tapes that folks have donated to The Unix Heritage Society, TUHS. They are available to the public.
 

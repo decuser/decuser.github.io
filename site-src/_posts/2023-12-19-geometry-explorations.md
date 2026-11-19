@@ -1,6 +1,6 @@
 ---
 title:	Geometry Explorations
-tags: GEOMETRY
+tags: math
 ---
 This note sets up a series of related notes pertaining to my explorations in Geometry and by extension, Maths.
 

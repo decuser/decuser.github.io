@@ -1,6 +1,6 @@
 ---
 title:	Installing and Using Research Unix Version 7 in the SIMH PDP-11/45 and 11/70 Emulators 2.0
-tags: unix research-unix v7
+tags: unix research-unix v7 emulators
 ---
 This is a completely reorganized, updated, and edited version of the document. It includes the following sections:
 

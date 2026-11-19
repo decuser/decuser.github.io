@@ -1,6 +1,6 @@
 ---
 title:  "Building Sculpt 22.10 on Debian 11.6 Bullseye"
-tags: operating-systems genode sculpt
+tags: os genode
 ---
 This note is about building a bootable Sculpt OS 22.10 image using a Debian 11 "Bullseye" Guest OS running in VirtualBox. This is useful as a starting point for building a custom image. My Thinkpad T430 runs Sculpt just fine, but wifi doesn't work, so I would like to add the needed firmware. This is work in that direction.
 

@@ -1,6 +1,6 @@
 ---
 title:	PAL-1 Entering a Program at the Keypad
-tags: retro-computing pal-1
+tags: 6502 kim-1 pal-1 retro-computing
 ---
 Note describing a minimalist example of how to input and run a program on the PAL-1.
 

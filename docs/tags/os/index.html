@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6K8M1G32XP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-6K8M1G32XP');
+  </script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>os - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate"
+      type="application/rss+xml"
+      title="DECUSER RSS Feed"
+      href="/feed.xml">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+        <a href="/research/">research</a>
+	<a href="/feed.xml">RSS</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<h1 class="page-heading">os</h1>
+<ul class="post-list">
+
+<li>
+  <span class="post-meta">Aug 8, 2026</span>
+  <a href="/tags/os/" class="tag">os</a> <a href="/tags/dec/" class="tag">dec</a> <a href="/tags/pdp-11/" class="tag">pdp-11</a> <a href="/tags/emulators/" class="tag">emulators</a> <a href="/tags/retro-computing/" class="tag">retro-computing</a> 
+  <h3><a class="post-link" href="/posts/getting-dos-11-v004a-running-on-a-pdp-11-40/">Getting DOS-11 V004A Running on a PDP-11/40</a></h3>
+  <div class="summary"><h1>Getting DOS-11 V004A Running on a PDP-11/40</h1>
+<p>I did not set out to install DOS-11.</p>
+<p>I have been working with Sixth Edition UNIX on a simulated PDP-11/40, partly to understand the system itself and partly to get closer to the environment described by Lions. That inevitably led downward. Reading the V6 source means reading PDP-11 assembly, and reading PDP-11 assembly means spending some time with the tools and conventions that existed around the machine before and alongside UNIX.</p>
+<p>That led me to PAL-11R, DEC's relocatable assembler for the PDP-11, and from there to DOS-11.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Sep 23, 2024</span>
+  <a href="/tags/linux/" class="tag">linux</a> <a href="/tags/os/" class="tag">os</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/github-actions/">github actions - seriously?</a></h3>
+  <div class="summary"><p>This post is not a particularly informative one, but when I tried to switch to github actions for publishing the blog, uh, it went poorly.</p>
+<p>Maybe I'll try again later, but for the time being - sticking with publish a branch.</p>
+<p>If you're lost reading this, no worries. It's github speak for if it ain't broke, don't fix it :).</p>
+<p><em>post added 2024-09-23 19:12:00 -0600</em></p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Feb 22, 2023</span>
+  <a href="/tags/linux/" class="tag">linux</a> <a href="/tags/os/" class="tag">os</a> <a href="/tags/programming/" class="tag">programming</a> 
+  <h3><a class="post-link" href="/posts/slackware-15-t430-x-windows/">Setting up Slackware 15 on T430 for X Window Programming</a></h3>
+  <div class="summary"><p>The note walks through the process of installing and configuring a working Slackware 15 64 instance with the packages mirrored locally for ease of access and eliminating the need to be online as much. When the system is up and running it provides xdm services to nearby hosts (those on the local network). This makes running and testing x window clients simpler and more interesting. You may notice that the note references other environments that you may not have or want to use (MacOS Mojave and FreeBSD 13.1). Just ignore those references as they are not strictly required.</p>
+<p>I chose Slackware 15 64 as the environment after trying out various flavors of Debian, Arch, Kwort and others. While these worked ok, they did not provide much of a clean, vanilla x experience. Slackware, on the other hand, provided a sane, simple, and understandable x environment that was pretty vanilla :). It feels really good to get back to Slackware and its simplicity. I don't have a gazillion processes running doing who knows what, the laptop sleeps without crazy interventions, and stuff works well. That said, Slackware is not for the faint of heart. You should be somewhat familiar with Linux and it's command line interface and be willing to do your own research before jumping into it.</p>
+<p><img src="/assets/img/t430/02.png" alt="two"></p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 24, 2023</span>
+  <a href="/tags/os/" class="tag">os</a> <a href="/tags/mac/" class="tag">mac</a> <a href="/tags/programming/" class="tag">programming</a> 
+  <h3><a class="post-link" href="/posts/x-windows-dev-on-mac/">Setting up for X-Windows Development on MacOS</a></h3>
+  <div class="summary"><p>This note describes setting up a development environment for doing X Windows Development on Mac OS from the ground up. The notes do apply to other environments... with minor tweaks (I tried the same basic setup on Debian Linux, DragonFly BSD, and FreeBSD with no major issues).</p>
+<p>This is enough setup to build applications in X Windows using Xlib - the lowest level of programming in X... other than the X Protocol :). I did this because I have developed an interest in how graphical interfaces work and X, for all its quirks, is not self-limiting, crippled, partially proprietary or any of that nonsense and it is widely used.</p>
+<p>After setting up, downloading some source, building and deploying, here's what we're looking at... on a Mac:</p>
+<p><img src="/assets/img/xwindows/01-small.jpeg" alt="one"></p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 16, 2023</span>
+  <a href="/tags/bsd/" class="tag">bsd</a> <a href="/tags/os/" class="tag">os</a> 
+  <h3><a class="post-link" href="/posts/dragonfly/">Installing and running DragonFly BSD 6.4</a></h3>
+  <div class="summary"><p>This note is about installing and running DragonFly BSD 6.4</p>
+<p><img src="/assets/img/dragonfly/01.jpeg" alt="one"></p>
+<p>DragonFly BSD from <a href="https://dragonflybsd.org">https://dragonflybsd.org</a> is a BSD :). As such, it is a rock and the userland is sane. It was forked from FreeBSD long ago and is renowned for its HAMMER FS. I started the exploration with the intention of learning more about HAMMER and have enjoyed the journey.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 7, 2023</span>
+  <a href="/tags/bsd/" class="tag">bsd</a> <a href="/tags/os/" class="tag">os</a> <a href="/tags/version-control/" class="tag">version-control</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/fossil-on-truenas/">Installing and running Fossil on TrueNAS Core</a></h3>
+  <div class="summary"><p>This note is about installing and running Fossil SCM on TrueNAS Core.</p>
+<p>Fossil is brought to us by the same people who developed SQLite. It was created to serve their needs, but is useful to everybody with a similar set of needs (pretty much any dev team). According to the fossil folks over at <a href="https://fossil-scm.org">https://fossil-scm.org</a>, &quot;Fossil is a simple, high-reliability, distributed software configuration management system...&quot; To mme, it's my git-killer.</p>
+<p>I have been running Fossil for about a year to see if it was worth replacing git for my own use. After this year, while I still like git and I will continue to use it for disposable repos, I have completely jumped ship for my own repos and won't be going back to hosting them on anything else anytime soon. Fossil is very lightweight, fast and responsive, has a fantastic server side ui, and is slightly more intuitive to use. It is also easier to recover from when things go wonky.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Dec 30, 2022</span>
+  <a href="/tags/os/" class="tag">os</a> <a href="/tags/genode/" class="tag">genode</a> 
+  <h3><a class="post-link" href="/posts/sculpt-os-22.10-a-truly-alternative-os/">Sculpt 22.10 - A Truly Alternative OS</a></h3>
+  <div class="summary"><p>This note is about installing and running Sculpt OS 22.10 in VirtualBox.</p>
+<p>SculptOS is an operating system built out of components provided by the Genode Operating System Framework and as such it qualifies as a truly alternative operating system. These days, that's quite a feat. Most 'alternatives' are linux distros or flavors. This OS runs on a microkernel - Nova or any one of several other choices. It is decidedly not unix, windows, linux, haiku, beos, os/2 or any other mainstream os.</p>
+<p>Sculpt OS is made so that it is relatively straightforward, if not easy, to provide a secure computing environment where applications and services are built on a Trusted Computing Base... that is an application is provisioned explicitly to depend on a tree of components that are known to be trustworthy, and are sandboxed. It is similar in some ways to Qubes OS, but significantly different in others.</p>
+<p>The learning curve is steep. So, as I explore the environment and learn more about it, I'll post more of these notes.</p>
+<p>Here's the OS running stuff.</p>
+<p><img src="/assets/img/genode/42.png" alt="fortytwo">{: width=&quot;560&quot; }</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Dec 30, 2022</span>
+  <a href="/tags/os/" class="tag">os</a> <a href="/tags/genode/" class="tag">genode</a> 
+  <h3><a class="post-link" href="/posts/building-sculpt-22.10-on-debian-11.6-no-desktop/">Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop</a></h3>
+  <div class="summary"><p>Sheesh, live and learn. I didn't pay any attention to system requirements in the prior note <a href="/posts/building-sculpt-22.10-on-debian-11.6/">Building Sculpt 22.10 on Debian 11.6 Bullseye</a>. I just glibly provisioned using a small portion of my available resources. In this note, I've corrected this oversight. The system requirements are much, much more modest than what I originally provisioned. There is no need for the overkill.</p>
+<p>This note is about building a bootable Sculpt OS 22.10 image using a Debian 11 &quot;Bullseye&quot; Guest OS running in VirtualBox without a desktop. If you were to include the desktop, expect that the system requirements would increase, but not by lot. I expect it would work with these same provisions, but would work better with more CPUs and RAM, as well as with a bigger allocation of hard disk space.</p>
+<p>Bottom line - The image can be built comfortably, in a reasonable amount of time (call it 15 minutes to download the toolchain, and source code, and do the build), on a system with 512 MB RAM, 1 CPU, 12 GB HDD, but it's faster with more resources provisioned, where CPU seems to be the biggest factor - more is better letting us use parallel threads in make.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Dec 29, 2022</span>
+  <a href="/tags/os/" class="tag">os</a> <a href="/tags/genode/" class="tag">genode</a> 
+  <h3><a class="post-link" href="/posts/building-sculpt-22.10-on-debian-11.6/">Building Sculpt 22.10 on Debian 11.6 Bullseye</a></h3>
+  <div class="summary"><p>This note is about building a bootable Sculpt OS 22.10 image using a Debian 11 &quot;Bullseye&quot; Guest OS running in VirtualBox. This is useful as a starting point for building a custom image. My Thinkpad T430 runs Sculpt just fine, but wifi doesn't work, so I would like to add the needed firmware. This is work in that direction.</p>
+<p>The note also applies, leaving out the VirtualBox specifics, to building Sculpt OS 22.10 on a Debian instance running on metal (confirmed working 12/28).</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Mar 23, 2021</span>
+  <a href="/tags/bsd/" class="tag">bsd</a> <a href="/tags/os/" class="tag">os</a> 
+  <h3><a class="post-link" href="/posts/freebsd-2021-ep-2-logging-in-and-out/">freebsd 2021 ep 2 logging in and out</a></h3>
+  <div class="summary"><iframe width="560" height="315" src="https://www.youtube.com/embed/mQtp14F6hMc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+</li>
+
+</ul>
+<nav class="pagination">
+  
+  page 1 of 4
+  <a href="/tags/os/page/2/">older →</a>
+</nav>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/6502/">6502 (20)</a>, <a href="/tags/aiki/">aiki (5)</a>, <a href="/tags/apple-iie/">apple-iie (11)</a>, <a href="/tags/assembly/">assembly (13)</a>, <a href="/tags/bsd/">bsd (18)</a>, <a href="/tags/dec/">dec (12)</a>, <a href="/tags/electronics/">electronics (4)</a>, <a href="/tags/emulators/">emulators (15)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/kim-1/">kim-1 (7)</a>, <a href="/tags/linux/">linux (8)</a>, <a href="/tags/lisp/">lisp (7)</a>, <a href="/tags/m100/">m100 (3)</a>, <a href="/tags/mac/">mac (4)</a>, <a href="/tags/math/">math (6)</a>, <a href="/tags/os/">os (32)</a>, <a href="/tags/pal-1/">pal-1 (7)</a>, <a href="/tags/pdp-11/">pdp-11 (11)</a>, <a href="/tags/programming/">programming (20)</a>, <a href="/tags/research/">research (1)</a>, <a href="/tags/research-unix/">research-unix (23)</a>, <a href="/tags/retro-computing/">retro-computing (25)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/tools/">tools (14)</a>, <a href="/tags/unix/">unix (28)</a>, <a href="/tags/v6/">v6 (11)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/version-control/">version-control (3)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title:  "Setting up for X-Windows Development on MacOS"
-tags: operating-systems mojave x-windows
+tags: os mac programming
 ---
 
 This note describes setting up a development environment for doing X Windows Development on Mac OS from the ground up. The notes do apply to other environments... with minor tweaks (I tried the same basic setup on Debian Linux, DragonFly BSD, and FreeBSD with no major issues).

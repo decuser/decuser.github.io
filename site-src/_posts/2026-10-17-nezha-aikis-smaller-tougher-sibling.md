@@ -1,6 +1,6 @@
 ---
 title: "Nezha: Aiki's Smaller, Tougher Sibling."
-tags: [nezha aiki programming-languages interpreters language-design blockly wails]
+tags: aiki programming
 ---
 
 ## Nezha: smaller, tougher, and less patient with baggage.

@@ -10,7 +10,7 @@ A short note about installing and using the DZ-11 Terminal Multiplexor in v7 for
 
 This note assumes you have a working instance of V7 and you want to use the DZ-11 Terminal Multiplexor to serve up telnet. It further assumes that you have not previously configured UNIX for another set of additional terminal interfaces (such as the DC-11). If you have, that's fine, you will just need to remove the existing /dev/tty?? entries. Otherwise, this note should work for you as well.
 
-My guide for setting up a V7 instance will work for this (follow the directions through setting up a multi-user system and don't do the multi-session instructions). The most current post is [here]({% post_url 2022-01-03-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-2.0 %})
+My guide for setting up a V7 instance will work for this (follow the directions through setting up a multi-user system and don't do the multi-session instructions). The most current post is [here](/posts/installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-2.0/)
 
 ## Boot up your v7 instance
 

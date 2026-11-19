@@ -1,6 +1,6 @@
 ---
 title:	freebsd 2020 ep 7 all about manpages
-tags: unix freebsd videos
+tags: bsd os
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/y9iFJ1ehNRA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

@@ -1,6 +1,6 @@
 ---
 title:	Will's Geometry - A Setting Out.
-tags: GEOMETRY
+tags: math
 ---
 
 This is a note where I begin to develop my own geometry based on the example of Euclid, but with an eye towards addressing its shortcomings - what hubris?! But seriously, I'm pretty sure my geometry will pale in comparison. The purpose of the exploration is not to show off, but to learn more about the world and in this regard, will be interesting and educational.

@@ -1,6 +1,6 @@
 ---
 title:	freebsd 2020 ep 4 updating your freebsd 12.1 system safely with zfs boot environments
-tags: unix freebsd videos
+tags: bsd os
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Q4hPCYf94Dk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

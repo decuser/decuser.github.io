@@ -1,6 +1,6 @@
 ---
 title:	Nyquist what?! Gobsmacked by Sampling Frequency
-tags: electronics theory
+tags: 6502 electronics math
 ---
 A note to capture what I learned the hard way about sampling frequencies.
 

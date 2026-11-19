@@ -1,6 +1,6 @@
 ---
 title:	freebsd 2020 ep 3 installing plasma on freebsd 12.1 on virtualbox 6.1
-tags: unix freebsd videos
+tags: bsd os
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/1iaGoNiuO0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

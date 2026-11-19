@@ -1,6 +1,6 @@
 ---
 title:	HelloMono - Mono on Windows XP
-tags: programming mono
+tags: programming
 ---
 An article I wrote back in the day (2004-05-06)and published on [CodeProject](https://www.codeproject.com/). The article is rated 4.11 and has been viewed more than 229k times as of October 21, 2025. Codeproject is no longer active. The links below refer to wayback's archived version.
 

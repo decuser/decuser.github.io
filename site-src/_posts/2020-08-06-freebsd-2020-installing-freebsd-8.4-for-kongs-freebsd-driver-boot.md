@@ -1,6 +1,6 @@
 ---
 title:	Installing freebsd 8.4 to work with Kongs driver book
-tags: unix freebsd videos
+tags: bsd os
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/li5YB9Q1dOg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

@@ -45,8 +45,26 @@
 <ul class="post-list">
 
 <li>
+  <span class="post-meta">Oct 17, 2026</span>
+  <a href="/tags/programming/" class="tag">programming</a> <a href="/tags/version-control/" class="tag">version-control</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/git-time-machine/">Git Time Machine: Browsing a Repository Through Time.</a></h3>
+  <div class="summary"><h2>Git Time Machine: a filesystem with a past.</h2>
+<p>I have been working on a tool called Git Time Machine (GTM). The idea is simple: instead of thinking of a Git repository as a sequence of commits, treat it as a filesystem that can be visited at different points in time.</p>
+<p>Pick a repository, a branch, and a moment. GTM finds the corresponding historical snapshot. From there you can browse files, inspect their histories, compare versions, and extract an older file without disturbing your working tree.</p>
+</div>
+</li>
+
+<li>
   <span class="post-meta">Jan 25, 2026</span>
-  <a href="/tags/tools/" class="tag">tools</a> <a href="/tags/go/" class="tag">go</a> 
+  <a href="/tags/programming/" class="tag">programming</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/ssg/">Migrating from Jekyll to a custom static site generator</a></h3>
+  <div class="summary"><p>Replaced the Jekyll-based blog with a custom static site generator written in Go.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 25, 2026</span>
+  <a href="/tags/programming/" class="tag">programming</a> <a href="/tags/tools/" class="tag">tools</a> 
   <h3><a class="post-link" href="/posts/dex/">dex - directory comparison tool in Go</a></h3>
   <div class="summary"><p>Released <a href="https://github.com/decuser/dex">dex</a>, a Go port of my Python dircmp utility. Clean architecture, static binaries, no dependencies.</p>
 <p>Compares two directory trees and sorts files into five buckets:</p>
@@ -67,24 +85,100 @@ dex [options] &lt;src&gt; &lt;dst&gt;     # compare directories
 </li>
 
 <li>
-  <span class="post-meta">Jan 25, 2026</span>
-  <a href="/tags/go/" class="tag">go</a> <a href="/tags/tools/" class="tag">tools</a> <a href="/tags/github-pages/" class="tag">github-pages</a> 
-  <h3><a class="post-link" href="/posts/ssg/">Migrating from Jekyll to a custom static site generator</a></h3>
-  <div class="summary"><p>Replaced the Jekyll-based blog with a custom static site generator written in Go.</p>
+  <span class="post-meta">Jun 12, 2025</span>
+  <a href="/tags/emulators/" class="tag">emulators</a> <a href="/tags/retro-computing/" class="tag">retro-computing</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/compiling-and-installing-opensimh-from-source/">Building and Installing OpenSIMH from Source</a></h3>
+  <div class="summary"><iframe width="560" height="315" src="https://www.youtube.com/embed/2OdwzNxeLsk?si=XVZgYDaFcIYzWBnD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<p>A video walking the user through the process of obtaining, building and installing OpenSIMH from source. This is a prerequisite for installing Research Unix Version 6 or 7.</p>
+<p>Enjoy!</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Sep 23, 2024</span>
+  <a href="/tags/linux/" class="tag">linux</a> <a href="/tags/os/" class="tag">os</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/github-actions/">github actions - seriously?</a></h3>
+  <div class="summary"><p>This post is not a particularly informative one, but when I tried to switch to github actions for publishing the blog, uh, it went poorly.</p>
+<p>Maybe I'll try again later, but for the time being - sticking with publish a branch.</p>
+<p>If you're lost reading this, no worries. It's github speak for if it ain't broke, don't fix it :).</p>
+<p><em>post added 2024-09-23 19:12:00 -0600</em></p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Aug 16, 2024</span>
+  <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/thunderbird-hangs-indexing/">Geometry Explorations</a></h3>
+  <div class="summary"><p>This note describes a method for fixing Thunderbird when it hangs while indexing.</p>
+<p>I'm posting this in case it's useful to folks and for my own reference. It took me a quite a while to figure it out.</p>
+<p>So you have been using Thunderbird for your email for a while, on Windows, Linux, Mac, FreeBSD, and so on, for let's say a couple of decades. If you copy your profile around much, you are bound to hit an indexing issue where Thunderbird is unable to index your archives. You open up Activity Manager and it helpfully reports:</p>
+<p>Indexing 32 of 14243 messages in Archives/2002-2020/2016</p>
+<p>Read on for the fix.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Feb 1, 2023</span>
+  <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/pdf-cleanup-workflow/">A Modern PDF Cleanup Workflow</a></h3>
+  <div class="summary"><p>This note provides a workflow for taking a less than optimized PDF and optimizing it for viewing and printing. It isn't a cure-all for sick PDF's, but it does work for a lot of them. I've struggled with badly scanned PDF's for a long time and this workflow represents my current best approach.</p>
+<p>The note also provides a cookbook of solutions to problems I have run up against and the solutions that I currently use to address those problems.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 23, 2023</span>
+  <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/mermaid/">Enabling Mermaid in Jekyll without a Plugin</a></h3>
+  <div class="summary"><p>Mermaid is a javascript tool to generate graphics - diagrams and charts and such using markdown-like syntax. This note describes adding it into a jekyll site such as mine <a href="https://decuser.github.io">https://decuser.github.io</a></p>
+<div class="mermaid">
+flowchart LR
+     id1((a)) --> id2((b)) & c--> d
+</div>
+<p>Flowchart Example</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 23, 2023</span>
+  <a href="/tags/version-control/" class="tag">version-control</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/fossil-merging-binary-files/">Merging binary files in Fossil - to do or not to do?</a></h3>
+  <div class="summary"><p>This is a note about merging (or not merging) binary files in Fossil.</p>
+<h2>Scenario</h2>
+<p>Two users Marilyn and Jim update to latest and begin working on their versions of the repository. Marilyn, changes a binary file called DEMO and commits her changes. Meanwhile, Jim changes his DEMO and tries to commit his changes. When he does so, he is warned that a fork would result from his commit.</p>
+<p><strong>Current Situation</strong></p>
+<div class="mermaid">
+flowchart LR
+    START[ ]-->id1((2))-->id2((3)) 
+    id1((2))-..->STOP[ ]
+    style START fill-opacity:0, stroke-opacity:0
+    style STOP  fill-opacity:0, stroke-opacity:0
+</div>
+<p>In this note, I look at different solutions to the problems arising when two different committers try to commit changes to the same binary file. This is just a note, not a published solution set. It presents my current thinking on the matter and will inevitably evolve as my understanding of Fossil grows.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 7, 2023</span>
+  <a href="/tags/bsd/" class="tag">bsd</a> <a href="/tags/os/" class="tag">os</a> <a href="/tags/version-control/" class="tag">version-control</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/fossil-on-truenas/">Installing and running Fossil on TrueNAS Core</a></h3>
+  <div class="summary"><p>This note is about installing and running Fossil SCM on TrueNAS Core.</p>
+<p>Fossil is brought to us by the same people who developed SQLite. It was created to serve their needs, but is useful to everybody with a similar set of needs (pretty much any dev team). According to the fossil folks over at <a href="https://fossil-scm.org">https://fossil-scm.org</a>, &quot;Fossil is a simple, high-reliability, distributed software configuration management system...&quot; To mme, it's my git-killer.</p>
+<p>I have been running Fossil for about a year to see if it was worth replacing git for my own use. After this year, while I still like git and I will continue to use it for disposable repos, I have completely jumped ship for my own repos and won't be going back to hosting them on anything else anytime soon. Fossil is very lightweight, fast and responsive, has a fantastic server side ui, and is slightly more intuitive to use. It is also easier to recover from when things go wonky.</p>
 </div>
 </li>
 
 </ul>
 <nav class="pagination">
   
-  page 1 of 1
-  
+  page 1 of 2
+  <a href="/tags/tools/page/2/">older →</a>
 </nav>
 
         </div>
         <aside>
 	  <h3>tags</h3>
-	  <a href="/tags/academic/">academic (1)</a>, <a href="/tags/ai/">ai (2)</a>, <a href="/tags/aiki/">aiki (5)</a>, <a href="/tags/algebra/">algebra (2)</a>, <a href="/tags/analysis/">analysis (3)</a>, <a href="/tags/assembly/">assembly (11)</a>, <a href="/tags/basic/">basic (3)</a>, <a href="/tags/blockly/">blockly (1)</a>, <a href="/tags/boolean/">boolean (1)</a>, <a href="/tags/bsd/">bsd (1)</a>, <a href="/tags/c#/">c# (1)</a>, <a href="/tags/c&#43;&#43;/">c&#43;&#43; (2)</a>, <a href="/tags/centos/">centos (4)</a>, <a href="/tags/dec/">dec (1)</a>, <a href="/tags/development/">development (3)</a>, <a href="/tags/dragonfly-bsd/">dragonfly-bsd (1)</a>, <a href="/tags/education/">education (1)</a>, <a href="/tags/electronics/">electronics (3)</a>, <a href="/tags/forth/">forth (1)</a>, <a href="/tags/fossil/">fossil (2)</a>, <a href="/tags/freebsd/">freebsd (14)</a>, <a href="/tags/freepascal/">freepascal (1)</a>, <a href="/tags/fuse/">fuse (1)</a>, <a href="/tags/general/">general (7)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/geometry/">geometry (3)</a>, <a href="/tags/git/">git (1)</a>, <a href="/tags/github/">github (1)</a>, <a href="/tags/github-pages/">github-pages (2)</a>, <a href="/tags/go/">go (2)</a>, <a href="/tags/hardware/">hardware (1)</a>, <a href="/tags/information-science/">information-science (1)</a>, <a href="/tags/interpreters/">interpreters (1)</a>, <a href="/tags/jekyll/">jekyll (2)</a>, <a href="/tags/language-design/">language-design (1)</a>, <a href="/tags/lazarus/">lazarus (1)</a>, <a href="/tags/linux/">linux (6)</a>, <a href="/tags/lions/">lions (1)</a>, <a href="/tags/lisp/">lisp (6)</a>, <a href="/tags/m100/">m100 (3)</a>, <a href="/tags/macos/">macos (2)</a>, <a href="/tags/macro-11/">macro-11 (1)</a>, <a href="/tags/macro-11s/">macro-11s (1)</a>, <a href="/tags/math/">math (2)</a>, <a href="/tags/merging/">merging (1)</a>, <a href="/tags/mermaid/">mermaid (1)</a>, <a href="/tags/minima/">minima (1)</a>, <a href="/tags/mint/">mint (1)</a>, <a href="/tags/mojave/">mojave (1)</a>, <a href="/tags/mono/">mono (1)</a>, <a href="/tags/nezha/">nezha (1)</a>, <a href="/tags/opensimh/">opensimh (4)</a>, <a href="/tags/operating-systems/">operating-systems (6)</a>, <a href="/tags/pal-1/">pal-1 (7)</a>, <a href="/tags/pascal/">pascal (1)</a>, <a href="/tags/pdfs/">pdfs (1)</a>, <a href="/tags/pdp-11/">pdp-11 (9)</a>, <a href="/tags/programming/">programming (4)</a>, <a href="/tags/programming-languages/">programming-languages (5)</a>, <a href="/tags/publications/">publications (1)</a>, <a href="/tags/python/">python (1)</a>, <a href="/tags/raspberry-pi/">raspberry-pi (1)</a>, <a href="/tags/ratfor/">ratfor (1)</a>, <a href="/tags/research/">research (1)</a>, <a href="/tags/research-unix/">research-unix (24)</a>, <a href="/tags/retro/">retro (11)</a>, <a href="/tags/retro-computing/">retro-computing (10)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/scheme/">scheme (1)</a>, <a href="/tags/sculpt/">sculpt (3)</a>, <a href="/tags/self-hosting/">self-hosting (1)</a>, <a href="/tags/slackware15/">slackware15 (1)</a>, <a href="/tags/software-tools/">software-tools (1)</a>, <a href="/tags/systems/">systems (2)</a>, <a href="/tags/theory/">theory (2)</a>, <a href="/tags/tools/">tools (2)</a>, <a href="/tags/truenas-core/">truenas-core (1)</a>, <a href="/tags/ucb-stk/">ucb-stk (1)</a>, <a href="/tags/unix/">unix (53)</a>, <a href="/tags/unix-v6/">unix-v6 (1)</a>, <a href="/tags/v6/">v6 (11)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/videos/">videos (26)</a>, <a href="/tags/vim/">vim (2)</a>, <a href="/tags/votrax/">votrax (1)</a>, <a href="/tags/vt01/">vt01 (1)</a>, <a href="/tags/wails/">wails (1)</a>, <a href="/tags/x-windows/">x-windows (3)</a>, <a href="/tags/xlib/">xlib (1)</a>
+	  <a href="/tags/6502/">6502 (20)</a>, <a href="/tags/aiki/">aiki (5)</a>, <a href="/tags/apple-iie/">apple-iie (11)</a>, <a href="/tags/assembly/">assembly (13)</a>, <a href="/tags/bsd/">bsd (18)</a>, <a href="/tags/dec/">dec (12)</a>, <a href="/tags/electronics/">electronics (4)</a>, <a href="/tags/emulators/">emulators (15)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/kim-1/">kim-1 (7)</a>, <a href="/tags/linux/">linux (8)</a>, <a href="/tags/lisp/">lisp (7)</a>, <a href="/tags/m100/">m100 (3)</a>, <a href="/tags/mac/">mac (4)</a>, <a href="/tags/math/">math (6)</a>, <a href="/tags/os/">os (32)</a>, <a href="/tags/pal-1/">pal-1 (7)</a>, <a href="/tags/pdp-11/">pdp-11 (11)</a>, <a href="/tags/programming/">programming (20)</a>, <a href="/tags/research/">research (1)</a>, <a href="/tags/research-unix/">research-unix (23)</a>, <a href="/tags/retro-computing/">retro-computing (25)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/tools/">tools (14)</a>, <a href="/tags/unix/">unix (28)</a>, <a href="/tags/v6/">v6 (11)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/version-control/">version-control (3)</a>
 	</aside>
       </div>
     </div>

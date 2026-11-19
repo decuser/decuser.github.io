@@ -1,6 +1,6 @@
 ---
 title:  "Setting up Slackware 15 on T430 for X Window Programming"
-tags: development x-windows slackware15
+tags: linux os programming
 ---
 
 The note walks through the process of installing and configuring a working Slackware 15 64 instance with the packages mirrored locally for ease of access and eliminating the need to be online as much. When the system is up and running it provides xdm services to nearby hosts (those on the local network). This makes running and testing x window clients simpler and more interesting. You may notice that the note references other environments that you may not have or want to use (MacOS Mojave and FreeBSD 13.1). Just ignore those references as they are not strictly required.

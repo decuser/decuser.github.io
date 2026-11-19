@@ -1,7 +1,7 @@
 ---
 
 title: Aiki Alpha 3 Released
-tags: aiki programming-languages systems
+tags: aiki programming
 ---
 
 Aiki Alpha 3 is out.

@@ -1,6 +1,6 @@
 ---
 title:  "Welcome to Decuser's Blog on GitHub"
-tags: general
+tags: 
 ---
 This Blog ranges over diverse technical topics such as Retrocomputing, Unix, and Programming
 

@@ -8,7 +8,7 @@ A note demonstrating the process of assembling and running a simple **hello, wor
 
 ## Prerequisites
 
-* A working Research Unix v6 environment: [Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emplator (Nov 23, 2015)]({% post_url 2015-11-23-installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator %})
+* A working Research Unix v6 environment: [Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emplator (Nov 23, 2015)](/posts/installing-and-using-research-unix-v6-in-simh-pdp-11-40-emulator/)
 * A recent version of SimH (since December 2015): [https://github.com/simh/simh](https://github.com/simh/simh) 
 * Some experience with SimH and copying and pasting between host and simulated os.
 

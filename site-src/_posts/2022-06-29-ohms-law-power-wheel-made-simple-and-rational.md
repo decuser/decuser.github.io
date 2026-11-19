@@ -1,6 +1,6 @@
 ---
 title:	Ohm's Law Power Wheel Made Simple and Rational
-tags: electronics theory videos
+tags: electronics math
 ---
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/DaBhAEf9XPE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

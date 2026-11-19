@@ -1,7 +1,7 @@
 ---
 title:	Using an el-cheapo logic analyser to detect address bus activity
 
-tags: electronics analysis
+tags: 6502 electronics
 ---
 
 This note documents my exploration of using a $9.99 logic analyzer to watch my PAL-1 go through some address bus gyrations.

@@ -1,6 +1,6 @@
 ---
 title:	A tutorial introduction to programming PDP-11 Macro-11 Assembly in RT-11 v5.3
-tags: pdp-11 rt-11 macro-11
+tags: os dec pdp-11 rt-11 assembly
 ---
 A tutorial about how to do assembly language programming and debugging in RT-11v5.3 running on a SimH PDP-11.
 
@@ -8,10 +8,10 @@ A tutorial about how to do assembly language programming and debugging in RT-11v
 
 ## Prerequisites
 
-In order to work through this walkthrough, it is necessary to have a working installation of RT-11 v5.3. see [Tutorial - Setting up RT-11 v5.3 on SimH PDP-11 (Dec 30, 2015)]({% post_url 2015-12-30-tutorial-setting-up-rt-11-v5.3-on-simh-pdp-11 %})
+In order to work through this walkthrough, it is necessary to have a working installation of RT-11 v5.3. see [Tutorial - Setting up RT-11 v5.3 on SimH PDP-11 (Dec 30, 2015)](/posts/tutorial-setting-up-rt-11-v5.3-on-simh-pdp-11/)
  for a tutorial on setting up a working environment.
 
-A quick start version of the setup is available at [Quick Setup RT-11v5.3 (Jan 20, 2016)]({% post_url 2016-01-20-quick-setup-rt-11v5.3-mac-linux %}) Look toward the bottom of the note for a minimalist rendering.
+A quick start version of the setup is available at [Quick Setup RT-11v5.3 (Jan 20, 2016)](/posts/quick-setup-rt-11v5.3-mac-linux/) Look toward the bottom of the note for a minimalist rendering.
 
 
 ## Sources

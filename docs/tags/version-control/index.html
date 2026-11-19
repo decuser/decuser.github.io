@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6K8M1G32XP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-6K8M1G32XP');
+  </script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>version-control - decuser's blog</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate"
+      type="application/rss+xml"
+      title="DECUSER RSS Feed"
+      href="/feed.xml">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="site-title" href="/">decuser's blog</a>
+      <nav class="site-nav">
+        <a href="/">home</a>
+        <a href="/all/">all</a>
+        <a href="/about/">about</a>
+        <a href="/research/">research</a>
+	<a href="/feed.xml">RSS</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="wrapper">
+      <div class="banner">
+        <img src="/assets/img/banner.png" alt="decuser's blog">
+      </div>
+      <div class="container">
+        <div class="content">
+          
+<h1 class="page-heading">version-control</h1>
+<ul class="post-list">
+
+<li>
+  <span class="post-meta">Oct 17, 2026</span>
+  <a href="/tags/programming/" class="tag">programming</a> <a href="/tags/version-control/" class="tag">version-control</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/git-time-machine/">Git Time Machine: Browsing a Repository Through Time.</a></h3>
+  <div class="summary"><h2>Git Time Machine: a filesystem with a past.</h2>
+<p>I have been working on a tool called Git Time Machine (GTM). The idea is simple: instead of thinking of a Git repository as a sequence of commits, treat it as a filesystem that can be visited at different points in time.</p>
+<p>Pick a repository, a branch, and a moment. GTM finds the corresponding historical snapshot. From there you can browse files, inspect their histories, compare versions, and extract an older file without disturbing your working tree.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 23, 2023</span>
+  <a href="/tags/version-control/" class="tag">version-control</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/fossil-merging-binary-files/">Merging binary files in Fossil - to do or not to do?</a></h3>
+  <div class="summary"><p>This is a note about merging (or not merging) binary files in Fossil.</p>
+<h2>Scenario</h2>
+<p>Two users Marilyn and Jim update to latest and begin working on their versions of the repository. Marilyn, changes a binary file called DEMO and commits her changes. Meanwhile, Jim changes his DEMO and tries to commit his changes. When he does so, he is warned that a fork would result from his commit.</p>
+<p><strong>Current Situation</strong></p>
+<div class="mermaid">
+flowchart LR
+    START[ ]-->id1((2))-->id2((3)) 
+    id1((2))-..->STOP[ ]
+    style START fill-opacity:0, stroke-opacity:0
+    style STOP  fill-opacity:0, stroke-opacity:0
+</div>
+<p>In this note, I look at different solutions to the problems arising when two different committers try to commit changes to the same binary file. This is just a note, not a published solution set. It presents my current thinking on the matter and will inevitably evolve as my understanding of Fossil grows.</p>
+</div>
+</li>
+
+<li>
+  <span class="post-meta">Jan 7, 2023</span>
+  <a href="/tags/bsd/" class="tag">bsd</a> <a href="/tags/os/" class="tag">os</a> <a href="/tags/version-control/" class="tag">version-control</a> <a href="/tags/tools/" class="tag">tools</a> 
+  <h3><a class="post-link" href="/posts/fossil-on-truenas/">Installing and running Fossil on TrueNAS Core</a></h3>
+  <div class="summary"><p>This note is about installing and running Fossil SCM on TrueNAS Core.</p>
+<p>Fossil is brought to us by the same people who developed SQLite. It was created to serve their needs, but is useful to everybody with a similar set of needs (pretty much any dev team). According to the fossil folks over at <a href="https://fossil-scm.org">https://fossil-scm.org</a>, &quot;Fossil is a simple, high-reliability, distributed software configuration management system...&quot; To mme, it's my git-killer.</p>
+<p>I have been running Fossil for about a year to see if it was worth replacing git for my own use. After this year, while I still like git and I will continue to use it for disposable repos, I have completely jumped ship for my own repos and won't be going back to hosting them on anything else anytime soon. Fossil is very lightweight, fast and responsive, has a fantastic server side ui, and is slightly more intuitive to use. It is also easier to recover from when things go wonky.</p>
+</div>
+</li>
+
+</ul>
+<nav class="pagination">
+  
+  page 1 of 1
+  
+</nav>
+
+        </div>
+        <aside>
+	  <h3>tags</h3>
+	  <a href="/tags/6502/">6502 (20)</a>, <a href="/tags/aiki/">aiki (5)</a>, <a href="/tags/apple-iie/">apple-iie (11)</a>, <a href="/tags/assembly/">assembly (13)</a>, <a href="/tags/bsd/">bsd (18)</a>, <a href="/tags/dec/">dec (12)</a>, <a href="/tags/electronics/">electronics (4)</a>, <a href="/tags/emulators/">emulators (15)</a>, <a href="/tags/genode/">genode (3)</a>, <a href="/tags/kim-1/">kim-1 (7)</a>, <a href="/tags/linux/">linux (8)</a>, <a href="/tags/lisp/">lisp (7)</a>, <a href="/tags/m100/">m100 (3)</a>, <a href="/tags/mac/">mac (4)</a>, <a href="/tags/math/">math (6)</a>, <a href="/tags/os/">os (32)</a>, <a href="/tags/pal-1/">pal-1 (7)</a>, <a href="/tags/pdp-11/">pdp-11 (11)</a>, <a href="/tags/programming/">programming (20)</a>, <a href="/tags/research/">research (1)</a>, <a href="/tags/research-unix/">research-unix (23)</a>, <a href="/tags/retro-computing/">retro-computing (25)</a>, <a href="/tags/rt-11/">rt-11 (3)</a>, <a href="/tags/tools/">tools (14)</a>, <a href="/tags/unix/">unix (28)</a>, <a href="/tags/v6/">v6 (11)</a>, <a href="/tags/v7/">v7 (12)</a>, <a href="/tags/version-control/">version-control (3)</a>
+	</aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrapper">
+      decuser | will.senn@gmail.com
+    </div>
+  </footer>
+  <script src="/assets/js/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

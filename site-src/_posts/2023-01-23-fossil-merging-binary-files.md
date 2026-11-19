@@ -1,6 +1,6 @@
 ---
 title:  "Merging binary files in Fossil - to do or not to do?"
-tags: fossil merging
+tags: version-control tools
 ---
 
 This is a note about merging (or not merging) binary files in Fossil.

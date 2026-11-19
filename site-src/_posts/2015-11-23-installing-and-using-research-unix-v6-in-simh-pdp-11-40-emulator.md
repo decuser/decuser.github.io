@@ -1,8 +1,8 @@
 ---
 title:	Installing and Using Research Unix Version 6 in SimH PDP-11/40 Emulator
-tags: unix research-unix v6 
+tags: unix research-unix v6 emulators
 ---
-This note is intended to document the process of running v6 in a PDP-11/40 emulated environment. A subsequent note covers [v7]({% post_url 2015-12-07-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.0 %})
+This note is intended to document the process of running v6 in a PDP-11/40 emulated environment. A subsequent note covers [v7](/posts/installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-1.0/)
 <!--more-->
 
 Minor updates on November 30, 2022.

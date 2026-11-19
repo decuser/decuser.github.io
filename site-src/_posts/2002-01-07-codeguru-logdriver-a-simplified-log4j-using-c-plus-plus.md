@@ -1,6 +1,6 @@
 ---
 title:	LogDriver - A simplified log4j using C++
-tags: programming c++
+tags: programming
 ---
 An article I wrote back in the day (2002-01-07) and published on [CodeGuru](https://www.codeguru.com/). The links below refer to wayback's archived version.
 

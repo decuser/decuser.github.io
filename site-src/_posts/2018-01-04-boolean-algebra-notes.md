@@ -1,6 +1,6 @@
 ---
 title:	Boolean Algebra Notes
-tags: math algebra boolean
+tags: math
 ---
 This set of notes is a synthesis of many sources. I was having a very difficult time understanding some of the simplifications that were being done in videos and texts on digital logic, so I dug a little deeper until I had enough of a grasp to appreciate the elegance of the boolean logic system.
 

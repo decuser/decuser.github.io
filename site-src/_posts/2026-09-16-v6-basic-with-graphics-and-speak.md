@@ -1,6 +1,6 @@
 ---
 title: "V6 Speaks! in OpenSIMH: Reconstructing the Votrax Speech Synthesizer Endpoint."
-tags: [unix v6 research-unix basic pdp-11 opensimh votrax]
+tags: unix research-unix v6 dec pdp-11
 ---
 
 ## Research UNIX V6 speaks again.

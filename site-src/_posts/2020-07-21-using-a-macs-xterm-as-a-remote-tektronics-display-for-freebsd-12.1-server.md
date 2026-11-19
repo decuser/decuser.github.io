@@ -1,6 +1,6 @@
 ---
 title:	Using a Mac's xterm as a remote Tektronics display for a FreeBSD 12.1 Server
-tags: unix macos
+tags: bsd retro-computing mac
 ---
 How to use the macos terminal as a remote tektronics display device for a terminal graphics process running on another unix system. In this case, freebsd.
 

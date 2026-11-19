@@ -1,6 +1,6 @@
 ---
 title:  "Installing and running Fossil on TrueNAS Core"
-tags: operating-systems truenas-core fossil
+tags: bsd os version-control tools
 ---
 This note is about installing and running Fossil SCM on TrueNAS Core. 
 

@@ -1,6 +1,6 @@
 ---
 title:	ratfor and Kernighan and Plaugers Software Tools
-tags: unix research-unix v7 ratfor
+tags: unix research-unix v7 programming
 ---
 A short note documenting the process of getting ratfor working on a v7 instance.
 
@@ -8,7 +8,7 @@ A short note documenting the process of getting ratfor working on a v7 instance.
 
 ## Prereqs
 
-This note assumes you have a working v7 setup. The most current post is [here]({% post_url 2022-02-08-installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-2.1 %})
+This note assumes you have a working v7 setup. The most current post is [here](/posts/installing-and-using-research-unix-v7-in-simh-pdp-11-45-and-70-emulators-rev-2.1/)
 
 ## Getting Started
 

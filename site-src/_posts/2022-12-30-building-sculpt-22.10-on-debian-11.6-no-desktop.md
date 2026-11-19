@@ -1,8 +1,8 @@
 ---
 title:  "Building Sculpt 22.10 on Debian 11.6 Bullseye without a Desktop"
-tags: operating-systems genode sculpt
+tags: os genode
 ---
-Sheesh, live and learn. I didn't pay any attention to system requirements in the prior note [Building Sculpt 22.10 on Debian 11.6 Bullseye]({% post_url 2022-12-29-building-sculpt-22.10-on-debian-11.6 %}). I just glibly provisioned using a small portion of my available resources. In this note, I've corrected this oversight. The system requirements are much, much more modest than what I originally provisioned. There is no need for the overkill.
+Sheesh, live and learn. I didn't pay any attention to system requirements in the prior note [Building Sculpt 22.10 on Debian 11.6 Bullseye](/posts/building-sculpt-22.10-on-debian-11.6/). I just glibly provisioned using a small portion of my available resources. In this note, I've corrected this oversight. The system requirements are much, much more modest than what I originally provisioned. There is no need for the overkill.
 
 This note is about building a bootable Sculpt OS 22.10 image using a Debian 11 "Bullseye" Guest OS running in VirtualBox without a desktop. If you were to include the desktop, expect that the system requirements would increase, but not by lot. I expect it would work with these same provisions, but would work better with more CPUs and RAM, as well as with a bigger allocation of hard disk space.
 

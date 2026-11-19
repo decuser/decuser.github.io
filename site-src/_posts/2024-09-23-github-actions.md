@@ -1,6 +1,6 @@
 ---
 title: github actions - seriously?	
-tags: linux
+tags: linux os tools
 ---
 This post is not a particularly informative one, but when I tried to switch to github actions for publishing the blog, uh, it went poorly.
 

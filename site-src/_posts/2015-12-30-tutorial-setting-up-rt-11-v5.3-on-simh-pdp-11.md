@@ -1,6 +1,6 @@
 ---
 title:	Tutorial - Setting up RT-11 v5.3 on SimH PDP-11
-tags: pdp-11 rt-11
+tags: os dec pdp-11 rt-11 emulators
 ---
 A tutorial about how to set up an RT-11 v5.3 in a SimH PDP-11 instance in Support of MACRO-11 Assembly Development and Experimentation.
 

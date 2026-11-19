@@ -1,6 +1,6 @@
 ---
 title:	PAL-1 Loading MOS Paper Tape to RAM
-tags: retro-computing pal-1
+tags: 6502 kim-1 pal-1 retro-computing
 ---
  This post describes how to get your Mac talking to your PAL-1 in order to send MOS papertape format ascii files via minicom to your PAL-1 and run them. Future installments will go into more detail, from the ground up.
 

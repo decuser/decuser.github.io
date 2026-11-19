@@ -1,6 +1,6 @@
 ---
 title:	Turn off that pesky Visual Mode mouse integration in VIM
-tags: unix vim
+tags: unix tools
 ---
 This is a note about how to kill that mouse craziness with vim.
 

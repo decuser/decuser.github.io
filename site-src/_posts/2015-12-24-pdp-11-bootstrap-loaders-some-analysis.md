@@ -1,6 +1,6 @@
 ---
 title:	PDP-11 Bootstrap loaders - some analysis
-tags: pdp-11
+tags: dec pdp-11
 ---
 This note provides some short analyses of several of the PDP-11 bootstrap loaders used to install the Research Unix Sixth edition. It is a work in progress...
 

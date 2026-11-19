@@ -1,6 +1,6 @@
 ---
 title:	Geometry Explorations
-tags: GEOMETRY
+tags: tools
 ---
 This note describes a method for fixing Thunderbird when it hangs while indexing.
 

@@ -1,6 +1,6 @@
 ---
 title:	How to Monitor Battery Life and Sleep on FreeBSD 12.1
-tags: unix freebsd
+tags: bsd os
 ---
 A non-ui method for monitoring battery life and sleep on FreeBSD. This is useful for when you just want to run the command line or a lightweight window manager like TWM, FVWM, etc. Installs as a service and will sleep the machine as the battery approaches it's lowpoint of charge.
 

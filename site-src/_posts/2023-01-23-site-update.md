@@ -1,6 +1,6 @@
 ---
 title:  "Site Update for Monday, January 23, 2023"
-tags: general
+tags: 
 ---
 
 Today, I did my 50th deployment (this is the 51st) of the blog, adding mermaid-js support to the site. So, now I can add in flow diagrams and such as I explore fossil scm or other flowing stuff.

@@ -1,6 +1,6 @@
 ---
 title: "Lions Laboratory: A Sixth Edition UNIX Laboratory for OpenSIMH"
-tags: [unix unix-v6 lions pdp-11 opensimh]
+tags: unix research-unix v6 dec pdp-11
 ---
 
 As a follow-up to my note on [setting up a Sixth Edition UNIX laboratory in OpenSIMH](/posts/setting-up-unix-sixth-edition-opensimh-laboratory-for-reading-lions/), I have now put the complete laboratory repository on GitHub:

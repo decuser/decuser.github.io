@@ -1,6 +1,6 @@
 ---
 title:	PAL-1 Resources A Curated List
-tags: retro-computing pal-1
+tags: 6502 kim-1 pal-1 retro-computing
 ---
 
 This is my curated list of resources. The manuals, books, videos, and sites referenced below are ones that I found useful and interesting, and occasionally enlightening. This is not an exhaustive list.

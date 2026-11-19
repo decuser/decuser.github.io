@@ -1,6 +1,6 @@
 ---
 title: "Git Time Machine: Browsing a Repository Through Time."
-tags: [git pascal lazarus freepascal fuse software-tools]
+tags: programming version-control tools
 ---
 
 ## Git Time Machine: a filesystem with a past.

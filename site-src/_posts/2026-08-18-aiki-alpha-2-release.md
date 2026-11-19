@@ -1,6 +1,6 @@
 ---
 title: Aiki Alpha 2 Released
-tags: aiki programming-languages systems
+tags: aiki programming
 ---
 
 Aiki Alpha 2 is out.

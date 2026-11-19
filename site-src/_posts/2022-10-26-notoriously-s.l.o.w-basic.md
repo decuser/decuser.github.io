@@ -1,6 +1,6 @@
 ---
 title:	Notoriously S.L.O.W BASIC
-tags: retro-computing m100 BASIC
+tags: m100 retro-computing programming
 ---
 This week, I spent some time writing code for my m100. On my list of things to do with the little machine, was to write a disassembler. In order to disassemble memory, it helps to know what's there, so I decided to write a memory dump utility first.
 

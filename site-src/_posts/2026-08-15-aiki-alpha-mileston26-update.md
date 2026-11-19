@@ -1,7 +1,7 @@
 ---
 
 title: Aiki: Alpha Milestone 26 Update
-tags: aiki programming-languages ai self-hosting
+tags: aiki programming
 ---
 
 I have been busy with Aiki lately, and the last couple of days have been especially active. I return to my day job next week. I am a Computer Information Systems professor at Tarleton State University. So, I have been using the remaining summer window to close several related pieces of work.

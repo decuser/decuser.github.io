@@ -1,6 +1,6 @@
 ---
 title:	How to set up tor on FreeBSD 11.2
-tags: unix freebsd
+tags: bsd os
 ---
 A note describing how to install and set up the tor browser on freebsd 11.2
 <!--more-->
