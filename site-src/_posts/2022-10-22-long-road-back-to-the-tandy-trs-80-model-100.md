@@ -1,6 +1,6 @@
 ---
 title:	Long Road Back to the Tandy TRS-80 Model 100
-tags: retro-computing pal-1
+tags: retro-computing m100
 ---
 
  ![one](/assets/img/m100/01.jpeg)
