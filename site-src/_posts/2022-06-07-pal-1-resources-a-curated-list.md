@@ -34,7 +34,7 @@ This is my curated list of resources. The manuals, books, videos, and sites refe
 
 * KIM-1 User Manual - [http://archive.6502.org/books/kim1_user_manual.pdf](http://archive.6502.org/books/kim1_user_manual.pdf)
 
-* 6502 Programmer's Guide (MOS scan) - [http://retro.hansotten.nl/uploads/files/MCS6500%20Programming%20Manual.pdf](http://retro.hansotten.nl/uploads/files/MCS6500%20Programming%20Manual.pdf)
+* 6502 Programmer's Guide (MOS scan) - [http://retro.hansotten.nl/uploads/files/6500-50A_MCS6500_Programming_Manual_(1976_Jan)%20with%20card.pdf](http://retro.hansotten.nl/uploads/files/6500-50A_MCS6500_Programming_Manual_(1976_Jan)%20with%20card.pdf)
 
 * 6502 Programmer's Guide (Modern readable recreation) - [https://pickledlight.blogspot.com/p/mcs6500-microcomputer-family.html](https://pickledlight.blogspot.com/p/mcs6500-microcomputer-family.html)
 

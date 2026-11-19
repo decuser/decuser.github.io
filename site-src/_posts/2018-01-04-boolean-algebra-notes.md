@@ -77,7 +77,7 @@ A class of elements B together with two binary operations (+) and (.) (where a .
 
     Proof. 
     
-    ```
+```
    a = a + 0           by P2
 	  = a + aa'         by P4
 	  = (a + a)(a + a') by P3
@@ -87,7 +87,7 @@ A class of elements B together with two binary operations (+) and (.) (where a .
 
     Similarly,
 
-    ```
+```
 	a = a(1).        by P2
 	  = a . (a + a') by P4
 	  = aa + aa'     by P3
@@ -101,7 +101,7 @@ A class of elements B together with two binary operations (+) and (.) (where a .
 
     Proof.
 
-    ```
+```
     1 = a + a'          by P4
 	  = a + a'(1)       by P2
 	  = (a + a')(a + 1) by P3

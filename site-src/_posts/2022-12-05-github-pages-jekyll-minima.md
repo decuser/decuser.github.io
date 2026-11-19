@@ -3,6 +3,8 @@ title:	Creating a github pages jekyll minima themed site with pagination
 tags: tools
 ---
 
+Historical note (November 2026): This article documents how I originally built this blog using Jekyll and GitHub Pages. In January 2026, I replaced Jekyll with a custom static site generator written in Go. The instructions below are preserved as originally written and may not reflect current versions of the tools.
+
 A note about creating a github pages jekyll minima themed blog site and about adding pagination after the fact. This note captures what I learned when I created this blog.
 
 <!--more-->

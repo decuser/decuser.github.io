@@ -9,7 +9,7 @@ A list of known Tandy TRS-80 Model 100 books and articles, with links. My faves 
 
 * Ahl, D. H. (1983). The TRS-80 Model 100 and NEC PC-8201 Ideabook: Includes 50 ready-to-run programs. Creative Computing Press. [https://archive.org/details/TheModel100Pc8201Ideabook](https://archive.org/details/TheModel100Pc8201Ideabook)
 
-* **Anderson, T. B. (1989). Programming Tips, Peeks, and Pokes for the Tandy Portable Computers. Tony B. Anderson.** [https://archive.org/details/ProgrammingTipsPeeksAndPokesForTheTandyPortableComputers ](https://archive.org/details/ProgrammingTipsPeeksAndPokesForTheTandyPortableComputers )
+* **Anderson, T. B. (1989). Programming Tips, Peeks, and Pokes for the Tandy Portable Computers. Tony B. Anderson.** [https://archive.org/details/ProgrammingTipsPeeksAndPokesForTheTandyPortableComputers ](https://archive.org/details/ProgrammingTipsPeeksAndPokesForTheTandyPortableComputers)
 
 * Barden, W. (1982). TRS-80 Computer Reference Handbook (62-2314). Radio Shack. [https://archive.org/details/TRS-80_Computer_Reference_Handbook_2nd_1982_Radio_Shack](https://archive.org/details/TRS-80_Computer_Reference_Handbook_2nd_1982_Radio_Shack)
 
@@ -117,8 +117,6 @@ ARCsoft Publishers. [https://archive.org/details/44ProgramsForTheTrs80Model100Po
 * **Tandy. (1983). TRD-80 Model 100 Portable Computer: Owner’s Manual. Radio Shack.** [https://archive.org/details/trs-80-m-100-user-guide](https://archive.org/details/trs-80-m-100-user-guide)
 
 * Tandy. (1983). TRS-80 Model 100 Portable Computer: Radio Shack Service Manual: (Catalog Numbers 26-3801/3802). Radio Shack. [https://archive.org/details/m100service](https://archive.org/details/m100service)
-
-* Tandy. (1983). TRS-80 Model 100 Portable Computer—Quick Reference Guide. Radio Shack. [No copy found]()
 
 * Tandy. (1983). TRS-80 Model 100: ROM Functions (700-2245). Radio Shack. [https://archive.org/details/Model100RomFunctions](https://archive.org/details/Model100RomFunctions)
 

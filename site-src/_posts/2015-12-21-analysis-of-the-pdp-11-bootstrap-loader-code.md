@@ -61,7 +61,7 @@ Let's begin the analysis of the bootstrap loader.
 
 Here is the raw source of the bootstrap loader configured for an 8K word machine:
 
-``
+```
 016701
 000026
 012702

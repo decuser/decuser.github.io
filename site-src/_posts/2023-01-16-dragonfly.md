@@ -190,7 +190,7 @@ The base installation, now it's time to configure the system.
 
  * Information
 
-     ```
+ ```
 The Time Zone has been set to
 /mnt/usr/share/zoneinfo/America/Chicago.
 ```

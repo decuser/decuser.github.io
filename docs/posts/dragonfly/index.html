@@ -229,62 +229,83 @@ swap 16G
 </li>
 <li>
 <p>Information</p>
-<pre><code></code></pre>
 </li>
 </ul>
-<p>The Time Zone has been set to
-/mnt/usr/share/zoneinfo/America/Chicago.</p>
-<pre><code> * Acknowledge by choosing `OK`
-
-##### Date and Time configuration
-
-* Set date and time
-
- * Set Time/Date as you like
-
- *  Confirm your choices by choosing `OK`
-
- * Information
-
-     `The time and date have been set.`
-
- * Acknowledge by choosing `OK`
-
-##### Keyboard map configuration
-
-* Choose `Set keyboard map`
-
- * Select Keyboard Map
-
-     * Choose `us.pc-ctrl-kbd`
-
-##### Root password configuration
-
-* Choose `Set root password`
-
- * Set Root Password
-
-     * Enter root password
-
-     * Enter root password again
-
-     * Choose `Accept and Set Password`
-
-     * Information
-
-         `The root password has been set.`
-
-     * Acknowledge by choosing `OK`
-
-##### Additional user configuration
-
-* Choose `Add a user`
-
- * Add user
-
- * 
+<pre><code>The Time Zone has been set to
+/mnt/usr/share/zoneinfo/America/Chicago.
 </code></pre>
-<p>Username wsenn
+<ul>
+<li>Acknowledge by choosing <code>OK</code></li>
+</ul>
+<h5>Date and Time configuration</h5>
+<ul>
+<li>
+<p>Set date and time</p>
+</li>
+<li>
+<p>Set Time/Date as you like</p>
+</li>
+<li>
+<p>Confirm your choices by choosing <code>OK</code></p>
+</li>
+<li>
+<p>Information</p>
+<p><code>The time and date have been set.</code></p>
+</li>
+<li>
+<p>Acknowledge by choosing <code>OK</code></p>
+</li>
+</ul>
+<h5>Keyboard map configuration</h5>
+<ul>
+<li>
+<p>Choose <code>Set keyboard map</code></p>
+</li>
+<li>
+<p>Select Keyboard Map</p>
+<ul>
+<li>Choose <code>us.pc-ctrl-kbd</code></li>
+</ul>
+</li>
+</ul>
+<h5>Root password configuration</h5>
+<ul>
+<li>
+<p>Choose <code>Set root password</code></p>
+</li>
+<li>
+<p>Set Root Password</p>
+<ul>
+<li>
+<p>Enter root password</p>
+</li>
+<li>
+<p>Enter root password again</p>
+</li>
+<li>
+<p>Choose <code>Accept and Set Password</code></p>
+</li>
+<li>
+<p>Information</p>
+<p><code>The root password has been set.</code></p>
+</li>
+<li>
+<p>Acknowledge by choosing <code>OK</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5>Additional user configuration</h5>
+<ul>
+<li>
+<p>Choose <code>Add a user</code></p>
+</li>
+<li>
+<p>Add user</p>
+</li>
+<li></li>
+</ul>
+<pre><code>Username wsenn
 Real Name Will Senn
 Password **
 Password again **
@@ -292,270 +313,245 @@ Shell /bin/sh
 Home Directory /home/wsenn
 User ID (leave blank)
 Login Group (leave blank)
-Other Group Membership [wheel,video]</p>
-<pre><code>
- * Choose `Accept and Add`
-
- * Information
-
-     `The user 'wsenn' was added.`
-
-   * Acknowledge by choosing `OK`
-
-##### Network configuration
-
-* Choose `Configure network interfaces`
-
- * Assign IP Address
-
-     * choose `em0`
-
-     * Use DHCP
-
-         * Choose `Use DHCP`
-
-             It takes a few seconds to initialize the nic.
-    
-     * Information
-
-         `Lots of em0 info is displayed`
-
-     * Acknowledge by choosing `OK`
-
-##### Hostname and domain configuration
- 
-* Choose `Configure hostname and domain`
-
- * Enter your hostname
-
- * Enter your domain	
-
- * Confirm your selections by choosing `OK`
-
-##### Console font configuration (optional)
-
-Probably don't need to change it but if you do...
-
-Choose cp437 fonts
-
-##### Screen map configuration
-
-Probably don't need to change it but if you do...
-
-Choose the iso-8859-1 to cp437 screen map
-
-##### Wrapping up configuration
-
-* Choose `Return to Welcome Screen`
-
-* Choose `Reboot This Computer`
-
- * Reboot
-
-     * Choose `Reboot`
-
-* Remove the USB Stick and reboot
-
-I had to power cycle the computer at this point.
-
-### Running DragonFly BSD
-
-----
-
-The computer will reboot and display the Dragonfly BSD Boot manager.
-
+Other Group Membership [wheel,video]
 </code></pre>
-<p>F1 DF/FBSD
-Default: F1</p>
-<pre><code>
-After about 10 seconds, the computer will boot the default entry (DragonFly BSD).
-
-The Dragonfly BSD Boot menu will appear and a countdown timer will count down before booting the default entry - `1. DragonFly BSD (kernel)`.
-
-
-#### Login as regular user
-
+<ul>
+<li>
+<p>Choose <code>Accept and Add</code></p>
+</li>
+<li>
+<p>Information</p>
+<p><code>The user 'wsenn' was added.</code></p>
+<ul>
+<li>Acknowledge by choosing <code>OK</code></li>
+</ul>
+</li>
+</ul>
+<h5>Network configuration</h5>
+<ul>
+<li>
+<p>Choose <code>Configure network interfaces</code></p>
+</li>
+<li>
+<p>Assign IP Address</p>
+<ul>
+<li>
+<p>choose <code>em0</code></p>
+</li>
+<li>
+<p>Use DHCP</p>
+<ul>
+<li>
+<p>Choose <code>Use DHCP</code></p>
+<p>It takes a few seconds to initialize the nic.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Information</p>
+<p><code>Lots of em0 info is displayed</code></p>
+</li>
+<li>
+<p>Acknowledge by choosing <code>OK</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5>Hostname and domain configuration</h5>
+<ul>
+<li>
+<p>Choose <code>Configure hostname and domain</code></p>
+</li>
+<li>
+<p>Enter your hostname</p>
+</li>
+<li>
+<p>Enter your domain</p>
+</li>
+<li>
+<p>Confirm your selections by choosing <code>OK</code></p>
+</li>
+</ul>
+<h5>Console font configuration (optional)</h5>
+<p>Probably don't need to change it but if you do...</p>
+<p>Choose cp437 fonts</p>
+<h5>Screen map configuration</h5>
+<p>Probably don't need to change it but if you do...</p>
+<p>Choose the iso-8859-1 to cp437 screen map</p>
+<h5>Wrapping up configuration</h5>
+<ul>
+<li>
+<p>Choose <code>Return to Welcome Screen</code></p>
+</li>
+<li>
+<p>Choose <code>Reboot This Computer</code></p>
+</li>
+<li>
+<p>Reboot</p>
+<ul>
+<li>Choose <code>Reboot</code></li>
+</ul>
+</li>
+<li>
+<p>Remove the USB Stick and reboot</p>
+</li>
+</ul>
+<p>I had to power cycle the computer at this point.</p>
+<h3>Running DragonFly BSD</h3>
+<hr>
+<p>The computer will reboot and display the Dragonfly BSD Boot manager.</p>
+<pre><code>F1 DF/FBSD
+Default: F1
 </code></pre>
-<p>login: wsenn
-password:</p>
-<pre><code>
-#### Get the ip
-
+<p>After about 10 seconds, the computer will boot the default entry (DragonFly BSD).</p>
+<p>The Dragonfly BSD Boot menu will appear and a countdown timer will count down before booting the default entry - <code>1. DragonFly BSD (kernel)</code>.</p>
+<h4>Login as regular user</h4>
+<pre><code>login: wsenn
+password:
 </code></pre>
-<p>ifconfig
+<h4>Get the ip</h4>
+<pre><code>ifconfig
 ...
 192.168.254.12
-...</p>
-<pre><code>
-#### Temporarily change ssh to allow password based logins
-
+...
 </code></pre>
-<p>su -</p>
-<p>vi /etc/ssh/sshd_config
+<h4>Temporarily change ssh to allow password based logins</h4>
+<pre><code>su -
+
+vi /etc/ssh/sshd_config
 PasswordAuthentication yes
-service sshd restart</p>
-<pre><code>
-#### Copy over your user key (if you plan to log in remotely)
-
-on remote host
-
-`ssh-copy-id loki`
-
-#### Change ssh back to only allow key based logins
-
-on loki
-
+service sshd restart
 </code></pre>
-<p>su -</p>
-<p>vi /etc/ssh/sshd_config
+<h4>Copy over your user key (if you plan to log in remotely)</h4>
+<p>on remote host</p>
+<p><code>ssh-copy-id loki</code></p>
+<h4>Change ssh back to only allow key based logins</h4>
+<p>on loki</p>
+<pre><code>su -
+
+vi /etc/ssh/sshd_config
 PasswordAuthentication no
-service sshd restart</p>
-<pre><code>
-#### Log in over ssh
-
+service sshd restart
 </code></pre>
-<p>ssh loki</p>
-<pre><code>
-#### Do updates and upgrade
-
-Note: 6.4.0 ships with an old version of pkg and the upgrade fails as a result and blows away the pkg configuration. The simple solution is to copy the sample configuration over and rerun the upgrade as described below.
-
+<h4>Log in over ssh</h4>
+<pre><code>ssh loki
 </code></pre>
-<p>pkg update
-pkg upgrade</p>
-<pre><code>
-This results in the following error:
-
+<h4>Do updates and upgrade</h4>
+<p>Note: 6.4.0 ships with an old version of pkg and the upgrade fails as a result and blows away the pkg configuration. The simple solution is to copy the sample configuration over and rerun the upgrade as described below.</p>
+<pre><code>pkg update
+pkg upgrade
 </code></pre>
-<p>Updating Avalon repository catalogue...
+<p>This results in the following error:</p>
+<pre><code>Updating Avalon repository catalogue...
 Avalon repository is up to date.
 All repositories are up to date.
 New version of pkg detected; it needs to be installed first.
-The following 1 package(s) will be affected (of 0 checked):</p>
-<p>Installed packages to be UPGRADED:
-pkg: 1.14.4 -&gt; 1.18.4 [Avalon]</p>
-<p>Number of packages to be upgraded: 1</p>
-<p>3 MiB to be downloaded.</p>
-<p>Proceed with this action? [y/N]: Y
-[1/1] Fetching pkg-1.18.4.pkg: 100%    3 MiB 790.6kB/s    00:04<br>
+The following 1 package(s) will be affected (of 0 checked):
+
+Installed packages to be UPGRADED:
+	pkg: 1.14.4 -&gt; 1.18.4 [Avalon]
+
+Number of packages to be upgraded: 1
+
+3 MiB to be downloaded.
+
+Proceed with this action? [y/N]: Y
+[1/1] Fetching pkg-1.18.4.pkg: 100%    3 MiB 790.6kB/s    00:04    
 Checking integrity... done (0 conflicting)
 [1/1] Upgrading pkg from 1.14.4 to 1.18.4...
 [1/1] Extracting pkg-1.18.4: 100%
 pkg: Failed to execute lua script: [string &quot;-- args: etc/pkg.conf.sample...&quot;]:12: attempt to call a nil value (field 'stat')
 pkg: lua script failed
-No active remote repositories configured.</p>
-<pre><code>
-##### Restore the borked configuration
-
-`cp /usr/local/etc/pkg/repos/df-latest.conf.sample /usr/local/etc/pkg/repos/df-latest.conf`
-
-##### Rerun the upgrade step
-
-`pkg upgrade`
-
-This time, things ought to be good.
-
-#### Install some useful baseline packages
-
+No active remote repositories configured.
 </code></pre>
-<p>pkg install sudo vim bash sysrc
+<h5>Restore the borked configuration</h5>
+<p><code>cp /usr/local/etc/pkg/repos/df-latest.conf.sample /usr/local/etc/pkg/repos/df-latest.conf</code></p>
+<h5>Rerun the upgrade step</h5>
+<p><code>pkg upgrade</code></p>
+<p>This time, things ought to be good.</p>
+<h4>Install some useful baseline packages</h4>
+<pre><code>pkg install sudo vim bash sysrc
 visudo
 uncomment
-%wheel ALL=(ALL:ALL) NOPASSWD: ALL</p>
-<p>exit</p>
-<pre><code>
-#### Change the user shell to bash
+%wheel ALL=(ALL:ALL) NOPASSWD: ALL
 
-as user
-
+exit
 </code></pre>
-<p>chsh
-/usr/local/bin/bash</p>
-<pre><code>
-
-#### Install a Windowing Environment
-
+<h4>Change the user shell to bash</h4>
+<p>as user</p>
+<pre><code>chsh
+/usr/local/bin/bash
 </code></pre>
-<p>sudo -s
-pkg install xorg xf86-input-evdev windowmaker leafpad nautilus chromium slim slim-themes</p>
-<p>echo &quot;exec wmaker&quot; &gt; .xinitrc</p>
-<p>sysrc slim_enable=&quot;YES&quot;
+<h4>Install a Windowing Environment</h4>
+<pre><code>sudo -s
+pkg install xorg xf86-input-evdev windowmaker leafpad nautilus chromium slim slim-themes
+
+echo &quot;exec wmaker&quot; &gt; .xinitrc
+
+sysrc slim_enable=&quot;YES&quot;
 sysrc dbus_enable=&quot;YES&quot;
-sysrc snd_hda_load=&quot;YES&quot;</p>
-<p>sysrc -f /boot/loader.conf autoboot_delay=&quot;1&quot;</p>
-<p>sudo shutdown -r now</p>
-<pre><code>should restart with slim
+sysrc snd_hda_load=&quot;YES&quot;
 
-#### Login, fire up Chrome and youtube, stuff oughta just work
+sysrc -f /boot/loader.conf autoboot_delay=&quot;1&quot;
 
-* Right-click on the desktop, open a terminal, then
-
-`chrome`
-
-
-logging out of windowmaker takes 10 seconds then beep
-
-
-### Post installation rigamarole
-
-----
-
-I have an ASUS ATI Radeon HD 650 Silence video card. I did the following to learn more about it.
-
+sudo shutdown -r now
 </code></pre>
-<p>kldload radeon
+<p>should restart with slim</p>
+<h4>Login, fire up Chrome and youtube, stuff oughta just work</h4>
+<ul>
+<li>Right-click on the desktop, open a terminal, then</li>
+</ul>
+<p><code>chrome</code></p>
+<p>logging out of windowmaker takes 10 seconds then beep</p>
+<h3>Post installation rigamarole</h3>
+<hr>
+<p>I have an ASUS ATI Radeon HD 650 Silence video card. I did the following to learn more about it.</p>
+<pre><code>kldload radeon
 kldstat
 Id Refs Address            Size     Name
-1   26 0xffffffff80200000 1ada9a8  kernel
-2    1 0xffffffff81cdb000 7c550    ehci.ko
-3    1 0xffffffff81d58000 8a1f0    xhci.ko
-4    1 0xffffffff82600000 16000    ums.ko
-5    1 0xffffffff82616000 19a7000  radeon.ko
-6    1 0xffffffff83fbd000 baa000   drm.ko
-7    1 0xffffffff84b67000 1f000    iicbus.ko
-8    1 0xffffffff84b86000 a000     radeonkmsfw_CAICOS_pfp.ko
-9    1 0xffffffff84b90000 b000     radeonkmsfw_CAICOS_me.ko
+ 1   26 0xffffffff80200000 1ada9a8  kernel
+ 2    1 0xffffffff81cdb000 7c550    ehci.ko
+ 3    1 0xffffffff81d58000 8a1f0    xhci.ko
+ 4    1 0xffffffff82600000 16000    ums.ko
+ 5    1 0xffffffff82616000 19a7000  radeon.ko
+ 6    1 0xffffffff83fbd000 baa000   drm.ko
+ 7    1 0xffffffff84b67000 1f000    iicbus.ko
+ 8    1 0xffffffff84b86000 a000     radeonkmsfw_CAICOS_pfp.ko
+ 9    1 0xffffffff84b90000 b000     radeonkmsfw_CAICOS_me.ko
 10    1 0xffffffff84b9b000 a000     radeonkmsfw_BTC_rlc.ko
 11    1 0xffffffff84ba5000 f000     radeonkmsfw_CAICOS_mc.ko
 12    1 0xffffffff84bb4000 f000     radeonkmsfw_CAICOS_smc.ko
-13    1 0xffffffff84bc3000 3b000    radeonkmsfw_SUMO_uvd.ko</p>
-<pre><code>
-I have onboard sound. Here's the exploration.
-
+13    1 0xffffffff84bc3000 3b000    radeonkmsfw_SUMO_uvd.ko
 </code></pre>
-<p>kldload snd_hda
-cat /dev/random &gt; /dev/dsp</p>
-<pre><code>
-Static sound ensues :).
-
+<p>I have onboard sound. Here's the exploration.</p>
+<pre><code>kldload snd_hda
+cat /dev/random &gt; /dev/dsp
 </code></pre>
-<p>cat /dev/sndstat
+<p>Static sound ensues :).</p>
+<pre><code>cat /dev/sndstat
 Installed devices:
 pcm0: &lt;Analog Devices AD1984 (Analog)&gt; (play/rec) default
 pcm1: &lt;Analog Devices AD1984 (Analog)&gt; (play/rec)
-pcm2: &lt;ATI R6xx (HDMI)&gt; (play)</p>
-<p>dmesg|grep pcm
+pcm2: &lt;ATI R6xx (HDMI)&gt; (play)
+
+dmesg|grep pcm
 pcm0: &lt;Analog Devices AD1984 (Analog)&gt; at nid 18 and 20 on hdaa0
 pcm1: &lt;Analog Devices AD1984 (Analog)&gt; at nid 17 and 21 on hdaa0
-pcm2: &lt;ATI R6xx (HDMI)&gt; at nid 3 on hdaa1</p>
-<pre><code>
-I mucked up loader.conf and booting became an issue. Here's the fix.
-
-* insert usb and boot to it
-* select r for ramdisk
-* in the booted system, `mount /dev/da0s1a`
-* find and edit `loader.conf` in /mnt
-* reboot
-
-
-I originally had a janky mouse, the fix was to install `xf86-input-evdev`
-
-To enable X11 over ssh
-sudo vi /etc/ssh/sshd_config
-X11Forwarding yes
-
-*post last updated 2023-01-19 13:12:00 -0600*
+pcm2: &lt;ATI R6xx (HDMI)&gt; at nid 3 on hdaa1
 </code></pre>
+<p>I mucked up loader.conf and booting became an issue. Here's the fix.</p>
+<ul>
+<li>insert usb and boot to it</li>
+<li>select r for ramdisk</li>
+<li>in the booted system, <code>mount /dev/da0s1a</code></li>
+<li>find and edit <code>loader.conf</code> in /mnt</li>
+<li>reboot</li>
+</ul>
+<p>I originally had a janky mouse, the fix was to install <code>xf86-input-evdev</code></p>
+<p>To enable X11 over ssh
+sudo vi /etc/ssh/sshd_config
+X11Forwarding yes</p>
+<p><em>post last updated 2023-01-19 13:12:00 -0600</em></p>
 </div>
 </article>
 
