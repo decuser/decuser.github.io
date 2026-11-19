@@ -1,5 +1,11 @@
 [
   {
+    "title": "m65c02: Making the Invisible Visible",
+    "url": "/posts/m65c02-making-the-invisible-visible/",
+    "date": "Nov 19, 2026",
+    "tags": "6502 kim-1 emulators retro-computing programming"
+  },
+  {
     "title": "Research, Publications, and CV",
     "url": "/posts/research-page-and-cv/",
     "date": "Oct 30, 2026",
@@ -72,14 +78,14 @@
     "tags": "unix research-unix v6 emulators"
   },
   {
-    "title": "dex - directory comparison tool in Go",
-    "url": "/posts/dex/",
+    "title": "Migrating from Jekyll to a custom static site generator",
+    "url": "/posts/ssg/",
     "date": "Jan 25, 2026",
     "tags": "programming tools"
   },
   {
-    "title": "Migrating from Jekyll to a custom static site generator",
-    "url": "/posts/ssg/",
+    "title": "dex - directory comparison tool in Go",
+    "url": "/posts/dex/",
     "date": "Jan 25, 2026",
     "tags": "programming tools"
   },
@@ -180,14 +186,14 @@
     "tags": "unix research-unix v7"
   },
   {
-    "title": "Geometry Explorations",
-    "url": "/posts/geometry-explorations/",
+    "title": "Will's Geometry - A Setting Out.",
+    "url": "/posts/wills-geometry/",
     "date": "Dec 19, 2023",
     "tags": "math"
   },
   {
-    "title": "Will's Geometry - A Setting Out.",
-    "url": "/posts/wills-geometry/",
+    "title": "Geometry Explorations",
+    "url": "/posts/geometry-explorations/",
     "date": "Dec 19, 2023",
     "tags": "math"
   },
